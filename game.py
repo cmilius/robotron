@@ -2,7 +2,7 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import PhysicsEntity
+from scripts.entities import PhysicsEntity, Player, Robot
 from scripts.utils import load_image, load_images
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
@@ -24,12 +24,18 @@ class Game:
         self.movement = [0, 0]  # [x, y]
 
         self.assets = {
-            "player": load_image("entities/player.png")
+            "player": load_image("entities/player.png"),
+            "robot": load_image("entities/robot.png")
         }
 
         # Create the player
-        self.player = PhysicsEntity(self, "player", (50, 50), (20, 27))
+        self.player = Player(self, (50, 50), (20, 27))
 
+        # Spawn robots
+        self.robots = []
+        self.robot_positions = [(20, 20), (150, 180), (300, 200)]  # TODO: need to determine how we want to spawn things
+        for pos in self.robot_positions:
+            self.robots.append(Robot(self, pos, (29, 27)))
 
     def run(self):
         while True:
@@ -38,6 +44,11 @@ class Game:
             # player functions
             self.player.update((self.movement[0], self.movement[1]))
             self.player.render(self.display)
+
+            # robot functions
+            for robot in self.robots.copy():
+                robot.update(movement=(0, 0))
+                robot.render(surf=self.display)
 
             # event manager
             for event in pygame.event.get():
