@@ -89,6 +89,8 @@ class Robot(PhysicsEntity):
         # scale the movement, can be used later to increase difficulty if desired.
         # Throw in random.random() so the robots have slightly various movespeeds.
         # This also stops them from instantly merging.
-        frame_movement = [frame_movement[0] * .7 * random.random(), frame_movement[1] * .7 * random.random()]
+        frame_movement = [frame_movement[0] * .7 * random.random(),
+                          frame_movement[1] * .7 * random.random()]
 
         super().update(movement=frame_movement)
+

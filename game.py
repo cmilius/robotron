@@ -2,7 +2,8 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import PhysicsEntity, Player, Robot
+from scripts.entities import Player, Robot
+from scripts.spawner import Spawner
 from scripts.utils import load_image, load_images
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
@@ -28,16 +29,24 @@ class Game:
             "robot": load_image("entities/robot.png")
         }
 
+        # init wave counter
+        self.wave_counter = 1
+
         # Create the player
-        self.player = Player(self, (50, 50), (20, 27))
+        self.player_size = (20, 27)  # pixel size
+        self.player = Player(game=self, pos=(150, 106.5), size=self.player_size)
 
         # Spawn robots
+        self.robot_size = (29, 27)  # pixel size
+        # TODO: below will be eventually be moved to a "start wave" function
         self.robots = []
-        self.robot_positions = [(20, 20), (150, 180), (300, 200)]  # TODO: need to determine how we want to spawn things
+        self.spawner = Spawner(self)
+        self.robot_positions = self.spawner.robot_spawn()
         for pos in self.robot_positions:
-            self.robots.append(Robot(self, pos, (29, 27)))
+            self.robots.append(Robot(self, pos, self.robot_size))
 
     def run(self):
+        timer = 0
         while True:
             self.display.fill((0, 0, 0))  # black background
 
