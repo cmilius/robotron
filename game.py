@@ -2,7 +2,8 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import Player, Robot, Hulk
+
+from scripts.entities import Hero, Grunt, Hulk
 from scripts.spawner import Spawner
 from scripts.utils import load_image, load_images
 
@@ -15,7 +16,7 @@ class Game:
     def __init__(self):
         pygame.init()
 
-        pygame.display.set_caption("Robotron")
+        pygame.display.set_caption("robotron")
         self.screen = pygame.display.set_mode((640, 480))  # Top-left is 0-0
         # Put assets onto the display. Display will then be projected onto the screen for a more pixel-art look.
         self.display = pygame.Surface((320, 240))
@@ -25,52 +26,61 @@ class Game:
         self.movement = [0, 0]  # [x, y]
 
         self.assets = {
-            "player": load_image("entities/player.png"),
-            "robot": load_image("entities/robot.png"),
+            "hero": load_image("entities/hero.png"),
+            "grunt": load_image("entities/grunt.png"),
             "hulk": load_image("entities/hulk.png")
         }
 
         # init wave counter
         self.wave_counter = 1
 
-        # Create the player
-        self.player_size = (20, 27)  # pixel size
-        self.player = Player(game=self, pos=(150, 106.5), size=self.player_size)
+        self.allsprites = pygame.sprite.Group()
 
-        # Spawn robots
-        self.robot_size = (29, 27)  # pixel size
+        # Create the hero
+        self.hero_size = (20, 27)  # pixel size
+        self.hero = Hero(self, (150, 106.5), self.hero_size)
+        self.hero_group = pygame.sprite.Group()
+        self.hero_group.add(self.hero)
+        self.allsprites.add(self.hero)
+
+        # Spawn grunts
+        self.grunt_size = (29, 27)  # pixel size
         # TODO: below will be eventually be moved to a "start wave" function
-        self.robots = []
+        self.grunts_group = pygame.sprite.Group()
         self.spawner = Spawner(self)
-        self.robot_positions = self.spawner.robot_spawn()
-        for pos in self.robot_positions:
-            self.robots.append(Robot(self, pos, self.robot_size))
-            print("Robots")
-            print(self.robot_positions)
+        self.grunt_positions = self.spawner.grunt_spawn()
+        
+        for pos in self.grunt_positions:
+            grunt = Grunt(self, pos, self.grunt_size)
+            self.grunts_group.add(grunt)
+            self.allsprites.add(grunt)
 
         #spawn hulks
         self.hulk_size = (29, 27)  # pixel size
         self.hulks = []
         #self.spawner = Spawner(self)
-        self.hulk_positions = self.spawner.robot_spawn()
+        self.hulk_positions = self.spawner.grunts_spawn()
         for pos in self.hulk_positions:
             self.hulks.append(Hulk(self, pos, self.hulk_size))
             print("Hulks")
             print(self.hulk_positions)
 
     def run(self):
-        timer = 0
+        grunt_move_timer = 0
         while True:
             self.display.fill((0, 0, 0))  # black background
 
-            # player functions
-            self.player.update((self.movement[0], self.movement[1]))
-            self.player.render(self.display)
+            # hero functions
+            self.hero.update((self.movement[0], self.movement[1]))
 
-            # robot functions
-            for robot in self.robots.copy():
-                robot.update(movement=(0, 0))
-                robot.render(surf=self.display)
+            # grunt functions
+            grunt_move_timer += 1
+            if grunt_move_timer == 20:
+                self.grunts_group.update()
+                grunt_move_timer = 0
+
+            # draw sprites
+            self.allsprites.draw(self.display)
 
             # hulk functions
             for hulk in self.hulks.copy():
