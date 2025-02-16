@@ -1,6 +1,7 @@
 import pygame
 import random
 import logging
+from .projectiles import Projectiles
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,19 @@ class Hero(PhysicsEntity):
         self.pos = pos
         self.size = size
         super().__init__(self.game, "hero", self.pos, self.size)
+        self.projectile_reload = 20  # frames
+        self.projectile_timer = 10  # count up to projectile reload
+
+    def update(self, movement=(0, 0), shooting=(False, False, False, False)):
+        super().update(movement=movement)
+        self.shooting = list(shooting)
+        if self.projectile_timer != self.projectile_reload:
+            self.projectile_timer += 1
+        if True in self.shooting and (self.projectile_timer == self.projectile_reload):
+            projectile = Projectiles(self.game, "projectile", self.pos, self.shooting)
+            self.game.hero_projectiles.add(projectile)
+            self.game.allsprites.add(projectile)
+            self.projectile_timer = 0  # cooldown to the projectile_reload framecount
 
 
 class Grunt(PhysicsEntity):

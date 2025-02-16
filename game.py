@@ -24,11 +24,13 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.movement = [0, 0]  # [x, y]
+        self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
 
         self.assets = {
             "hero": load_image("entities/hero.png"),
             "grunt": load_image("entities/grunt.png"),
-            "hulk": load_image("entities/hulk.png")
+            "hulk": load_image("entities/hulk.png"),
+            "projectile": load_image("projectile.png")
         }
 
         # init wave counter
@@ -43,13 +45,16 @@ class Game:
         self.hero_group.add(self.hero)
         self.allsprites.add(self.hero)
 
+        # Projectile holder
+        self.hero_projectiles = pygame.sprite.Group()
+
         # Spawn grunts
         self.grunt_size = (29, 27)  # pixel size
         # TODO: below will be eventually be moved to a "start wave" function
         self.grunts_group = pygame.sprite.Group()
         self.spawner = Spawner(self)
         self.grunt_positions = self.spawner.grunt_spawn()
-        
+
         for pos in self.grunt_positions:
             grunt = Grunt(self, pos, self.grunt_size)
             self.grunts_group.add(grunt)
@@ -71,13 +76,18 @@ class Game:
             self.display.fill((0, 0, 0))  # black background
 
             # hero functions
-            self.hero.update((self.movement[0], self.movement[1]))
+            # TODO: can we merge hero_projectiles and hero_group to only do a single group update() here?
+            self.hero.update(movement=(self.movement[0], self.movement[1]),
+                             shooting=self.hero_shooting)
 
             # grunt functions
             grunt_move_timer += 1
             if grunt_move_timer == 20:
                 self.grunts_group.update()
                 grunt_move_timer = 0
+
+            # Update projectiles
+            self.hero_projectiles.update()
 
             # hulk functions
             self.hulks_group.update()
@@ -99,6 +109,14 @@ class Game:
                         self.movement[0] = -1
                     if event.key == pygame.K_d:
                         self.movement[0] = 1
+                    if event.key == pygame.K_LEFT:
+                        self.hero_shooting[0] = True
+                    if event.key == pygame.K_RIGHT:
+                        self.hero_shooting[1] = True
+                    if event.key == pygame.K_UP:
+                        self.hero_shooting[2] = True
+                    if event.key == pygame.K_DOWN:
+                        self.hero_shooting[3] = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w:
                         self.movement[1] = 0
@@ -108,6 +126,14 @@ class Game:
                         self.movement[0] = 0
                     if event.key == pygame.K_d:
                         self.movement[0] = 0
+                    if event.key == pygame.K_LEFT:
+                        self.hero_shooting[0] = False
+                    if event.key == pygame.K_RIGHT:
+                        self.hero_shooting[1] = False
+                    if event.key == pygame.K_UP:
+                        self.hero_shooting[2] = False
+                    if event.key == pygame.K_DOWN:
+                        self.hero_shooting[3] = False
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
