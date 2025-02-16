@@ -33,15 +33,21 @@ class Spawner:
 
         :return: List of randomized positions
         """
-
+        # account for the size of the robots to avoid clipping off the edge of the map
         mod_surf_size_x = self.display.get_width() - self.game.robot_size[0]
         mod_surf_size_y = self.display.get_height() - self.game.robot_size[1]
+
+        # get the center of the map, use int() to get integer rather than float.
+        map_center_x = int(self.display.get_width()/2)
+        map_center_y = int(self.display.get_height()/2)
+
+        # get the intensity
         num_robots = WAVE_INTENSITY["robots"][self.level]
         posits = []
 
-        # need to define an exclusion zone around the player spawn area  #TODO: ADD PLAYER POSITION
-        x_exclude = [self.game.player_size[0] - 100, self.game.player_size[0] + 100]
-        y_exclude = [self.game.player_size[1] - 100, self.game.player_size[1] + 100]
+        # need to define an exclusion zone around the player spawn area
+        x_exclude = range(map_center_x - 30, map_center_x + 30)
+        y_exclude = range(map_center_y - 30, map_center_y + 30)
 
         for i in range(0, num_robots):
             posits.append(((random.choice([x for x in range(mod_surf_size_x) if x not in x_exclude])),
