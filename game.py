@@ -2,7 +2,7 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import Player, Robot
+from scripts.entities import Player, Robot, Hulk
 from scripts.spawner import Spawner
 from scripts.utils import load_image, load_images
 
@@ -26,7 +26,8 @@ class Game:
 
         self.assets = {
             "player": load_image("entities/player.png"),
-            "robot": load_image("entities/robot.png")
+            "robot": load_image("entities/robot.png"),
+            "hulk": load_image("entities/hulk.png")
         }
 
         # init wave counter
@@ -44,6 +45,18 @@ class Game:
         self.robot_positions = self.spawner.robot_spawn()
         for pos in self.robot_positions:
             self.robots.append(Robot(self, pos, self.robot_size))
+            print("Robots")
+            print(self.robot_positions)
+
+        #spawn hulks
+        self.hulk_size = (29, 27)  # pixel size
+        self.hulks = []
+        #self.spawner = Spawner(self)
+        self.hulk_positions = self.spawner.robot_spawn()
+        for pos in self.hulk_positions:
+            self.hulks.append(Hulk(self, pos, self.hulk_size))
+            print("Hulks")
+            print(self.hulk_positions)
 
     def run(self):
         timer = 0
@@ -58,6 +71,11 @@ class Game:
             for robot in self.robots.copy():
                 robot.update(movement=(0, 0))
                 robot.render(surf=self.display)
+
+            # hulk functions
+            for hulk in self.hulks.copy():
+                hulk.update(movement=(0, 0))
+                hulk.render(surf=self.display)
 
             # event manager
             for event in pygame.event.get():
