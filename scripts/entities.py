@@ -75,3 +75,44 @@ class Grunt(PhysicsEntity):
 
         super().update(movement=frame_movement)
 
+class Hulk(PhysicsEntity):
+    """
+        Large, indestructible robots that wander the screen, killing humans and trapping the player.
+    """
+
+    def __init__(self, game, pos, size):
+        super().__init__(game, "hulk", pos, size)  # inheret the PhysicsEntity class
+
+    def update(self, movement=(0, 0)):
+        """
+        Moves the hulk
+
+        :param movement: Movement in (x, y). Default (0, 0)
+        :return: None
+        """
+
+        # Determine player's location and your location
+        player_pos = self.game.player.rect()
+        hulk_pos = self.rect()
+
+        frame_movement = [movement[0], movement[1]]
+
+        # x-movement logic
+        if player_pos[0] > hulk_pos[0]:
+            frame_movement[0] = 1
+        elif player_pos[0] < hulk_pos[0]:
+            frame_movement[0] = -1
+            
+        # y-movement logic
+        if player_pos[1] > hulk_pos[1]:
+            frame_movement[1] = 1
+        elif player_pos[1] < hulk_pos[1]:
+            frame_movement[1] = -1
+
+        # scale the movement, can be used later to increase difficulty if desired.
+        # Throw in random.random() so the hulks have slightly various movespeeds.
+        # This also stops them from instantly merging.
+        frame_movement = [frame_movement[0] * .5 * random.random(),
+                          frame_movement[1] * .5 * random.random()]
+
+        super().update(movement=frame_movement)

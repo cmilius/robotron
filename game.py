@@ -2,7 +2,8 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import Hero, Grunt
+
+from scripts.entities import Hero, Grunt, Hulk
 from scripts.spawner import Spawner
 from scripts.utils import load_image, load_images
 
@@ -26,7 +27,8 @@ class Game:
 
         self.assets = {
             "hero": load_image("entities/hero.png"),
-            "grunt": load_image("entities/grunt.png")
+            "grunt": load_image("entities/grunt.png"),
+            "hulk": load_image("entities/hulk.png")
         }
 
         # init wave counter
@@ -47,10 +49,21 @@ class Game:
         self.grunts_group = pygame.sprite.Group()
         self.spawner = Spawner(self)
         self.grunt_positions = self.spawner.grunt_spawn()
+        
         for pos in self.grunt_positions:
             grunt = Grunt(self, pos, self.grunt_size)
             self.grunts_group.add(grunt)
             self.allsprites.add(grunt)
+
+        #spawn hulks
+        self.hulk_size = (29, 27)  # pixel size
+        self.hulks = []
+        #self.spawner = Spawner(self)
+        self.hulk_positions = self.spawner.grunts_spawn()
+        for pos in self.hulk_positions:
+            self.hulks.append(Hulk(self, pos, self.hulk_size))
+            print("Hulks")
+            print(self.hulk_positions)
 
     def run(self):
         grunt_move_timer = 0
@@ -68,6 +81,11 @@ class Game:
 
             # draw sprites
             self.allsprites.draw(self.display)
+
+            # hulk functions
+            for hulk in self.hulks.copy():
+                hulk.update(movement=(0, 0))
+                hulk.render(surf=self.display)
 
             # event manager
             for event in pygame.event.get():
