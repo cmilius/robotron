@@ -169,3 +169,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+scripts/pip.exe
+scripts/deactivate.bat
+scripts/Activate.ps1
+scripts/activate
+scripts/activate.bat
+scripts/activate.fish
+scripts/pip3.13.exe
+scripts/pip3.exe
+scripts/python.exe
+scripts/pythonw.exe
+pyvenv.cfg
