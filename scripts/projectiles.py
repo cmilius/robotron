@@ -1,5 +1,4 @@
 import pygame
-import random
 
 
 class Projectiles(pygame.sprite.Sprite):
@@ -9,20 +8,20 @@ class Projectiles(pygame.sprite.Sprite):
         self.p_type = p_type
         self.pos = pos
         self.direction = direction
+        # If the projectile is going up or down, rotate the image.
         if self.direction[2] or self.direction[3]:
             self.image = pygame.transform.rotate(self.game.assets[self.p_type], 90)
         else:
             self.image = self.game.assets[self.p_type]
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 4)
-        self.last_direction = direction
 
     def update(self):
         projectile_speed = 3
 
         # Directions truth tables
-        #     [True, False, True, False]: "Northwest",
-        #     [True, False, False, True]: "Southwest",
-        #     [False, True, True, False]: "Northeast",
+        #     [True, False, True, False]: "Northwest"
+        #     [True, False, False, True]: "Southwest"
+        #     [False, True, True, False]: "Northeast"
         #     [False, True, False, True]: "Southeast"
 
         # TODO: need a way to limit the input to only 2.

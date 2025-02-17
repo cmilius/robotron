@@ -89,9 +89,6 @@ class Game:
             # Update projectiles
             self.hero_projectiles.update()
 
-            # Update projectiles
-            self.hero_projectiles.update()
-
             # hulk functions
             self.hulks_group.update()
 
