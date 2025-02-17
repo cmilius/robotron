@@ -57,13 +57,13 @@ class Game:
 
         #spawn hulks
         self.hulk_size = (29, 27)  # pixel size
-        self.hulks = []
-        #self.spawner = Spawner(self)
-        self.hulk_positions = self.spawner.grunts_spawn()
+        self.hulks_group = pygame.sprite.Group()
+        self.hulk_positions = self.spawner.grunt_spawn()
+
         for pos in self.hulk_positions:
-            self.hulks.append(Hulk(self, pos, self.hulk_size))
-            print("Hulks")
-            print(self.hulk_positions)
+            hulk = Hulk(self, pos, self.hulk_size)
+            self.hulks_group.add(hulk)
+            self.allsprites.add(hulk)
 
     def run(self):
         grunt_move_timer = 0
@@ -79,13 +79,11 @@ class Game:
                 self.grunts_group.update()
                 grunt_move_timer = 0
 
+            # hulk functions
+            self.hulks_group.update()
+
             # draw sprites
             self.allsprites.draw(self.display)
-
-            # hulk functions
-            for hulk in self.hulks.copy():
-                hulk.update(movement=(0, 0))
-                hulk.render(surf=self.display)
 
             # event manager
             for event in pygame.event.get():
