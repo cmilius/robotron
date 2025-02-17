@@ -2,15 +2,14 @@ import sys
 import pygame
 import logging
 
-
 from scripts.entities import Hero, Grunt, Hulk
 from scripts.spawner import Spawner
 from scripts.utils import load_image, load_images
+from scripts.hud import HUD
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 class Game:
     def __init__(self):
@@ -31,8 +30,13 @@ class Game:
             "hulk": load_image("entities/hulk.png")
         }
 
-        # init wave counter
+        # init counts
+        self.score_count = 0
         self.wave_counter = 1
+        self.life_count = 3
+
+        # initialize the HUD
+        self.hud = HUD(self.score_count, self.wave_counter, self.life_count)
 
         self.allsprites = pygame.sprite.Group()
 
@@ -109,11 +113,15 @@ class Game:
                     if event.key == pygame.K_d:
                         self.movement[0] = 0
 
+            # draw the HUD
+            self.hud.render(self.display)
+
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-            pygame.display.update()
-            self.clock.tick(60)  # framerate
 
+            # update the screen
+            pygame.display.flip()
+            self.clock.tick(60)  # framerate
 
 if __name__ == "__main__":
     Game().run()
