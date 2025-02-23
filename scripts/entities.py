@@ -35,34 +35,44 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
-    def move_to_hero(self, movement=(0, 0), scaler=1):
+    def move_to_target(self, target_pos, movement=(0, 0), scaler=1, move_dir=None):
         """
-        Move the entity torward the hero.
+        Move the entity torward the target.
 
+        :param target_pos: [x, y] position for the entity to move torwards
         :param movement: default movement (0, 0)
-        :param float scaler: Scales how fast the enemy moves in relation to the player.
+        :param float scaler: Scales how fast the enemy moves in relation to the target.
+        :param str move_dir: "x" or "y". Selects which direction the entity will move in.
         :return: None
         """
-        # Determine hero location and grunt location
-        hero_pos = (self.game.hero.rect.x, self.game.hero.rect.y)
-        grunt_pos = (self.rect.x, self.rect.y)
+        target_pos = list(target_pos)
+        # Determine the entity_position
+        e_pos = (self.rect.x, self.rect.y)
 
         frame_movement = [movement[0], movement[1]]
 
         # x-movement logic
-        if hero_pos[0] > grunt_pos[0]:
+        if target_pos[0] > e_pos[0]:
             frame_movement[0] = 1
-        elif hero_pos[0] < grunt_pos[0]:
+        elif target_pos[0] < e_pos[0]:
             frame_movement[0] = -1
         # y-movement logic
-        if hero_pos[1] > grunt_pos[1]:
+        if target_pos[1] > e_pos[1]:
             frame_movement[1] = 1
-        elif hero_pos[1] < grunt_pos[1]:
+        elif target_pos[1] < e_pos[1]:
             frame_movement[1] = -1
 
         # scale the movement, can be used later to increase difficulty if desired.
         frame_movement = [frame_movement[0] * scaler,
                           frame_movement[1] * scaler]
+
+        if move_dir is not None:
+            if move_dir == "x":
+                frame_movement[1] = 0
+            elif move_dir == "y":
+                frame_movement[0] = 0
+            else:
+                logger.warning(f"Movement direction input must be either 'x' or 'y'. Current input: {move_dir}")
 
         self.move_entity(movement=frame_movement)
 
@@ -153,7 +163,9 @@ class Grunt(PhysicsEntity):
         """
         self.movement_timer += 1
         if self.movement_timer == self.move_at_time:
-            super().move_to_hero(movement=movement, scaler=3)
+            super().move_to_target(target_pos=(self.game.hero.rect.x, self.game.hero.rect.y),
+                                   movement=movement,
+                                   scaler=3)
             self.movement_timer = 0
 
     def hit_by_projectile(self):
@@ -171,23 +183,59 @@ class Hulk(PhysicsEntity):
         self.slowed_timer = 300
         self.timer = 300
 
+        self.target_posit = self.hulk_movement()
+        self.move_dir = None
+
+    def hulk_movement(self):
+        """
+        Pick a new position for the hulk to travel to.
+
+        :return: [x, y]
+        """
+        posit = [random.choice(range(self.game.display.get_width())),
+                 random.choice(range(self.game.display.get_height()))]
+        return posit
+
     def update(self, movement=(0, 0)):
         """
-        Moves the hulk
+        Moves the hulk. The hulk only moves orthogonally and in one direction at a time.
 
         :param movement: Movement in (x, y). Default (0, 0)
         :return: None
         """
+        # If the hulk is hit with a projectile, its movement speed will be slowed for self.slowed_timer.
         if self.timer == self.slowed_timer:
-            movement_scaler = .3
+            movement_scaler = .6
         else:
-            movement_scaler = .1
+            movement_scaler = .2
             self.timer += 1
-        super().move_to_hero(movement=movement, scaler=movement_scaler)
+
+        # pick movement direction, x or y
+        if self.move_dir is None:
+            self.move_dir = random.choice(["x", "y"])
+        # move x
+        if self.move_dir == "x":
+            if abs(self.pos[0] - self.target_posit[0]) < 2:  # get it close, won't ever be exact due to speed variation
+                self.move_dir = "y"
+        # move y
+        if self.move_dir == "y":
+            if abs(self.pos[1] - self.target_posit[1]) < 2:  # get it close, won't ever be exact due to speed variation
+                self.move_dir = "x"
+        # if the hulk has reached its target, calculate a new target
+        if abs(self.pos[0] - self.target_posit[0]) < 2\
+                and abs(self.pos[1] - self.target_posit[1]) < 2:
+            # calculate new target posit
+            self.target_posit = self.hulk_movement()
+            self.move_dir = None  # reset the movement direction
+        super().move_to_target(target_pos=self.target_posit,
+                               movement=movement,
+                               scaler=movement_scaler,
+                               move_dir=self.move_dir)
 
     def hit_by_projectile(self):
         """
         Slows down the hulk.
+
         :return: None
         """
         self.timer = 0
