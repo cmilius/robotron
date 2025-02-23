@@ -63,7 +63,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
 class Hero(PhysicsEntity):
     def __init__(self, game, pos, size):
         self.game = game
-        self.pos = pos
+        self.pos = list(pos)
         self.size = size
         super().__init__(self.game, "hero", self.pos, self.size)
         self.projectile_reload = 20  # frames
@@ -122,6 +122,8 @@ class Hero(PhysicsEntity):
 class Grunt(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "grunt", pos, size)  # inheret the PhysicsEntity class
+        self.movement_timer = 0
+        self.move_at_time = 20
 
     def update(self, movement=(0, 0)):
         """
@@ -130,7 +132,10 @@ class Grunt(PhysicsEntity):
         :param movement: Movement in (x, y). Default (0, 0)
         :return: None
         """
-        super().move_to_hero(movement=movement, scaler=3)
+        self.movement_timer += 1
+        if self.movement_timer == self.move_at_time:
+            super().move_to_hero(movement=movement, scaler=3)
+            self.movement_timer = 0
 
 
 class Hulk(PhysicsEntity):
