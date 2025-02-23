@@ -32,10 +32,12 @@ class Game:
             "hulk": load_image("entities/hulk.png"),
             "projectile": load_image("projectile.png")
         }
+        self.grunt_size = (29, 27)  # pixel size
+        self.hulk_size = (29, 27)  # pixel size
 
         # init counts
         self.score_count = 0
-        self.wave_counter = 1
+        self.wave_counter = 0
         self.life_count = 3
 
         # initialize the HUD
@@ -53,33 +55,19 @@ class Game:
         # Projectile holder
         self.hero_projectiles = pygame.sprite.Group()
 
-        # Enemies group
-        self.enemy_group = pygame.sprite.Group()
-
-        # Spawn grunts
-        self.grunt_size = (29, 27)  # pixel size
-        # TODO: below will be eventually be moved to a "start wave" function
-        self.grunts_group = pygame.sprite.Group()
+        # Enemy groups
         self.spawner = Spawner(self)
-        self.grunt_positions = self.spawner.grunt_spawn()
-
-        for pos in self.grunt_positions:
-            grunt = Grunt(self, pos, self.grunt_size)
-            self.enemy_group.add(grunt)
-            self.allsprites.add(grunt)
-
-        #spawn hulks
-        self.hulk_size = (29, 27)  # pixel size
-        self.hulk_positions = self.spawner.grunt_spawn()
-
-        for pos in self.hulk_positions:
-            hulk = Hulk(self, pos, self.hulk_size)
-            self.enemy_group.add(hulk)
-            self.allsprites.add(hulk)
+        self.grunts_group = pygame.sprite.Group()
+        self.enemy_group = pygame.sprite.Group()
 
     def run(self):
         while True:
             self.display.fill((0, 0, 0))  # black background
+
+            # Spawn enemies
+            if not self.grunts_group:
+                self.hud.wave_count += 1
+                self.spawner.spawn_enemies(self.hud.wave_count)
 
             # collision detection
             #   projectile-to-enemy
