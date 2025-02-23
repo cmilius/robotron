@@ -47,7 +47,7 @@ class Game:
 
         # Create the hero
         self.hero_size = (20, 27)  # pixel size
-        self.hero = Hero(self, (150, 106.5), self.hero_size)
+        self.hero = Hero(self, (self.display.get_width()/2, self.display.get_height()/2), self.hero_size)
         self.hero_group = pygame.sprite.Group()
         self.hero_group.add(self.hero)
         self.allsprites.add(self.hero)
@@ -67,8 +67,12 @@ class Game:
             # Spawn enemies
             if not self.grunts_group:
                 # empty out any previous wave stuff
-                self.enemy_group.empty()
-                self.hero_projectiles.empty()
+                for enemy in self.enemy_group:
+                    enemy.kill()
+                for projectile in self.hero_projectiles:
+                    projectile.kill()
+                # respawn the player
+                self.hero.move_to_center()
                 # spawn new wave
                 self.hud.wave_count += 1
                 self.spawner.spawn_enemies(self.hud.wave_count)
@@ -83,12 +87,13 @@ class Game:
             #   enemy-to-hero
             hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
             if hero_collision:
-                if self.hud.life_count == 1:
-                    # TODO: game over!
+                if self.hud.life_count == 0:
+                    # TODO: game over
                     pass
                 else:
+                    # TODO: respawn logic: hero invulnerability, etc.
                     self.hud.life_count -= 1
-                    # TODO: respawn the player
+                    self.hero.move_to_center()
 
             # hero functions
             self.hero.update(movement=(self.movement[0], self.movement[1]),

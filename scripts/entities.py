@@ -66,6 +66,18 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         self.move_entity(movement=frame_movement)
 
+    def move_to_center(self):
+        """
+        Move the entity to the center of the screen.
+
+        :return: None
+        """
+        cent_y = self.game.display.get_height() // 2
+        cent_x = self.game.display.get_width() // 2
+        hero_x = self.rect.x
+        hero_y = self.rect.y
+        self.move_entity(movement=[cent_x-hero_x, cent_y-hero_y])
+
 
 class Hero(PhysicsEntity):
     def __init__(self, game, pos, size):
