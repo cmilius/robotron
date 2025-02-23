@@ -5,14 +5,32 @@ from .entities import Grunt, Hulk
 
 logger = logging.getLogger(__name__)
 
+# TODO: probably should put this information in a text file, as it goes up to 40
 WAVE_INTENSITY = {
-    "grunts": {1: 2,
-               2: 4,
-               3: 6
+    "grunts": {1: 15,
+               2: 17,
+               3: 22
                },
     "hulks": {1: 0,
-              2: 1,
-              3: 3}
+              2: 5,
+              3: 6
+              },
+    "electrodes": {1: 5,
+                   2: 15,
+                   3: 25
+                   },
+    "brains": {1: 0,
+               2: 0,
+               3: 0
+               },
+    "spheroids": {1: 0,
+                  2: 1,
+                  3: 3
+                  },
+    "quarks": {1: 0,
+               2: 0,
+               3: 0
+               }
 }
 
 
@@ -43,8 +61,8 @@ class Spawner:
         mod_surf_size_y = self.display.get_height() - self.game.grunt_size[1]
 
         # get the center of the map, use int() to get integer rather than float.
-        map_center_x = int(self.display.get_width()/2)
-        map_center_y = int(self.display.get_height()/2)
+        map_center_x = int(self.display.get_width() / 2)
+        map_center_y = int(self.display.get_height() / 2)
 
         # get the intensity
         num_robots = WAVE_INTENSITY[e_type][self.level]

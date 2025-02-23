@@ -17,9 +17,9 @@ class Game:
         pygame.init()
 
         pygame.display.set_caption("robotron")
-        self.screen = pygame.display.set_mode((640, 480))  # Top-left is 0-0
+        self.screen = pygame.display.set_mode((1280, 960))  # Top-left is 0-0
         # Put assets onto the display. Display will then be projected onto the screen for a more pixel-art look.
-        self.display = pygame.Surface((320, 240))
+        self.display = pygame.Surface((640, 480))
 
         self.clock = pygame.time.Clock()
 
@@ -66,6 +66,10 @@ class Game:
 
             # Spawn enemies
             if not self.grunts_group:
+                # empty out any previous wave stuff
+                self.enemy_group.empty()
+                self.hero_projectiles.empty()
+                # spawn new wave
                 self.hud.wave_count += 1
                 self.spawner.spawn_enemies(self.hud.wave_count)
 
