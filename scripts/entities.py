@@ -36,6 +36,13 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.rect.y = self.pos[1]
 
     def move_to_hero(self, movement=(0, 0), scaler=1):
+        """
+        Move the entity torward the hero.
+
+        :param movement: default movement (0, 0)
+        :param float scaler: Scales how fast the enemy moves in relation to the player.
+        :return: None
+        """
         # Determine hero location and grunt location
         hero_pos = (self.game.hero.rect.x, self.game.hero.rect.y)
         grunt_pos = (self.rect.x, self.rect.y)
@@ -137,6 +144,10 @@ class Grunt(PhysicsEntity):
             super().move_to_hero(movement=movement, scaler=3)
             self.movement_timer = 0
 
+    def hit_by_projectile(self):
+        self.kill()
+        # TODO: add to score
+
 
 class Hulk(PhysicsEntity):
     """
@@ -145,6 +156,8 @@ class Hulk(PhysicsEntity):
 
     def __init__(self, game, pos, size):
         super().__init__(game, "hulk", pos, size)  # inheret the PhysicsEntity class
+        self.slowed_timer = 300
+        self.timer = 300
 
     def update(self, movement=(0, 0)):
         """
@@ -153,4 +166,16 @@ class Hulk(PhysicsEntity):
         :param movement: Movement in (x, y). Default (0, 0)
         :return: None
         """
-        super().move_to_hero(movement=movement, scaler=.3)
+        if self.timer == self.slowed_timer:
+            movement_scaler = .3
+        else:
+            movement_scaler = .1
+            self.timer += 1
+        super().move_to_hero(movement=movement, scaler=movement_scaler)
+
+    def hit_by_projectile(self):
+        """
+        Slows down the hulk.
+        :return: None
+        """
+        self.timer = 0

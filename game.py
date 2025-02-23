@@ -71,7 +71,11 @@ class Game:
 
             # collision detection
             #   projectile-to-enemy
-            pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_group, True, True)
+            enemy_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_group, True, False)
+            if enemy_hit:
+                # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
+                affected_enemy = list(enemy_hit.values())[0][0]
+                affected_enemy.hit_by_projectile()
             #   enemy-to-hero
             hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
             if hero_collision:
