@@ -1,0 +1,20 @@
+{"robotrons_spritesheet.json": {
+
+    "grunt":
+    {
+        "frame": {"x":0,"y":0,"w":9,"h":13},
+        "rows":1,
+        "cols":3,
+        "padding": {"x":3,"y":0}
+    },
+    "hulk":
+    {
+        "frame": {"x":0,"y":0,"w":13,"h":14},
+        "rows":3,
+        "cols":3,
+        "padding": {"x":1,"y":0}
+    }},
+    "meta": {
+        "colorKey": {"r":255,"g":255,"b":255}
+    }
+}
