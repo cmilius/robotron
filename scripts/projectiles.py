@@ -16,7 +16,7 @@ class Projectiles(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 4)
 
     def update(self):
-        projectile_speed = 3
+        projectile_speed = 8
 
         # Directions truth tables
         #     [True, False, True, False]: "Northwest"

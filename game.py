@@ -11,14 +11,15 @@ logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line:
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class Game:
     def __init__(self):
         pygame.init()
 
         pygame.display.set_caption("robotron")
-        self.screen = pygame.display.set_mode((640, 480))  # Top-left is 0-0
+        self.screen = pygame.display.set_mode((1280, 960))  # Top-left is 0-0
         # Put assets onto the display. Display will then be projected onto the screen for a more pixel-art look.
-        self.display = pygame.Surface((320, 240))
+        self.display = pygame.Surface((640, 480))
 
         self.clock = pygame.time.Clock()
 
@@ -31,10 +32,12 @@ class Game:
             "hulk": load_image("entities/hulk.png"),
             "projectile": load_image("projectile.png")
         }
+        self.grunt_size = (29, 27)  # pixel size
+        self.hulk_size = (29, 27)  # pixel size
 
         # init counts
         self.score_count = 0
-        self.wave_counter = 1
+        self.wave_counter = 0
         self.life_count = 3
 
         # initialize the HUD
@@ -44,7 +47,7 @@ class Game:
 
         # Create the hero
         self.hero_size = (20, 27)  # pixel size
-        self.hero = Hero(self, (150, 106.5), self.hero_size)
+        self.hero = Hero(self, (self.display.get_width()/2, self.display.get_height()/2), self.hero_size)
         self.hero_group = pygame.sprite.Group()
         self.hero_group.add(self.hero)
         self.allsprites.add(self.hero)
@@ -52,49 +55,55 @@ class Game:
         # Projectile holder
         self.hero_projectiles = pygame.sprite.Group()
 
-        # Spawn grunts
-        self.grunt_size = (29, 27)  # pixel size
-        # TODO: below will be eventually be moved to a "start wave" function
-        self.grunts_group = pygame.sprite.Group()
+        # Enemy groups
         self.spawner = Spawner(self)
-        self.grunt_positions = self.spawner.grunt_spawn()
-
-        for pos in self.grunt_positions:
-            grunt = Grunt(self, pos, self.grunt_size)
-            self.grunts_group.add(grunt)
-            self.allsprites.add(grunt)
-
-        #spawn hulks
-        self.hulk_size = (29, 27)  # pixel size
-        self.hulks_group = pygame.sprite.Group()
-        self.hulk_positions = self.spawner.grunt_spawn()
-
-        for pos in self.hulk_positions:
-            hulk = Hulk(self, pos, self.hulk_size)
-            self.hulks_group.add(hulk)
-            self.allsprites.add(hulk)
+        self.grunts_group = pygame.sprite.Group()
+        self.enemy_group = pygame.sprite.Group()
 
     def run(self):
-        grunt_move_timer = 0
         while True:
             self.display.fill((0, 0, 0))  # black background
 
+            # Spawn enemies
+            if not self.grunts_group:
+                # empty out any previous wave stuff
+                for enemy in self.enemy_group:
+                    enemy.kill()
+                for projectile in self.hero_projectiles:
+                    projectile.kill()
+                # respawn the player
+                self.hero.move_to_center()
+                # spawn new wave
+                self.hud.wave_count += 1
+                self.spawner.spawn_enemies(self.hud.wave_count)
+
+            # collision detection
+            #   projectile-to-enemy
+            enemy_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_group, True, False)
+            if enemy_hit:
+                # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
+                affected_enemy = list(enemy_hit.values())[0][0]
+                affected_enemy.hit_by_projectile()
+            #   enemy-to-hero
+            hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
+            if hero_collision:
+                if self.hud.life_count == 0:
+                    # TODO: game over
+                    pass
+                else:
+                    # TODO: respawn logic: hero invulnerability, etc.
+                    self.hud.life_count -= 1
+                    self.hero.move_to_center()
+
             # hero functions
-            # TODO: can we merge hero_projectiles and hero_group to only do a single group update() here?
             self.hero.update(movement=(self.movement[0], self.movement[1]),
                              shooting=self.hero_shooting)
-
-            # grunt functions
-            grunt_move_timer += 1
-            if grunt_move_timer == 20:
-                self.grunts_group.update()
-                grunt_move_timer = 0
 
             # Update projectiles
             self.hero_projectiles.update()
 
-            # hulk functions
-            self.hulks_group.update()
+            # enemy functions
+            self.enemy_group.update()
 
             # draw sprites
             self.allsprites.draw(self.display)
@@ -148,6 +157,7 @@ class Game:
             # update the screen
             pygame.display.flip()
             self.clock.tick(60)  # framerate
+
 
 if __name__ == "__main__":
     Game().run()
