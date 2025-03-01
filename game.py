@@ -2,9 +2,9 @@ import sys
 import pygame
 import logging
 
-from scripts.entities import Hero, Grunt, Hulk
-from scripts.spawner import Spawner
-from scripts.utils import load_image, load_images
+from robotron.scripts.entities.hero import Hero
+from robotron.scripts.entities.spawner import Spawner
+from scripts.utils import load_image
 from scripts.hud import HUD
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
