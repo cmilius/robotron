@@ -1,7 +1,7 @@
 import random
 import logging
-from robotron.scripts.entities.grunt import Grunt
-from robotron.scripts.entities.hulk import Hulk
+from scripts.entities.grunt import Grunt
+from scripts.entities.hulk import Hulk
 
 logger = logging.getLogger(__name__)
 

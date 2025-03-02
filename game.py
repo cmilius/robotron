@@ -2,10 +2,11 @@ import sys
 import pygame
 import logging
 
-from robotron.scripts.entities.hero import Hero
-from robotron.scripts.entities.spawner import Spawner
+from scripts.entities.hero import Hero
+from scripts.entities.spawner import Spawner
 from scripts.utils import load_image
 from scripts.hud import HUD
+from scripts.entities.spritesheet import SpriteSheet
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -34,6 +35,11 @@ class Game:
         }
         self.grunt_size = (29, 27)  # pixel size
         self.hulk_size = (29, 27)  # pixel size
+
+        # Load the sprite sheets
+        #self.hero_animations = SpriteSheet("entities/hero_spritesheet.png")
+        #self.human_family_animations = SpriteSheet("entities/human_family_spritesheet.png")
+        self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
 
         # init counts
         self.score_count = 0
@@ -150,6 +156,10 @@ class Game:
 
             # draw the HUD
             self.hud.render(self.display)
+
+            self.display.blit(self.robotrons_animations.animations['hulk']['idle'][0], (20, 40))
+            self.display.blit(self.robotrons_animations.animations['grunt']['walk'][1], (20, 60))
+            self.display.blit(self.robotrons_animations.animations['grunt']['walk'][2], (20, 80))
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))

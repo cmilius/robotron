@@ -1,4 +1,4 @@
-from robotron.scripts.entities.entities import PhysicsEntity
+from scripts.entities.entities import PhysicsEntity
 import random
 
 
