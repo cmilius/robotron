@@ -2,6 +2,9 @@ import random
 import logging
 from robotron.scripts.entities.grunt import Grunt
 from robotron.scripts.entities.hulk import Hulk
+from robotron.scripts.entities.dad import Dad
+from robotron.scripts.entities.mom import Mom
+from robotron.scripts.entities.mike import Mike
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +33,19 @@ WAVE_INTENSITY = {
     "quarks": {1: 0,
                2: 0,
                3: 0
-               }
+               },
+    "dad": {1: 1,
+            2: 1,
+            3: 1
+            },
+    "mom": {1: 1,
+            2: 1,
+            3: 1
+            },
+    "mike": {1: 1,
+             2: 1,
+             3: 1
+             },
 }
 
 
@@ -99,4 +114,35 @@ class Spawner:
         for pos in hulk_positions:
             hulk = Hulk(self.game, pos, self.game.hulk_size)
             self.game.enemy_group.add(hulk)
+            self.game.hulks_group.add(hulk)
             self.game.allsprites.add(hulk)
+
+    def spawn_family(self, wave_count):
+        """
+        Used to spawn family members for a new wave.
+
+        :param wave_count: Current game wave count.
+        :return: None
+        """
+        self.level = wave_count  # update the wave
+
+        # spawn dads
+        dad_positions = self.spawn_positions("dad")
+        for pos in dad_positions:
+            dad = Dad(self.game, pos, self.game.dad_size)
+            self.game.family_group.add(dad)
+            self.game.allsprites.add(dad)
+
+        # spawn moms
+        mom_positions = self.spawn_positions("mom")
+        for pos in mom_positions:
+            mom = Mom(self.game, pos, self.game.mom_size)
+            self.game.family_group.add(mom)
+            self.game.allsprites.add(mom)
+
+        # spawn mikes
+        mike_positions = self.spawn_positions("mike")
+        for pos in mike_positions:
+            mike = Mike(self.game, pos, self.game.mike_size)
+            self.game.family_group.add(mike)
+            self.game.allsprites.add(mike)

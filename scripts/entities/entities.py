@@ -1,5 +1,6 @@
 import pygame
 import logging
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
         :param target_pos: [x, y] position for the entity to move torwards
         :param movement: default movement (0, 0)
         :param float scaler: Scales how fast the enemy moves in relation to the target.
-        :param str move_dir: "x" or "y". Selects which direction the entity will move in.
+        :param str or None move_dir: "x" or "y". Selects which direction the entity will move in.
         :return: None
         """
         target_pos = list(target_pos)
@@ -86,6 +87,26 @@ class PhysicsEntity(pygame.sprite.Sprite):
         hero_y = self.rect.y
         self.move_entity(movement=[cent_x-hero_x, cent_y-hero_y])
 
+    def reached_target(self, target_pos):
+        """
+        Determine if the entity has reached it's target position within a given tolerance.
+        If target reached, return new target_pos. Else, return the same target_pos
+        :param target_pos: Target entity position
+        :return: [x, y]
+        """
+        if abs(self.pos[0] - target_pos[0]) < 2\
+                and abs(self.pos[1] - target_pos[1]) < 2:
+            # calculate new target posit
+            target_pos = self.random_movement()
+        return target_pos
 
+    def random_movement(self):
+        """
+        Pick a new position for the hulk to travel to.
 
+        :return: [x, y]
+        """
+        posit = [random.choice(range(self.game.display.get_width())),
+                 random.choice(range(self.game.display.get_height()))]
+        return posit
 

@@ -12,18 +12,8 @@ class Hulk(PhysicsEntity):
         self.slowed_timer = 300
         self.timer = 300
 
-        self.target_posit = self.hulk_movement()
+        self.target_posit = self.random_movement()
         self.move_dir = None
-
-    def hulk_movement(self):
-        """
-        Pick a new position for the hulk to travel to.
-
-        :return: [x, y]
-        """
-        posit = [random.choice(range(self.game.display.get_width())),
-                 random.choice(range(self.game.display.get_height()))]
-        return posit
 
     def update(self, movement=(0, 0)):
         """
@@ -51,10 +41,12 @@ class Hulk(PhysicsEntity):
             if abs(self.pos[1] - self.target_posit[1]) < 2:  # get it close, won't ever be exact due to speed variation
                 self.move_dir = "x"
         # if the hulk has reached its target, calculate a new target
+        # TODO: this logic got implemented into the super().reached_target function.
+        #  However, I did not implement the self.move_dir logic into the return. Need to figure out how to handle this.
         if abs(self.pos[0] - self.target_posit[0]) < 2\
                 and abs(self.pos[1] - self.target_posit[1]) < 2:
             # calculate new target posit
-            self.target_posit = self.hulk_movement()
+            self.target_posit = self.random_movement()
             self.move_dir = None  # reset the movement direction
         super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
