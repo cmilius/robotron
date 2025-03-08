@@ -34,21 +34,16 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
-    def move_to_target(self, target_pos, movement=(0, 0), scaler=1, move_dir=None):
+    def direction_to_target(self, target_pos):
         """
-        Move the entity torward the target.
-
-        :param target_pos: [x, y] position for the entity to move torwards
-        :param movement: default movement (0, 0)
-        :param float scaler: Scales how fast the enemy moves in relation to the target.
-        :param str or None move_dir: "x" or "y". Selects which direction the entity will move in.
-        :return: None
+        Given a target position, return a vector torwards that position.
+        :return: (x, y) vector
         """
         target_pos = list(target_pos)
         # Determine the entity_position
         e_pos = (self.rect.x, self.rect.y)
 
-        frame_movement = [movement[0], movement[1]]
+        frame_movement = [0, 0]  # init
 
         # x-movement logic
         if target_pos[0] > e_pos[0]:
@@ -60,6 +55,23 @@ class PhysicsEntity(pygame.sprite.Sprite):
             frame_movement[1] = 1
         elif target_pos[1] < e_pos[1]:
             frame_movement[1] = -1
+
+        return frame_movement
+
+
+    def move_to_target(self, target_pos, movement=(0, 0), scaler=1, move_dir=None):
+        """
+        Move the entity torward the target.
+
+        :param target_pos: [x, y] position for the entity to move torwards
+        :param movement: default movement (0, 0)
+        :param float scaler: Scales how fast the enemy moves in relation to the target.
+        :param str or None move_dir: "x" or "y". Selects which direction the entity will move in.
+        :return: None
+        """
+        target_pos = list(target_pos)
+
+        frame_movement = list(self.direction_to_target(target_pos))
 
         # scale the movement, can be used later to increase difficulty if desired.
         frame_movement = [frame_movement[0] * scaler,
@@ -109,4 +121,13 @@ class PhysicsEntity(pygame.sprite.Sprite):
         posit = [random.choice(range(self.game.display.get_width())),
                  random.choice(range(self.game.display.get_height()))]
         return posit
+
+    def hit_by_projectile(self):
+        """
+        Default enemy behaviour from being hit by a hero projectile is to remove it from groups with kill()
+
+        :return: None
+        """
+        self.kill()
+
 

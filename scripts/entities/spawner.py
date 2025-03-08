@@ -2,6 +2,7 @@ import random
 import logging
 from robotron.scripts.entities.grunt import Grunt
 from robotron.scripts.entities.hulk import Hulk
+from robotron.scripts.entities.spheroid import Spheroid
 from robotron.scripts.entities.dad import Dad
 from robotron.scripts.entities.mom import Mom
 from robotron.scripts.entities.mike import Mike
@@ -26,7 +27,7 @@ WAVE_INTENSITY = {
                2: 0,
                3: 0
                },
-    "spheroids": {1: 0,
+    "spheroids": {1: 1,
                   2: 1,
                   3: 3
                   },
@@ -116,6 +117,13 @@ class Spawner:
             self.game.enemy_group.add(hulk)
             self.game.hulks_group.add(hulk)
             self.game.allsprites.add(hulk)
+
+        # spawn spheroids
+        spheroid_positions = self.spawn_positions("spheroids")
+        for pos in spheroid_positions:
+            spheroid = Spheroid(self.game, pos, self.game.spheroid_size)
+            self.game.enemy_group.add(spheroid)
+            self.game.allsprites.add(spheroid)
 
     def spawn_family(self, wave_count):
         """
