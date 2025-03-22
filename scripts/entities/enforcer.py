@@ -18,13 +18,6 @@ class Enforcer(PhysicsEntity):
 
         self.target_posit = self.random_movement()
 
-    def calculate_to_hero(self):
-        """
-        Calculate the direction torwards the hero
-        :return:
-        """
-        pass
-
     def fire_projectile(self):
         """
         Fire projectiles at the hero
