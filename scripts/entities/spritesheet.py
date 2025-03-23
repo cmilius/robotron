@@ -3,6 +3,14 @@ import json
 
 class SpriteSheet:
     def __init__(self, filename):
+        """
+        Initialize the sprite sheet with the given filename. 
+        You must ensure there is a .json file with the same name as the .png file
+        containing the necessary metadata for the sprite sheet.
+
+        :param filename: Relative path to the sprite sheet image file
+        """
+        
         self.sprite_sheet = pygame.image.load(filename).convert_alpha() #convert_alpha allows for transparency
         self.animations = {}
 

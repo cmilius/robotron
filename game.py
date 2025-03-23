@@ -66,6 +66,8 @@ class Game:
         self.grunts_group = pygame.sprite.Group()
         self.enemy_group = pygame.sprite.Group()
 
+        self.animation_count = 0
+
     def run(self):
         while True:
             self.display.fill((0, 0, 0))  # black background
@@ -157,9 +159,14 @@ class Game:
             # draw the HUD
             self.hud.render(self.display)
 
-            self.display.blit(self.robotrons_animations.animations['hulk']['idle'][0], (20, 40))
-            self.display.blit(self.robotrons_animations.animations['grunt']['walk'][1], (20, 60))
-            self.display.blit(self.robotrons_animations.animations['grunt']['walk'][2], (20, 80))
+            self.display.blit(self.robotrons_animations.animations['sepheroid']['idle'][0], (20, 40))
+
+            if self.animation_count == len(self.robotrons_animations.animations['grunt']['walk']):
+                self.animation_count = 0
+
+            self.display.blit(self.robotrons_animations.animations['grunt']['walk'][self.animation_count], (20, 60))
+            self.animation_count += 1
+            # self.display.blit(self.robotrons_animations.animations['grunt']['walk'][2], (20, 80))
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
