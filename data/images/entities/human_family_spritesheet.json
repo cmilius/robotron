@@ -1,0 +1,37 @@
+{
+    "entities": {
+    "dad":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":20,"y":0,"w":8,"h":12}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_up": {"frame_data": {"x":30,"y":0,"w":8,"h":13}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_down": {"frame_data": {"x":20,"y":0,"w":8,"h":13}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":0,"w":8,"h":12}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":10,"y":0,"w":8,"h":12}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+        }
+    },
+    "mom":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":16,"y":41,"w":7,"h":13}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_up": {"frame_data": {"x":24,"y":41,"w":7,"h":14}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_down": {"frame_data": {"x":16,"y":41,"w":7,"h":14}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":41,"w":7,"h":13}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":7,"y":41,"w":7,"h":13}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+        }
+    },
+    "mike":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":12,"y":85,"w":5,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_up": {"frame_data": {"x":18,"y":85,"w":5,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_down": {"frame_data": {"x":12,"y":85,"w":5,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":85,"w":5,"h":10}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":6,"y":85,"w":5,"h":10}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+        }
+    }
+    },
+    "meta": {
+        
+    }
+}
