@@ -29,12 +29,24 @@ class Game:
 
         self.assets = {
             "hero": load_image("entities/hero.png"),
+            "dad": load_image("entities/dad.png"),
+            "mom": load_image("entities/mom.png"),
+            "mike": load_image("entities/mike.png"),
             "grunt": load_image("entities/grunt.png"),
             "hulk": load_image("entities/hulk.png"),
-            "projectile": load_image("projectile.png")
+            "spheroid": load_image("entities/spheroid.png"),
+            "enforcer": load_image("entities/enforcer.png"),
+            "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
+            "projectile": load_image("projectiles/hero_projectile.png")
         }
-        self.grunt_size = (29, 27)  # pixel size
-        self.hulk_size = (29, 27)  # pixel size
+        # pixel size of sprite
+        self.grunt_size = (29, 27)
+        self.hulk_size = (29, 27)
+        self.dad_size = (29, 27)
+        self.mom_size = (29, 27)
+        self.mike_size = (29, 27)
+        self.spheroid_size = (16, 15)
+        self.enforcer_size = (30, 37)
 
         # Load the sprite sheets
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
@@ -60,11 +72,16 @@ class Game:
 
         # Projectile holder
         self.hero_projectiles = pygame.sprite.Group()
+        self.enemy_projectiles = pygame.sprite.Group()
 
         # Enemy groups
         self.spawner = Spawner(self)
         self.grunts_group = pygame.sprite.Group()
         self.enemy_group = pygame.sprite.Group()
+        self.hulks_group = pygame.sprite.Group()
+
+        # Family group
+        self.family_group = pygame.sprite.Group()
 
         self.animation_count = 0
 
@@ -73,28 +90,39 @@ class Game:
             self.display.fill((0, 0, 0))  # black background
 
             # Spawn enemies
-            if not self.grunts_group:
+            if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
                 # empty out any previous wave stuff
                 for enemy in self.enemy_group:
                     enemy.kill()
                 for projectile in self.hero_projectiles:
                     projectile.kill()
+                for projectile in self.enemy_projectiles:
+                    projectile.kill()
+                for family in self.family_group:
+                    family.kill()  # :(
                 # respawn the player
                 self.hero.move_to_center()
                 # spawn new wave
                 self.hud.wave_count += 1
                 self.spawner.spawn_enemies(self.hud.wave_count)
+                self.spawner.spawn_family(self.hud.wave_count)
 
             # collision detection
-            #   projectile-to-enemy
+            #   hero_projectile-to-enemy
             enemy_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_group, True, False)
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
-                affected_enemy = list(enemy_hit.values())[0][0]
+                affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
                 affected_enemy.hit_by_projectile()
             #   enemy-to-hero
             hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
-            if hero_collision:
+            hero_shot = pygame.sprite.spritecollide(self.hero, self.enemy_projectiles, False)
+            if hero_shot:
+                # need to kill the projectile that hit the hero,
+                #  otherwise it could cause instant game-over if the hero is at the center of the screen
+                affected_projectile = hero_shot[0]  # determine the projectile
+                affected_projectile.kill()
+            if hero_collision or hero_shot:
                 if self.hud.life_count == 0:
                     # TODO: game over
                     pass
@@ -102,16 +130,20 @@ class Game:
                     # TODO: respawn logic: hero invulnerability, etc.
                     self.hud.life_count -= 1
                     self.hero.move_to_center()
+            #   hulk-to-family
+            pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
+            #   hero-to-family
+            pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
 
-            # hero functions
+            # Update hero
             self.hero.update(movement=(self.movement[0], self.movement[1]),
                              shooting=self.hero_shooting)
 
-            # Update projectiles
+            # Update groups
             self.hero_projectiles.update()
-
-            # enemy functions
+            self.enemy_projectiles.update()
             self.enemy_group.update()
+            self.family_group.update()
 
             # draw sprites
             self.allsprites.draw(self.display)
