@@ -39,6 +39,7 @@ class Game:
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
             "projectile": load_image("projectiles/hero_projectile.png")
         }
+
         # pixel size of sprite
         self.grunt_size = (29, 27)
         self.hulk_size = (29, 27)
@@ -52,6 +53,9 @@ class Game:
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
         self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
         self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
+
+        # example use of the animations for reference, look in the json files in the data/images/entities folder for the animation names
+        # self.display.blit(self.human_family_animations.animations['mike']['walk_right'][animation_frame_count], (20, 60))
 
         # init counts
         self.score_count = 0
@@ -82,8 +86,6 @@ class Game:
 
         # Family group
         self.family_group = pygame.sprite.Group()
-
-        self.animation_count = 0
 
     def run(self):
         while True:
@@ -190,16 +192,6 @@ class Game:
 
             # draw the HUD
             self.hud.render(self.display)
-
-            self.display.blit(self.robotrons_animations.animations['sepheroid']['idle'][0], (20, 40))
-
-            if self.animation_count == len(self.human_family_animations.animations['mike']['walk_right']):
-                self.animation_count = 0
-
-            self.display.blit(self.human_family_animations.animations['mike']['walk_right'][self.animation_count], (20, 60))
-            self.animation_count += 1
-
-            self.display.blit(self.hero_animations.animations['hero']['idle'][0], (20, 80))
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))

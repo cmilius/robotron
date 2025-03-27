@@ -34,7 +34,6 @@ class SpriteSheet:
                     animation_data['frame_padding']['x'],
                     animation_data['frame_padding']['y']
                 )
-        print(self.animations)
 
     def get_sprite(self, x, y, width, height):
         """Get a single sprite from the sprite sheet.
