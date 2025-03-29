@@ -1,20 +1,35 @@
-{"robotrons_spritesheet.json": {
-
+{
+    "entities": {
     "grunt":
     {
-        "frame": {"x":0,"y":0,"w":9,"h":13},
-        "rows":1,
-        "cols":3,
-        "padding": {"x":3,"y":0}
+        "animations": {
+            "idle": {"frame_data": {"x":0,"y":0,"w":9,"h":13}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk": {"frame_data": {"x":0,"y":0,"w":9,"h":13}, "frame_padding": {"x":3,"y":0}, "rows": 1, "cols": 3}
+        }
     },
     "hulk":
     {
-        "frame": {"x":0,"y":0,"w":13,"h":14},
-        "rows":3,
-        "cols":3,
-        "padding": {"x":1,"y":0}
-    }},
+        "animations": {
+            "idle": {"frame_data": {"x":14,"y":14,"w":13,"h":14}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_vertical": {"frame_data": {"x":0,"y":0,"w":9,"h":13}, "frame_padding": {"x":3,"y":0}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":0,"w":9,"h":13}, "frame_padding": {"x":3,"y":0}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":0,"y":0,"w":9,"h":13}, "frame_padding": {"x":3,"y":0}, "rows": 3, "cols": 1}
+        }
+    },
+    "sepheroid":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":45,"y":65,"w":11,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+        }
+    },
+    "enforcer":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":43,"y":79,"w":9,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+        }
+    }
+    },
     "meta": {
-        "colorKey": {"r":255,"g":255,"b":255}
+        
     }
 }

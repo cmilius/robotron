@@ -1,5 +1,5 @@
-from robotron.scripts.entities.entities import PhysicsEntity
-from robotron.scripts.projectiles.enforcer_projectiles import EnforcerProjectiles
+from scripts.entities.entities import PhysicsEntity
+from scripts.projectiles.enforcer_projectiles import EnforcerProjectiles
 import logging
 
 logger = logging.getLogger(__name__)

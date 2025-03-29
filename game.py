@@ -2,10 +2,11 @@ import sys
 import pygame
 import logging
 
-from robotron.scripts.entities.hero import Hero
-from robotron.scripts.entities.spawner import Spawner
+from scripts.entities.hero import Hero
+from scripts.entities.spawner import Spawner
 from scripts.utils import load_image
 from scripts.hud import HUD
+from scripts.entities.spritesheet import SpriteSheet
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -38,6 +39,7 @@ class Game:
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
             "projectile": load_image("projectiles/hero_projectile.png")
         }
+
         # pixel size of sprite
         self.grunt_size = (29, 27)
         self.hulk_size = (29, 27)
@@ -46,6 +48,14 @@ class Game:
         self.mike_size = (29, 27)
         self.spheroid_size = (16, 15)
         self.enforcer_size = (30, 37)
+
+        # Load the sprite sheets
+        self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
+        self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
+        self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
+
+        # example use of the animations for reference, look in the json files in the data/images/entities folder for the animation names
+        # self.display.blit(self.human_family_animations.animations['mike']['walk_right'][animation_frame_count], (20, 60))
 
         # init counts
         self.score_count = 0

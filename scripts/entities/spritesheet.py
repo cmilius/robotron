@@ -3,13 +3,37 @@ import json
 
 class SpriteSheet:
     def __init__(self, filename):
-        self.sprite_sheet = pygame.image.load(filename).convert()
+        """
+        Initialize the sprite sheet with the given filename. 
+        You must ensure there is a .json file with the same name as the .png file
+        containing the necessary metadata for the sprite sheet.
+
+        :param filename: Relative path to the sprite sheet image file
+        """
+        
+        self.sprite_sheet = pygame.image.load(filename).convert_alpha() #convert_alpha allows for transparency
+        self.animations = {}
 
         # Load the meta data for the sprite sheet
         self.meta_data = filename.replace('png', 'json')
         with open(self.meta_data) as f:
             self.data = json.load(f)
-        f.close()
+
+        # Parse the sprite sheet for each entity found in the json file
+        for entity_name, entity_data in self.data['entities'].items():
+            self.animations[entity_name] = {}
+            for animation_name, animation_data in entity_data['animations'].items():
+                # Save the necessary frames for each animation
+                self.animations[entity_name][animation_name] = self.get_sprites(
+                    animation_data['frame_data']['x'],
+                    animation_data['frame_data']['y'],
+                    animation_data['frame_data']['w'],
+                    animation_data['frame_data']['h'],
+                    animation_data['rows'],
+                    animation_data['cols'],
+                    animation_data['frame_padding']['x'],
+                    animation_data['frame_padding']['y']
+                )
 
     def get_sprite(self, x, y, width, height):
         """Get a single sprite from the sprite sheet.
@@ -18,7 +42,6 @@ class SpriteSheet:
         """
 
         sprite = pygame.Surface((width, height)).convert()              # define an empty surface
-        sprite.set_colorkey((255, 255, 255))                            # set the color key for transparency
         sprite.blit(self.sprite_sheet, (0, 0), (x, y, width, height))   # copy the sprite from the sprite sheet to the surface
         return sprite                                                   # return the surface
     

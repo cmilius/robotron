@@ -1,5 +1,5 @@
-from robotron.scripts.entities.entities import PhysicsEntity
-from robotron.scripts.entities.enforcer import Enforcer
+from scripts.entities.entities import PhysicsEntity
+from scripts.entities.enforcer import Enforcer
 import random
 import logging
 

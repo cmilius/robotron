@@ -1,5 +1,5 @@
-from robotron.scripts.entities.entities import PhysicsEntity
-from robotron.scripts.projectiles.projectiles import Projectiles
+from scripts.entities.entities import PhysicsEntity
+from scripts.projectiles.projectiles import Projectiles
 
 
 class Hero(PhysicsEntity):

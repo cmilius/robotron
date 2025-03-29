@@ -1,0 +1,17 @@
+{
+    "entities": {
+    "hero":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":14,"y":0,"w":7,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_up": {"frame_data": {"x":23,"y":0,"w":7,"h":12}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_down": {"frame_data": {"x":14,"y":0,"w":7,"h":12}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":0,"w":5,"h":11}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":7,"y":0,"w":5,"h":11}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+        }
+    }
+    },
+    "meta": {
+        
+    }
+}

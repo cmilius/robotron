@@ -1,11 +1,11 @@
 import random
 import logging
-from robotron.scripts.entities.grunt import Grunt
-from robotron.scripts.entities.hulk import Hulk
-from robotron.scripts.entities.spheroid import Spheroid
-from robotron.scripts.entities.dad import Dad
-from robotron.scripts.entities.mom import Mom
-from robotron.scripts.entities.mike import Mike
+from scripts.entities.grunt import Grunt
+from scripts.entities.hulk import Hulk
+from scripts.entities.spheroid import Spheroid
+from scripts.entities.dad import Dad
+from scripts.entities.mom import Mom
+from scripts.entities.mike import Mike
 
 logger = logging.getLogger(__name__)
 
