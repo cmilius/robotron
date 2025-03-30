@@ -11,11 +11,16 @@ class Hero(PhysicsEntity):
         self.projectile_reload = 20  # frames
         self.projectile_timer = 10  # count up to projectile reload
 
+        self.action = "idle"  # initial stance
+
         # used to track the last pressed keys for shooting
         self.h_stack = []
         self.v_stack = []
 
     def update(self, movement=(0, 0), shooting=(False, False, False, False)):
+
+        self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
+
         super().update(movement=movement)
 
         self.shooting = list(shooting)

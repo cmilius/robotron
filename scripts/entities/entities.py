@@ -13,7 +13,22 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.pos = list(pos)
         self.size = size
 
-        self.image = self.game.assets[self.e_type]
+        self.action = "idle"
+
+        if self.e_type == "hero":
+            self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
+        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
+            self.image = self.game.human_family_animations.animations[self.e_type][self.action][0]
+        else:
+            self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
+
+        if self.e_type == "grunt" or self.e_type == "hulk":
+            self.robo_anim = [0, 1, 0, 2]
+            self.frame = 0
+            self.buffer_length = 30
+            self.buffer = 0
+            self.anim_length = len(self.robo_anim)
+
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     def update(self, movement=(0, 0)):
@@ -30,6 +45,45 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         self.pos[0] += frame_movement[0]
         self.pos[1] += frame_movement[1]
+
+        # update animations
+        if self.e_type == "hero":
+            pass
+        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
+            if self.pos[1] > 0:
+                self.action = "walk_left"
+            elif self.pos[1] < 0:
+                self.action = "walk_right"
+            if self.pos[0] > 0 and not self.pos[1]:
+                self.action = "walk_up"
+            elif self.pos[0] < 0 and not self.pos[1]:
+                self.action = "walk_down"
+            self.image = self.game.human_family_animations.animations[self.e_type][self.action][0]
+        else:
+            if self.e_type == "grunt":
+                if self.pos[0] and self.pos[1]:
+                    self.action = "walk"
+                    self.frame += 1
+                    if self.frame == self.anim_length:
+                        self.frame = 0
+                else:
+                    self.action = "idle"
+                    self.frame = 0
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
+            if self.e_type == "hulk":
+                self.buffer += 1
+                if self.buffer_length == self.buffer:
+                    self.buffer = 0
+                    self.frame += 1
+                    if self.frame == self.anim_length:
+                        self.frame = 0
+                if self.pos[0] == 0 and self.pos[1] != 0:
+                    self.action = "walk_vertical"
+                elif self.pos[0] > 0:
+                    self.action = "walk_left"
+                elif self.pos[0] < 0:
+                    self.action = "walk_right"
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
 
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
@@ -57,7 +111,6 @@ class PhysicsEntity(pygame.sprite.Sprite):
             frame_movement[1] = -1
 
         return frame_movement
-
 
     def move_to_target(self, target_pos, movement=(0, 0), scaler=1, move_dir=None):
         """

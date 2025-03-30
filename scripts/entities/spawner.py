@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 
 # TODO: probably should put this information in a text file, as it goes up to 40
 WAVE_INTENSITY = {
-    "grunts": {1: 15,
+    "grunts": {1: 3,
                2: 17,
                3: 22
                },
-    "hulks": {1: 0,
+    "hulks": {1: 3,
               2: 5,
               3: 6
               },
