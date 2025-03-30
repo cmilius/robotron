@@ -10,10 +10,10 @@
     "hulk":
     {
         "animations": {
-            "idle": {"frame_data": {"x":14,"y":14,"w":13,"h":14}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
-            "walk_vertical": {"frame_data": {"x":15,"y":14,"w":13,"h":14}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
-            "walk_left": {"frame_data": {"x":0,"y":14,"w":13,"h":14}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
-            "walk_right": {"frame_data": {"x":28,"y":14,"w":13,"h":14}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+            "idle": {"frame_data": {"x":14,"y":14,"w":13,"h":15}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_vertical": {"frame_data": {"x":15,"y":14,"w":13,"h":15}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":0,"y":14,"w":13,"h":15}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":28,"y":14,"w":13,"h":15}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
         }
     },
     "spheroid":

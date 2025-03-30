@@ -12,9 +12,9 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.e_type = e_type
         self.pos = list(pos)
         self.size = size
-
         self.action = "idle"
 
+        # initialize the images
         if self.e_type == "hero":
             self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
         elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
@@ -22,12 +22,12 @@ class PhysicsEntity(pygame.sprite.Sprite):
         else:
             self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
 
-        if self.e_type == "grunt" or self.e_type == "hulk":
-            self.robo_anim = [0, 1, 0, 2]
-            self.frame = 0
-            self.buffer_length = 30
-            self.buffer = 0
-            self.anim_length = len(self.robo_anim)
+        # animation variables, see _animate() for more information
+        self.robo_anim = [0, 1, 0, 2]  # controls the animation frames
+        self.frame = 0  # indexes the robo_anim list
+        self.buffer_length = 20  # the time delay before the frame index will cycle
+        self.buffer = 0  # the counter for buffer, will count to the buffer_length then cycle
+        self.anim_length = len(self.robo_anim)  # The number of frames in the animation
 
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -40,53 +40,66 @@ class PhysicsEntity(pygame.sprite.Sprite):
         """
         self.move_entity(movement=movement)
 
+    def _animate(self, entity=None):
+        """
+        Update the animation frames.
+        There are two counters, the buffer and the frame. The buffer is the length of time in game frames, while the
+        frame is the index of the animation.
+        :param str entity: Type of entity, only required if == "grunt"
+        :return: None
+        """
+        if entity == "grunt":
+            # the grunt already moves on a "delay", so no buffer is required.
+            self.frame += 1
+            if self.frame == self.anim_length:
+                self.frame = 0
+            return
+        self.buffer += 1
+        if self.buffer_length == self.buffer:
+            self.buffer = 0
+            self.frame += 1
+            if self.frame == self.anim_length:
+                self.frame = 0
+
     def move_entity(self, movement=(0, 0)):
         frame_movement = [movement[0], movement[1]]
 
         self.pos[0] += frame_movement[0]
         self.pos[1] += frame_movement[1]
 
-        # update animations
-        if self.e_type == "hero":
-            pass
-        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
-            if self.pos[1] > 0:
-                self.action = "walk_left"
-            elif self.pos[1] < 0:
-                self.action = "walk_right"
-            if self.pos[0] > 0 and not self.pos[1]:
-                self.action = "walk_up"
-            elif self.pos[0] < 0 and not self.pos[1]:
-                self.action = "walk_down"
-            self.image = self.game.human_family_animations.animations[self.e_type][self.action][0]
-        else:
-            if self.e_type == "grunt":
-                if self.pos[0] and self.pos[1]:
-                    self.action = "walk"
-                    self.frame += 1
-                    if self.frame == self.anim_length:
-                        self.frame = 0
-                else:
-                    self.action = "idle"
-                    self.frame = 0
-                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
-            if self.e_type == "hulk":
-                self.buffer += 1
-                if self.buffer_length == self.buffer:
-                    self.buffer = 0
-                    self.frame += 1
-                    if self.frame == self.anim_length:
-                        self.frame = 0
-                if self.pos[0] == 0 and self.pos[1] != 0:
-                    self.action = "walk_vertical"
-                elif self.pos[0] > 0:
-                    self.action = "walk_left"
-                elif self.pos[0] < 0:
-                    self.action = "walk_right"
-                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
-
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
+
+        # update animations
+        if self.e_type == "hero":
+            # hero logic is handled in the Hero class
+            pass
+        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
+            self._animate()
+            if frame_movement[0] > 0:
+                self.action = "walk_right"
+            elif frame_movement[0] < 0:
+                self.action = "walk_left"
+            if frame_movement[1] > 0 and not frame_movement[0]:
+                self.action = "walk_down"
+            elif frame_movement[1] < 0 and not frame_movement[0]:
+                self.action = "walk_up"
+            self.image = self.game.human_family_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
+        else:
+            if self.e_type == "grunt":
+                if frame_movement[0] or frame_movement[1]:
+                    self.action = "walk"
+                    self._animate("grunt")
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
+            if self.e_type == "hulk":
+                self._animate()
+                if frame_movement[0] == 0 and frame_movement[1] != 0:
+                    self.action = "walk_vertical"
+                elif frame_movement[0] > 0:
+                    self.action = "walk_right"
+                elif frame_movement[0] < 0:
+                    self.action = "walk_left"
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
 
     def direction_to_target(self, target_pos):
         """
