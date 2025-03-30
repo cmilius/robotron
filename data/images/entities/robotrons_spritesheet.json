@@ -27,6 +27,16 @@
         "animations": {
             "idle": {"frame_data": {"x":43,"y":79,"w":9,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
         }
+    },
+    "brain":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":27,"y":142,"w":13,"h":16}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk_up": {"frame_data": {"x":42,"y":142,"w":13,"h":16}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_down": {"frame_data": {"x":27,"y":142,"w":13,"h":16}, "frame_padding": {"x":0,"y":0}, "rows": 3, "cols": 1},
+            "walk_left": {"frame_data": {"x":1,"y":142,"w":11,"h":15}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1},
+            "walk_right": {"frame_data": {"x":14,"y":142,"w":11,"h":15}, "frame_padding": {"x":0,"y":1}, "rows": 3, "cols": 1}
+        }
     }
     },
     "meta": {
