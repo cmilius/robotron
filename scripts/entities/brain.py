@@ -35,16 +35,26 @@ class Brain(PhysicsEntity):
         :return: None
         """
 
-        # check if there are any humans left
-        humans = self.game.family_group
-
+        # chase the player
+        target_pos = [self.game.hero.rect[0], self.game.hero.rect[1]]
+        
+        # unless there are humans left, chase the closest one
+        humans = self.game.family_group.sprites()
         if len(humans) > 0:
-            # if there are humans left, chase the closest one
-            closest_human = min(humans, key=lambda h: self.distance_to_target(h.pos))
-            target_pos = closest_human.pos
-        else:
-            # if there are no humans left, chase the player
-            target_pos = [self.game.hero.rect[0], self.game.hero.rect[1]]
+            
+            # initialize the closest human position
+            smallest_distance = 0
+
+            # loop through the humans to find the closest one
+            for human in humans:
+                x = self.pos[0] - human.pos[0]
+                y = self.pos[1] - human.pos[1]
+                distance = abs(x) + abs(y)
+
+                # Update the smallest distance and target position if a closer human is found
+                if smallest_distance == 0 or distance <= smallest_distance:
+                    smallest_distance = distance
+                    self.target_pos = human.pos       
 
         # move to the target position
         super().move_to_target(target_pos,
