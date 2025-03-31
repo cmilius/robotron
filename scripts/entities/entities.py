@@ -12,8 +12,23 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.e_type = e_type
         self.pos = list(pos)
         self.size = size
+        self.action = "idle"
 
-        self.image = self.game.assets[self.e_type]
+        # initialize the images
+        if self.e_type == "hero":
+            self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
+        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
+            self.image = self.game.human_family_animations.animations[self.e_type][self.action][0]
+        else:
+            self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
+
+        # animation variables, see _animate() for more information
+        self.robo_anim = [0, 1, 0, 2]  # controls the animation frames
+        self.frame = 0  # indexes the robo_anim list
+        self.buffer_length = 20  # the time delay before the frame index will cycle
+        self.buffer = 0  # the counter for buffer, will count to the buffer_length then cycle
+        self.anim_length = len(self.robo_anim)  # The number of frames in the animation
+
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     def update(self, movement=(0, 0)):
@@ -25,6 +40,27 @@ class PhysicsEntity(pygame.sprite.Sprite):
         """
         self.move_entity(movement=movement)
 
+    def _animate(self, entity=None):
+        """
+        Update the animation frames.
+        There are two counters, the buffer and the frame. The buffer is the length of time in game frames, while the
+        frame is the index of the animation.
+        :param str entity: Type of entity, only required if == "grunt"
+        :return: None
+        """
+        if entity == "grunt":
+            # the grunt already moves on a "delay", so no buffer is required.
+            self.frame += 1
+            if self.frame == self.anim_length:
+                self.frame = 0
+            return
+        self.buffer += 1
+        if self.buffer_length == self.buffer:
+            self.buffer = 0
+            self.frame += 1
+            if self.frame == self.anim_length:
+                self.frame = 0
+
     def move_entity(self, movement=(0, 0)):
         frame_movement = [movement[0], movement[1]]
 
@@ -33,6 +69,37 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
+
+        # update animations
+        if self.e_type == "hero":
+            # hero logic is handled in the Hero class
+            pass
+        elif self.e_type == "mom" or self.e_type == "dad" or self.e_type == "mike":
+            self._animate()
+            if frame_movement[0] > 0:
+                self.action = "walk_right"
+            elif frame_movement[0] < 0:
+                self.action = "walk_left"
+            if frame_movement[1] > 0 and not frame_movement[0]:
+                self.action = "walk_down"
+            elif frame_movement[1] < 0 and not frame_movement[0]:
+                self.action = "walk_up"
+            self.image = self.game.human_family_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
+        else:
+            if self.e_type == "grunt":
+                if frame_movement[0] or frame_movement[1]:
+                    self.action = "walk"
+                    self._animate("grunt")
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
+            if self.e_type == "hulk":
+                self._animate()
+                if frame_movement[0] == 0 and frame_movement[1] != 0:
+                    self.action = "walk_vertical"
+                elif frame_movement[0] > 0:
+                    self.action = "walk_right"
+                elif frame_movement[0] < 0:
+                    self.action = "walk_left"
+                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.robo_anim[self.frame]]
 
     def direction_to_target(self, target_pos):
         """
@@ -57,7 +124,6 @@ class PhysicsEntity(pygame.sprite.Sprite):
             frame_movement[1] = -1
 
         return frame_movement
-
 
     def move_to_target(self, target_pos, movement=(0, 0), scaler=1, move_dir=None):
         """
