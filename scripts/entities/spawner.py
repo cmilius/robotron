@@ -57,8 +57,6 @@ class Spawner:
         """
         self.game = game
         self.display = self.game.display
-        self.level = self.game.wave_counter
-        self.wave_count = 0
 
     @staticmethod
     def get_valid_position(size, exclude_range):
@@ -81,7 +79,7 @@ class Spawner:
         map_center_y = int(self.display.get_height() / 2)
 
         # get the intensity
-        num_robots = WAVE_INTENSITY[e_type][self.level]
+        num_robots = WAVE_INTENSITY[e_type][self.game.hud.wave_count]
         posits = []
 
         # need to define an exclusion zone around the hero spawn area
@@ -100,7 +98,7 @@ class Spawner:
         :param wave_count: Current game wave count.
         :return: None
         """
-        self.level = wave_count  # update the wave
+        self.level = self.game.hud.wave_count  # update the wave
 
         # spawn grunts
         grunt_positions = self.spawn_positions("grunts")
