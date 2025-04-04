@@ -1,5 +1,7 @@
 import random
 import logging
+import json
+import sys
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
@@ -9,45 +11,8 @@ from scripts.entities.mike import Mike
 
 logger = logging.getLogger(__name__)
 
-# TODO: probably should put this information in a text file, as it goes up to 40
-WAVE_INTENSITY = {
-    "grunts": {1: 15,
-               2: 17,
-               3: 22
-               },
-    "hulks": {1: 0,
-              2: 5,
-              3: 6
-              },
-    "electrodes": {1: 5,
-                   2: 15,
-                   3: 25
-                   },
-    "brains": {1: 0,
-               2: 0,
-               3: 0
-               },
-    "spheroids": {1: 1,
-                  2: 1,
-                  3: 3
-                  },
-    "quarks": {1: 0,
-               2: 0,
-               3: 0
-               },
-    "dad": {1: 1,
-            2: 1,
-            3: 1
-            },
-    "mom": {1: 1,
-            2: 1,
-            3: 1
-            },
-    "mike": {1: 1,
-             2: 1,
-             3: 1
-             },
-}
+with open("data/spawn_counts.json", "r") as f:
+    WAVE_INTENSITY = json.load(f)
 
 
 class Spawner:
@@ -78,8 +43,14 @@ class Spawner:
         map_center_x = int(self.display.get_width() / 2)
         map_center_y = int(self.display.get_height() / 2)
 
-        # get the intensity
-        num_robots = WAVE_INTENSITY[e_type][self.game.hud.wave_count]
+
+        # get the intensity. Search by entity type, then by level number (which has to be a string).
+        try:
+            num_robots = WAVE_INTENSITY.get(e_type).get(str(self.level))
+        except AttributeError as e:
+            logger.critical(e)
+            logger.critical(f"Error getting the entity or level from the JSON. Double check the variable names.")
+            sys.exit()
         posits = []
 
         # need to define an exclusion zone around the hero spawn area
