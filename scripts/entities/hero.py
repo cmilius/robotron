@@ -12,11 +12,16 @@ class Hero(PhysicsEntity):
         self.projectile_timer = 10  # count up to projectile reload
         self.respawn_invuln = 0  # frames
 
+        self.action = "idle"  # initial stance
+
         # used to track the last pressed keys for shooting
         self.h_stack = []
         self.v_stack = []
 
     def update(self, movement=(0, 0), shooting=(False, False, False, False)):
+
+        self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
+        
         if self.respawn_invuln:
             # Frame counter to make the hero invulnerable after respawn. Will be set to an integer in the game loop.
             self.respawn_invuln -= 1
