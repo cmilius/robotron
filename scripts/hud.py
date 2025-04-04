@@ -5,19 +5,22 @@ logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line:
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class HUD:
     """
     Handles the heads-up display (HUD) for the game. Displays the score, wave number & life count.
     """
 
-    def __init__(self, score_count=0, wave_count=1, life_count=3):
+    def __init__(self, game, score_count=0, wave_count=1, life_count=3):
         pygame.init()
         pygame.font.init()  # Initialize the font module
 
         # HUD setup
         self.font = pygame.font.SysFont('Consolas', 14)  # Load the Consolas font
+        self.game_over_font = pygame.font.SysFont('Consolas', 14*3)  # Load the Consolas font
 
         # init variables
+        self.game = game
         self.score_count = score_count
         self.wave_count = wave_count
         self.life_count = life_count
@@ -39,7 +42,7 @@ class HUD:
                          (rect.left, 
                           rect.top + self.border_padding, 
                           rect.width, 
-                          rect.height - 2 * self.border_padding), #The height of the rectangle, adjusted by subtracting twice the border_padding (once for the top and once for the bottom).
+                          rect.height - 2 * self.border_padding),  #The height of the rectangle, adjusted by subtracting twice the border_padding (once for the top and once for the bottom).
                          self.border_thickness)
         
         # Draw the score
@@ -80,3 +83,17 @@ class HUD:
         :param life_count: New wave count
         """
         self.wave_count = wave_count
+
+    def game_over(self):
+        """
+        You lose.
+
+        :return: None
+        """
+        game_over_text = self.game_over_font.render(f"GAME OVER", True, (255, 0, 0))
+        restart_text = self.font.render(f"Press 'R' to restart.", True, (255, 0, 0))
+        self.game.display.blit(game_over_text, (self.game.display.get_width()/2-game_over_text.get_width()/2,
+                                                self.game.display.get_height()/2-game_over_text.get_height()/2))
+        self.game.display.blit(restart_text,
+                               (self.game.display.get_width()/2-restart_text.get_width()/2,
+                                self.game.display.get_height()/2+game_over_text.get_height()/2+restart_text.get_height()))

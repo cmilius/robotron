@@ -22,8 +22,6 @@ class Spawner:
         """
         self.game = game
         self.display = self.game.display
-        self.level = self.game.wave_counter
-        self.wave_count = 0
 
     @staticmethod
     def get_valid_position(size, exclude_range):
@@ -44,6 +42,7 @@ class Spawner:
         # get the center of the map, use int() to get integer rather than float.
         map_center_x = int(self.display.get_width() / 2)
         map_center_y = int(self.display.get_height() / 2)
+
 
         # get the intensity. Search by entity type, then by level number (which has to be a string).
         try:
@@ -70,7 +69,7 @@ class Spawner:
         :param wave_count: Current game wave count.
         :return: None
         """
-        self.level = wave_count  # update the wave
+        self.level = self.game.hud.wave_count  # update the wave
 
         # spawn grunts
         grunt_positions = self.spawn_positions("grunts")

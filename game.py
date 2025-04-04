@@ -12,6 +12,10 @@ logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line:
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# New game values
+SCORE_COUNT = 0
+WAVE_COUNT = 0
+LIFE_COUNT = 3
 
 class Game:
     def __init__(self):
@@ -57,14 +61,14 @@ class Game:
         # example use of the animations for reference, look in the json files in the data/images/entities folder for the animation names
         # self.display.blit(self.human_family_animations.animations['mike']['walk_right'][animation_frame_count], (20, 60))
 
-        # init counts
-        self.score_count = 0
-        self.wave_counter = 0
-        self.life_count = 3
-
         # initialize the HUD
-        self.hud = HUD(self.score_count, self.wave_counter, self.life_count)
+        self.hud = HUD(self, SCORE_COUNT, WAVE_COUNT, LIFE_COUNT)
 
+        # initialize game conditions
+        self.game_over = False
+        self.game_restart = False
+
+        # initialize the group that will be used to draw all the sprites at once.
         self.allsprites = pygame.sprite.Group()
 
         # Create the hero
@@ -90,6 +94,17 @@ class Game:
     def run(self):
         while True:
             self.display.fill((0, 0, 0))  # black background
+
+            if self.game_restart:
+                # if the game has been restarted, set all the counters back to the their original values.
+                self.hud.score_count = SCORE_COUNT
+                self.hud.wave_count = WAVE_COUNT
+                self.hud.life_count = LIFE_COUNT
+                for entity in self.grunts_group:
+                    # this will trigger the spawn enemies code.
+                    entity.kill()
+                self.game_over = False
+                self.game_restart = False
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
@@ -125,30 +140,39 @@ class Game:
                 affected_projectile = hero_shot[0]  # determine the projectile
                 affected_projectile.kill()
             if hero_collision or hero_shot:
-                if self.hud.life_count == 0:
-                    # TODO: game over
-                    pass
-                else:
-                    # TODO: respawn logic: hero invulnerability, etc.
-                    self.hud.life_count -= 1
-                    self.hero.move_to_center()
+                if not self.hero.respawn_invuln:
+                    # check if the hero is invulnerable due to respawn
+                    # if the player is not invulnerable, they lose a life.
+                    if self.hud.life_count != 0:
+                        # this is here because otherwise you end up with a -1 life indication at the GAME OVER screen
+                        self.hud.life_count -= 1
+                    if self.hud.life_count == 0:
+                        self.game_over = True
+                    else:
+                        # respawn the hero at the center of the screen and toggle invulnerability
+                        self.hero.move_to_center()
+                        self.hero.respawn_invuln = 120  # set the hero invulnerable for 2 seconds
             #   hulk-to-family
             pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
             #   hero-to-family
             pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
 
-            # Update hero
-            self.hero.update(movement=(self.movement[0], self.movement[1]),
-                             shooting=self.hero_shooting)
+            if not self.game_over:
+                # Update hero
+                self.hero.update(movement=(self.movement[0], self.movement[1]),
+                                 shooting=self.hero_shooting)
 
-            # Update groups
-            self.hero_projectiles.update()
-            self.enemy_projectiles.update()
-            self.enemy_group.update()
-            self.family_group.update()
+                # Update groups
+                self.hero_projectiles.update()
+                self.enemy_projectiles.update()
+                self.enemy_group.update()
+                self.family_group.update()
 
             # draw sprites
             self.allsprites.draw(self.display)
+            if self.game_over:
+                # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
+                self.hud.game_over()
 
             # event manager
             for event in pygame.event.get():
@@ -172,6 +196,10 @@ class Game:
                         self.hero_shooting[2] = True
                     if event.key == pygame.K_DOWN:
                         self.hero_shooting[3] = True
+                    if event.key == pygame.K_r:
+                        if self.game_over:
+                            # if the game is over, restart the game.
+                            self.game_restart = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w:
                         self.movement[1] = 0
