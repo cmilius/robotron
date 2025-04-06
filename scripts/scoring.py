@@ -1,4 +1,5 @@
 import logging
+from pygame import font
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,9 @@ class Scoring:
         self.score_mult = 1  # used to multiply vs. the number of humans saved per wave
         self.life_add_mult = 1  # used to multiply vs. the 25000 additional life counter
 
+        self.font = font.SysFont('Consolas', 10)  # Load the Consolas font
+        self.score_disp = {}
+
         self.enemy_score_dict = {
             "grunt": GRUNT_SCORE,
             "prog": GRUNT_SCORE,
@@ -54,17 +58,24 @@ class Scoring:
         """
         self.score_mult = 1
 
-    def update_score(self, e_type):
+    def update_score(self, e_type, pos=None):
         """
         Given entity, update the score.
 
         :param e_type: entity type
+        :param pos: the position of the entity, only needed if the entity is family
         :return: None
         """
         if e_type in self.enemy_score_dict.keys():
             self.game.score_count += self.enemy_score_dict[e_type]
         elif e_type == "family":
-            self.game.score_count += 1000 * self.score_mult
+            # calculate and add score
+            self.score_to_add = 1000 * self.score_mult
+            self.game.score_count += self.score_to_add
+
+            # Add score to the score_disp dictionary. [position, time to display]
+            self.score_disp[self.font.render(str(self.score_to_add), True, (255, 255, 255))] = [list(pos), 120]
+
             if not self.score_mult == 5:  # limit the score multiplier to 5
                 self.score_mult += 1
         elif e_type == "hulk":
@@ -80,5 +91,15 @@ class Scoring:
             self.life_add_mult += 1
             logger.info("Life count +1!")
 
+    def draw_family_saved_score(self):
+        """
+        Display the 'family saved' score the floats near the saved family member for two seconds.
 
+        :return: None
+        """
+        for saved in self.score_disp:
+            if self.score_disp[saved][1] > 0:
+                self.game.display.blit(saved, (self.score_disp[saved][0]))
+                self.score_disp[saved][1] -= 1  # reduce the display countdown
+                self.score_disp[saved][0][1] -= .1  # make the score float vertically away
 

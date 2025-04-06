@@ -163,7 +163,7 @@ class Game:
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:
-                self.scoring.update_score("family")
+                self.scoring.update_score("family", pos=self.hero.pos)
 
             if not self.game_over:
                 # Update hero
@@ -228,6 +228,9 @@ class Game:
 
             # draw the HUD
             self.hud.render(self.display)
+
+            # draw any family saved score floats
+            self.scoring.draw_family_saved_score()
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
