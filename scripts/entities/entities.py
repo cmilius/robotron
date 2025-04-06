@@ -107,8 +107,11 @@ class PhysicsEntity(pygame.sprite.Sprite):
             x_dir = (movement[1] - movement[0])
             y_dir = (movement[3] - movement[2])
 
-            self.rect.x += x_dir
-            self.rect.y += y_dir
+            self.pos[0] += x_dir
+            self.pos[1] += y_dir
+
+            self.rect.x = self.pos[0]
+            self.rect.y = self.pos[1]
             return
 
         frame_movement = [movement[0], movement[1]]
