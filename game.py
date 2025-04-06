@@ -58,8 +58,13 @@ class Game:
         self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
         self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
 
+        # initialize game counters
+        self.score_count = SCORE_COUNT
+        self.wave_count = WAVE_COUNT
+        self.life_count = LIFE_COUNT
+
         # initialize the HUD
-        self.hud = HUD(self, SCORE_COUNT, WAVE_COUNT, LIFE_COUNT)
+        self.hud = HUD(self)
 
         # initialize game conditions
         self.game_over = False
@@ -94,9 +99,9 @@ class Game:
 
             if self.game_restart:
                 # if the game has been restarted, set all the counters back to the their original values.
-                self.hud.score_count = SCORE_COUNT
-                self.hud.wave_count = WAVE_COUNT
-                self.hud.life_count = LIFE_COUNT
+                self.score_count = SCORE_COUNT
+                self.wave_count = WAVE_COUNT
+                self.life_count = LIFE_COUNT
                 for entity in self.grunts_group:
                     # this will trigger the spawn enemies code.
                     entity.kill()
@@ -117,9 +122,9 @@ class Game:
                 # respawn the player
                 self.hero.move_to_center()
                 # spawn new wave
-                self.hud.wave_count += 1
-                self.spawner.spawn_enemies(self.hud.wave_count)
-                self.spawner.spawn_family(self.hud.wave_count)
+                self.wave_count += 1
+                self.spawner.spawn_enemies(self.wave_count)
+                self.spawner.spawn_family(self.wave_count)
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -140,10 +145,10 @@ class Game:
                 if not self.hero.respawn_invuln:
                     # check if the hero is invulnerable due to respawn
                     # if the player is not invulnerable, they lose a life.
-                    if self.hud.life_count != 0:
+                    if self.life_count != 0:
                         # this is here because otherwise you end up with a -1 life indication at the GAME OVER screen
-                        self.hud.life_count -= 1
-                    if self.hud.life_count == 0:
+                        self.life_count -= 1
+                    if self.life_count == 0:
                         self.game_over = True
                     else:
                         # respawn the hero at the center of the screen and toggle invulnerability
