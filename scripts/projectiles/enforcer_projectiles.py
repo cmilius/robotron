@@ -2,12 +2,11 @@ import pygame
 
 
 class EnforcerProjectiles(pygame.sprite.Sprite):
-    def __init__(self, game, p_type, pos, direction):
+    def __init__(self, game, p_type, pos):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.p_type = p_type
         self.pos = pos
-        self.direction = direction
 
         self.image = self.game.assets[self.p_type]
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.game.enforcer_size[0], self.game.enforcer_size[1])
@@ -29,16 +28,10 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
 
         frame_movement = [0, 0]  # init
 
-        # x-movement logic
-        if target_pos[0] > e_pos[0]:
-            frame_movement[0] = 1
-        elif target_pos[0] < e_pos[0]:
-            frame_movement[0] = -1
-        # y-movement logic
-        if target_pos[1] > e_pos[1]:
-            frame_movement[1] = 1
-        elif target_pos[1] < e_pos[1]:
-            frame_movement[1] = -1
+        # The vector needs to be scaled down to the appropriate speed by the maximum of the difference in positions
+        max_diff = max(abs(target_pos[0] - e_pos[0]), abs(target_pos[1] - e_pos[1]))
+        frame_movement[0] = (target_pos[0] - e_pos[0]) / max_diff
+        frame_movement[1] = (target_pos[1] - e_pos[1]) / max_diff
 
         # scale the movement, can be used later to increase difficulty if desired.
         return [frame_movement[0] * scaler,
