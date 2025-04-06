@@ -7,6 +7,7 @@ from scripts.entities.spawner import Spawner
 from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
+from scripts.scoring import Scoring
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 # New game values
 SCORE_COUNT = 0
 WAVE_COUNT = 0
-LIFE_COUNT = 3
+LIFE_COUNT = 5
+
 
 class Game:
     def __init__(self):
@@ -62,6 +64,9 @@ class Game:
         self.score_count = SCORE_COUNT
         self.wave_count = WAVE_COUNT
         self.life_count = LIFE_COUNT
+
+        # initalize the score counter
+        self.scoring = Scoring(self)
 
         # initialize the HUD
         self.hud = HUD(self)
@@ -121,6 +126,8 @@ class Game:
                     family.kill()  # :(
                 # respawn the player
                 self.hero.move_to_center()
+                # reset the family score multiplier
+                self.scoring.reset_score_mult()
                 # spawn new wave
                 self.wave_count += 1
                 self.spawner.spawn_enemies(self.wave_count)
@@ -132,7 +139,12 @@ class Game:
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
+                self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
+            #  hero_projectile-to-enemy_projectile
+            projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
+            if projectile_hit:
+                self.scoring.update_score("projectile")
             #   enemy-to-hero
             hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
             hero_shot = pygame.sprite.spritecollide(self.hero, self.enemy_projectiles, False)
@@ -157,7 +169,9 @@ class Game:
             #   hulk-to-family
             pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
             #   hero-to-family
-            pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
+            family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
+            if family_saved:
+                self.scoring.update_score("family")
 
             if not self.game_over:
                 # Update hero
