@@ -28,7 +28,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.movement = [0, 0]  # [x, y]
+        self.hero_movement = [False, False, False, False]  # [left, right, up, down]
         self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
 
         self.assets = {
@@ -57,9 +57,6 @@ class Game:
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
         self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
         self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
-
-        # example use of the animations for reference, look in the json files in the data/images/entities folder for the animation names
-        # self.display.blit(self.human_family_animations.animations['mike']['walk_right'][animation_frame_count], (20, 60))
 
         # initialize the HUD
         self.hud = HUD(self, SCORE_COUNT, WAVE_COUNT, LIFE_COUNT)
@@ -159,7 +156,7 @@ class Game:
 
             if not self.game_over:
                 # Update hero
-                self.hero.update(movement=(self.movement[0], self.movement[1]),
+                self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
 
                 # Update groups
@@ -180,18 +177,18 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_w:
-                        self.movement[1] = -1
-                        self.hero.action = "walk_up"
-                    if event.key == pygame.K_s:
-                        self.movement[1] = 1
-                        self.hero.action = "walk_down"
                     if event.key == pygame.K_a:
-                        self.movement[0] = -1
+                        self.hero_movement[0] = True
                         self.hero.action = "walk_left"
                     if event.key == pygame.K_d:
-                        self.movement[0] = 1
+                        self.hero_movement[1] = True
                         self.hero.action = "walk_right"
+                    if event.key == pygame.K_w:
+                        self.hero_movement[2] = True
+                        self.hero.action = "walk_up"
+                    if event.key == pygame.K_s:
+                        self.hero_movement[3] = True
+                        self.hero.action = "walk_down"
                     if event.key == pygame.K_LEFT:
                         self.hero_shooting[0] = True
                     if event.key == pygame.K_RIGHT:
@@ -205,14 +202,14 @@ class Game:
                             # if the game is over, restart the game.
                             self.game_restart = True
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_w:
-                        self.movement[1] = 0
-                    if event.key == pygame.K_s:
-                        self.movement[1] = 0
                     if event.key == pygame.K_a:
-                        self.movement[0] = 0
+                        self.hero_movement[0] = False
                     if event.key == pygame.K_d:
-                        self.movement[0] = 0
+                        self.hero_movement[1] = False
+                    if event.key == pygame.K_w:
+                        self.hero_movement[2] = False
+                    if event.key == pygame.K_s:
+                        self.hero_movement[3] = False
                     if event.key == pygame.K_LEFT:
                         self.hero_shooting[0] = False
                     if event.key == pygame.K_RIGHT:
