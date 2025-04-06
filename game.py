@@ -34,14 +34,6 @@ class Game:
         self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
 
         self.assets = {
-            "hero": load_image("entities/hero.png"),
-            "dad": load_image("entities/dad.png"),
-            "mom": load_image("entities/mom.png"),
-            "mike": load_image("entities/mike.png"),
-            "grunt": load_image("entities/grunt.png"),
-            "hulk": load_image("entities/hulk.png"),
-            "spheroid": load_image("entities/spheroid.png"),
-            "enforcer": load_image("entities/enforcer.png"),
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
             "projectile": load_image("projectiles/hero_projectile.png")
         }

@@ -8,15 +8,21 @@ class Projectiles(pygame.sprite.Sprite):
         self.p_type = p_type
         self.pos = pos
         self.direction = direction
-        # If the projectile is going up or down, rotate the image.
-        if self.direction[2] or self.direction[3]:
+
+        # Rotate the image based on direction
+        if (self.direction[0] or self.direction[1]) and (self.direction[2] or self.direction[3]) and not\
+                (self.direction[0] + self.direction[1] + self.direction[2] + self.direction[3] == 1):
+            self.image = pygame.transform.rotate(self.game.assets[self.p_type], 45)  # NorthEast, SouthWest
+            if (self.direction[0] and self.direction[2]) or (self.direction[1] and self.direction[3]):  # NorthWest, SouthEast
+                self.image = pygame.transform.flip(self.image, True, False)
+        elif self.direction[2] or self.direction[3]:  # North, South
             self.image = pygame.transform.rotate(self.game.assets[self.p_type], 90)
-        else:
+        else:  # East, West
             self.image = self.game.assets[self.p_type]
-        self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 4)
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 1)
 
     def update(self):
-        projectile_speed = 8
+        projectile_speed = 16
 
         # Directions truth tables
         #     [True, False, True, False]: "Northwest"
