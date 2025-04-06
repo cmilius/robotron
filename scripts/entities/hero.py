@@ -8,6 +8,7 @@ class Hero(PhysicsEntity):
         self.pos = list(pos)
         self.size = size
         super().__init__(self.game, "hero", self.pos, self.size)
+        self.buffer_length = 10  # override the super() buffer_length to be shorter
         self.projectile_reload = 20  # frames
         self.projectile_timer = 10  # count up to projectile reload
         self.respawn_invuln = 0  # frames
@@ -22,15 +23,18 @@ class Hero(PhysicsEntity):
         self.v_stack_movement = []
 
     def update(self, movement=(False, False, False, False), shooting=(False, False, False, False)):
-
-        self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
-        
         if self.respawn_invuln:
             # Frame counter to make the hero invulnerable after respawn. Will be set to an integer in the game loop.
             self.respawn_invuln -= 1
 
         self.movement = self._directions_logic(movement, self.h_stack_movement, self.v_stack_shooting)
         super().update(movement=self.movement)
+
+        if True in self.movement:
+            # only update the image if the player is pressing a movemnt key.
+            # Otherwise the image will face the last direction the hero moved.
+            super().iterate_animation_frames()
+            self.image = self.game.hero_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
         self.shooting = self._directions_logic(shooting, self.h_stack_shooting, self.v_stack_shooting)
         # only fire if the gun is reloaded
@@ -42,8 +46,7 @@ class Hero(PhysicsEntity):
             self.game.allsprites.add(projectile)
             self.projectile_timer = 0  # cooldown to the projectile_reload framecount
 
-    @staticmethod
-    def _directions_logic(player_inputs, h_stack, v_stack):
+    def _directions_logic(self, player_inputs, h_stack, v_stack):
         """
         Given a list of keyboard inputs, return a list of active outputs.
         This utilizes a stack of horizontal and vertical movement to handle
@@ -65,9 +68,11 @@ class Hero(PhysicsEntity):
             if h_stack[-1] == "left":
                 player_inputs[0] = True
                 player_inputs[1] = False
+                self.action = "walk_left"
             else:
                 player_inputs[0] = False
                 player_inputs[1] = True
+                self.action = "walk_right"
         if player_inputs[2] and "up" not in v_stack:
             v_stack.append("up")
         elif not player_inputs[2] and "up" in v_stack:
@@ -80,7 +85,9 @@ class Hero(PhysicsEntity):
             if v_stack[-1] == "up":
                 player_inputs[2] = True
                 player_inputs[3] = False
+                self.action = "walk_up"
             else:
                 player_inputs[2] = False
                 player_inputs[3] = True
+                self.action = "walk_down"
         return player_inputs

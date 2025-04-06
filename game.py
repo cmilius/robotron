@@ -190,16 +190,12 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
                         self.hero_movement[0] = True
-                        self.hero.action = "walk_left"
                     if event.key == pygame.K_d:
                         self.hero_movement[1] = True
-                        self.hero.action = "walk_right"
                     if event.key == pygame.K_w:
                         self.hero_movement[2] = True
-                        self.hero.action = "walk_up"
                     if event.key == pygame.K_s:
                         self.hero_movement[3] = True
-                        self.hero.action = "walk_down"
                     if event.key == pygame.K_LEFT:
                         self.hero_shooting[0] = True
                     if event.key == pygame.K_RIGHT:

@@ -41,7 +41,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
         """
         self.move_entity(movement=movement)
 
-    def _iterate_animation_frames(self, entity=None):
+    def iterate_animation_frames(self, entity=None):
         """
         Update the animation frames.
         There are two counters, the buffer and the flipbook index.
@@ -73,7 +73,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         if self.e_type in FAMILY_MEMBERS or self.e_type == "brain":
             # family and brain both have left/right/up/down movement
-            self._iterate_animation_frames()
+            self.iterate_animation_frames()
             if frame_movement[0] > 0:
                 self.action = "walk_right"
             elif frame_movement[0] < 0:
@@ -90,9 +90,9 @@ class PhysicsEntity(pygame.sprite.Sprite):
             if self.e_type == "grunt":
                 if frame_movement[0] or frame_movement[1]:
                     self.action = "walk"
-                    self._iterate_animation_frames("grunt")
+                    self.iterate_animation_frames("grunt")
             if self.e_type == "hulk":
-                self._iterate_animation_frames()
+                self.iterate_animation_frames()
                 if frame_movement[0] == 0 and frame_movement[1] != 0:
                     self.action = "walk_vertical"
                 elif frame_movement[0] > 0:
