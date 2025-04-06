@@ -56,23 +56,6 @@ class Hero(PhysicsEntity):
         player_inputs = list(player_inputs)
 
         # Find out which key was last pressed by the hero
-        if player_inputs[0] and "left" not in h_stack:
-            h_stack.append("left")
-        elif not player_inputs[0] and "left" in h_stack:
-            h_stack.remove("left")
-        if player_inputs[1] and "right" not in h_stack:
-            h_stack.append("right")
-        elif not player_inputs[1] and "right" in h_stack:
-            h_stack.remove("right")
-        if h_stack:
-            if h_stack[-1] == "left":
-                player_inputs[0] = True
-                player_inputs[1] = False
-                self.action = "walk_left"
-            else:
-                player_inputs[0] = False
-                player_inputs[1] = True
-                self.action = "walk_right"
         if player_inputs[2] and "up" not in v_stack:
             v_stack.append("up")
         elif not player_inputs[2] and "up" in v_stack:
@@ -90,4 +73,21 @@ class Hero(PhysicsEntity):
                 player_inputs[2] = False
                 player_inputs[3] = True
                 self.action = "walk_down"
+        if player_inputs[0] and "left" not in h_stack:
+            h_stack.append("left")
+        elif not player_inputs[0] and "left" in h_stack:
+            h_stack.remove("left")
+        if player_inputs[1] and "right" not in h_stack:
+            h_stack.append("right")
+        elif not player_inputs[1] and "right" in h_stack:
+            h_stack.remove("right")
+        if h_stack:
+            if h_stack[-1] == "left":
+                player_inputs[0] = True
+                player_inputs[1] = False
+                self.action = "walk_left"
+            else:
+                player_inputs[0] = False
+                player_inputs[1] = True
+                self.action = "walk_right"
         return player_inputs
