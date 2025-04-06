@@ -33,7 +33,7 @@ class Scoring:
 
         self.curr_wave = 1  # new game wave will start on 1
         self.score_mult = 1  # used to multiply vs. the number of humans saved per wave
-        self.life_add_mult = 1  # this is what will be used to count up to 25000
+        self.life_add_mult = 1  # used to multiply vs. the 25000 additional life counter
 
         self.enemy_score_dict = {
             "grunt": GRUNT_SCORE,
