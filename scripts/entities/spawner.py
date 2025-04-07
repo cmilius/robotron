@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 with open("data/spawn_counts.json", "r") as f:
     WAVE_INTENSITY = json.load(f)
 
+
 class Spawner:
     def __init__(self, game):
         """
@@ -61,11 +62,10 @@ class Spawner:
                            random.choice([y for y in range(mod_surf_size_y) if y not in y_exclude])))
         return posits
 
-    def spawn_enemies(self, wave_count):
+    def spawn_enemies(self):
         """
         Used to spawn enemies for a new wave.
 
-        :param wave_count: Current game wave count.
         :return: None
         """
         self.level = self.game.wave_count  # update the wave
@@ -93,14 +93,13 @@ class Spawner:
             self.game.enemy_group.add(spheroid)
             self.game.allsprites.add(spheroid)
 
-    def spawn_family(self, wave_count):
+    def spawn_family(self):
         """
         Used to spawn family members for a new wave.
 
-        :param wave_count: Current game wave count.
         :return: None
         """
-        self.level = wave_count  # update the wave
+        self.level = self.game.wave_count  # update the wave
 
         # spawn dads
         dad_positions = self.spawn_positions("dad")

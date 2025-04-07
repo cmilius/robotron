@@ -1,6 +1,7 @@
 import sys
 import pygame
 import logging
+import random
 
 from scripts.entities.hero import Hero
 from scripts.entities.spawner import Spawner
@@ -8,7 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import Animations
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -64,7 +65,14 @@ class Game:
         # initialize the HUD
         self.hud = HUD(self)
 
+        # Animation container
         self.active_animations = []
+        self.converge_list = []
+
+        #
+        self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
+        self.spawn_counter = 0
+        self.spawn = True
 
         # initialize game conditions
         self.game_over = False
@@ -107,9 +115,11 @@ class Game:
                     entity.kill()
                 self.game_over = False
                 self.game_restart = False
+                self.spawn = True
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
+                self.spawn = True
                 # empty out any previous wave stuff
                 for enemy in self.enemy_group:
                     enemy.kill()
@@ -127,6 +137,10 @@ class Game:
                 self.wave_count += 1
                 self.spawner.spawn_enemies()
                 self.spawner.spawn_family()
+                for entity in self.allsprites:
+                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
+                        self.converge_list.append(ConvergenceAnimations(self, entity,
+                                                                        (random.choice(["vertical", "horizontal"]), 0)))
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -139,7 +153,7 @@ class Game:
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
                 if affected_enemy.e_type != "hulk":
-                    self.active_animations.append(Animations(self, affected_enemy, explode_logic))
+                    self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -172,7 +186,7 @@ class Game:
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
 
-            if not self.game_over:
+            if not self.game_over and not self.spawn:
                 # Update hero
                 self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
@@ -184,7 +198,17 @@ class Game:
                 self.family_group.update()
 
             # draw sprites
-            self.allsprites.draw(self.display)
+            if not self.spawn:
+                self.allsprites.draw(self.display)
+
+            if self.spawn:
+                self.family_group.draw(self.display)
+                if self.spawn_counter == self.spawn_timer:
+                    self.spawn = False
+                    self.spawn_counter = 0
+                else:
+                    self.spawn_counter += 1
+
             if self.game_over:
                 # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
                 self.hud.game_over()
@@ -240,6 +264,10 @@ class Game:
                 animation.animate_slices()
                 if animation.finished:
                     self.active_animations.remove(animation)
+            for animation in self.converge_list:
+                animation.animate_slices()
+                if animation.finished:
+                    self.converge_list.remove(animation)
 
             # draw any family saved score floats
             self.scoring.draw_family_saved_score()
