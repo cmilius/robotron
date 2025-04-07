@@ -1,4 +1,7 @@
 import pygame
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Projectiles(pygame.sprite.Sprite):
@@ -8,17 +11,22 @@ class Projectiles(pygame.sprite.Sprite):
         self.p_type = p_type
         self.pos = pos
         self.direction = direction
+        self.explode_logic = ["horizontal", False]  # [direction, mirror flag]
 
         # Rotate the image based on direction
         if (self.direction[0] or self.direction[1]) and (self.direction[2] or self.direction[3]) and not\
                 (self.direction[0] + self.direction[1] + self.direction[2] + self.direction[3] == 1):
             self.image = pygame.transform.rotate(self.game.assets[self.p_type], 45)  # NorthEast, SouthWest
+            self.explode_logic = ["diagonal", False]
             if (self.direction[0] and self.direction[2]) or (self.direction[1] and self.direction[3]):  # NorthWest, SouthEast
                 self.image = pygame.transform.flip(self.image, True, False)
+                self.explode_logic = ["diagonal", True]
         elif self.direction[2] or self.direction[3]:  # North, South
             self.image = pygame.transform.rotate(self.game.assets[self.p_type], 90)
+            self.explode_logic = ["horizontal", False]
         else:  # East, West
             self.image = self.game.assets[self.p_type]
+            self.explode_logic = ["vertical", False]
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 1)
 
     def update(self):

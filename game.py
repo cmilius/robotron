@@ -8,6 +8,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
+from scripts.animations import Animations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -39,7 +40,7 @@ class Game:
         }
 
         # pixel size of sprite
-        self.grunt_size = (29, 27)
+        self.grunt_size = (9, 13)
         self.hulk_size = (29, 27)
         self.dad_size = (29, 27)
         self.mom_size = (29, 27)
@@ -62,6 +63,8 @@ class Game:
 
         # initialize the HUD
         self.hud = HUD(self)
+
+        self.active_animations = []
 
         # initialize game conditions
         self.game_over = False
@@ -122,8 +125,8 @@ class Game:
                 self.scoring.reset_score_mult()
                 # spawn new wave
                 self.wave_count += 1
-                self.spawner.spawn_enemies(self.wave_count)
-                self.spawner.spawn_family(self.wave_count)
+                self.spawner.spawn_enemies()
+                self.spawner.spawn_family()
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -131,8 +134,12 @@ class Game:
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
+                for key in enemy_hit:
+                    explode_logic = key.explode_logic
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
+                if affected_enemy.e_type != "hulk":
+                    self.active_animations.append(Animations(self, affected_enemy, explode_logic))
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -228,6 +235,11 @@ class Game:
 
             # draw the HUD
             self.hud.render(self.display)
+
+            for animation in self.active_animations:
+                animation.animate_slices()
+                if animation.finished:
+                    self.active_animations.remove(animation)
 
             # draw any family saved score floats
             self.scoring.draw_family_saved_score()
