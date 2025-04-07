@@ -50,7 +50,6 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
         if (self.rect.left - buffer) < 0 or (self.rect.right + buffer) > self.game.display.get_width():
             self.v_wall = True
         if (self.rect.top - buffer) < 0 or (self.rect.bottom + buffer) > self.game.display.get_height():
-            self.frame_movement[1] = 0
             self.h_wall = True
 
         # if the projectile hits a corner, kill
