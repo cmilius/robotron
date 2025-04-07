@@ -68,7 +68,7 @@ class Spawner:
         :param wave_count: Current game wave count.
         :return: None
         """
-        self.level = self.game.hud.wave_count  # update the wave
+        self.level = self.game.wave_count  # update the wave
 
         # spawn grunts
         grunt_positions = self.spawn_positions("grunts")

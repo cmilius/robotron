@@ -8,15 +8,21 @@ class Projectiles(pygame.sprite.Sprite):
         self.p_type = p_type
         self.pos = pos
         self.direction = direction
-        # If the projectile is going up or down, rotate the image.
-        if self.direction[2] or self.direction[3]:
+
+        # Rotate the image based on direction
+        if (self.direction[0] or self.direction[1]) and (self.direction[2] or self.direction[3]) and not\
+                (self.direction[0] + self.direction[1] + self.direction[2] + self.direction[3] == 1):
+            self.image = pygame.transform.rotate(self.game.assets[self.p_type], 45)  # NorthEast, SouthWest
+            if (self.direction[0] and self.direction[2]) or (self.direction[1] and self.direction[3]):  # NorthWest, SouthEast
+                self.image = pygame.transform.flip(self.image, True, False)
+        elif self.direction[2] or self.direction[3]:  # North, South
             self.image = pygame.transform.rotate(self.game.assets[self.p_type], 90)
-        else:
+        else:  # East, West
             self.image = self.game.assets[self.p_type]
-        self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 4)
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 1)
 
     def update(self):
-        projectile_speed = 8
+        projectile_speed = 16
 
         # Directions truth tables
         #     [True, False, True, False]: "Northwest"
@@ -24,37 +30,14 @@ class Projectiles(pygame.sprite.Sprite):
         #     [False, True, True, False]: "Northeast"
         #     [False, True, False, True]: "Southeast"
 
-        # TODO: need a way to limit the input to only 2.
-        # I think some kind of variable to hold the last valid input.
+        # dir[1] = east, dir[0] = west
+        # dir[3] = north, dir[2] = south
 
-        # Shoot West
-        if self.direction[0] and not (self.direction[1] or self.direction[2] or self.direction[3]):
-            self.rect.x -= projectile_speed
-        # Shoot East
-        if self.direction[1] and not (self.direction[0] or self.direction[2] or self.direction[3]):
-            self.rect.x += projectile_speed
-        # Shoot North
-        if self.direction[2] and not (self.direction[0] or self.direction[1] or self.direction[3]):
-            self.rect.y -= projectile_speed
-        # Shoot South
-        if self.direction[3] and not (self.direction[0] or self.direction[1] or self.direction[2]):
-            self.rect.y += projectile_speed
-        # Shoot Northeast
-        if self.direction[1] and self.direction[2] and not (self.direction[0] or self.direction[3]):
-            self.rect.x += projectile_speed
-            self.rect.y -= projectile_speed
-        # Shoot Northwest
-        if self.direction[0] and self.direction[2] and not (self.direction[1] or self.direction[3]):
-            self.rect.x -= projectile_speed
-            self.rect.y -= projectile_speed
-        # Shoot Southeast
-        if self.direction[1] and self.direction[3] and not (self.direction[0] or self.direction[2]):
-            self.rect.x += projectile_speed
-            self.rect.y += projectile_speed
-        # Shoot Southwest
-        if self.direction[0] and self.direction[3] and not (self.direction[1] or self.direction[2]):
-            self.rect.x -= projectile_speed
-            self.rect.y += projectile_speed
+        x_dir = (self.direction[1] - self.direction[0]) * projectile_speed
+        y_dir = (self.direction[3] - self.direction[2]) * projectile_speed
+
+        self.rect.x += x_dir
+        self.rect.y += y_dir
 
         # Once the projectile leaves the map, kill
         if self.rect.left < 0 \

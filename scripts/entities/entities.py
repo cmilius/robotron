@@ -41,7 +41,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
         """
         self.move_entity(movement=movement)
 
-    def _iterate_animation_frames(self, entity=None):
+    def iterate_animation_frames(self, entity=None):
         """
         Update the animation frames.
         There are two counters, the buffer and the flipbook index.
@@ -70,12 +70,10 @@ class PhysicsEntity(pygame.sprite.Sprite):
         :param list frame_movement: The direction vector the entity is moving in.
         :return: None
         """
-        if self.e_type == "hero":
-            # hero logic is handled in the Hero class
-            pass
-        elif self.e_type in FAMILY_MEMBERS or self.e_type == "brain":
+
+        if self.e_type in FAMILY_MEMBERS or self.e_type == "brain":
             # family and brain both have left/right/up/down movement
-            self._iterate_animation_frames()
+            self.iterate_animation_frames()
             if frame_movement[0] > 0:
                 self.action = "walk_right"
             elif frame_movement[0] < 0:
@@ -88,13 +86,13 @@ class PhysicsEntity(pygame.sprite.Sprite):
                 self.image = self.game.human_family_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
             elif self.e_type == "brain":
                 self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
-        else:
+        elif self.e_type != "hero":
             if self.e_type == "grunt":
                 if frame_movement[0] or frame_movement[1]:
                     self.action = "walk"
-                    self._iterate_animation_frames("grunt")
+                    self.iterate_animation_frames("grunt")
             if self.e_type == "hulk":
-                self._iterate_animation_frames()
+                self.iterate_animation_frames()
                 if frame_movement[0] == 0 and frame_movement[1] != 0:
                     self.action = "walk_vertical"
                 elif frame_movement[0] > 0:
@@ -104,6 +102,18 @@ class PhysicsEntity(pygame.sprite.Sprite):
             self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
     def move_entity(self, movement=(0, 0)):
+        if len(movement) == 4:
+            # hero logic is given in a list of len==4, not len==2
+            x_dir = (movement[1] - movement[0])
+            y_dir = (movement[3] - movement[2])
+
+            self.pos[0] += x_dir
+            self.pos[1] += y_dir
+
+            self.rect.x = self.pos[0]
+            self.rect.y = self.pos[1]
+            return
+
         frame_movement = [movement[0], movement[1]]
 
         self.pos[0] += frame_movement[0]
