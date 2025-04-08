@@ -205,6 +205,12 @@ class ConvergenceAnimations:
         # Animate each slice in the selected lists.
         for slice_list in slice_lists:
             for s in slice_list:
+
+                # Update the on-screen position of the sprite.
+                # This is mostly used for the hero respawn, when the hero can move while invulnerable
+                self.pos_x = self.sprite.pos[0]
+                self.pos_y = self.sprite.pos[1]
+
                 surf = s["surf"]
                 rect = s["rect"]
                 # Reverse the alpha transition: low alpha at start, full alpha at finish.
