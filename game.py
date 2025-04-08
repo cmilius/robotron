@@ -178,7 +178,10 @@ class Game:
                     else:
                         # respawn the hero at the center of the screen and toggle invulnerability
                         self.hero.move_to_center()
-                        self.hero.respawn_invuln = 120  # set the hero invulnerable for 2 seconds
+                        self.hero.respawn_invuln = 90  # set the hero invulnerable for 1.5 seconds
+                        self.converge_list.append(ConvergenceAnimations(self, self.hero,
+                                                                            (random.choice(["vertical", "horizontal"]),
+                                                                             0)))
             #   hulk-to-family
             pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
             #   hero-to-family
