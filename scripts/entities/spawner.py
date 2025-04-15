@@ -5,6 +5,7 @@ import sys
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
+from scripts.entities.brain import Brain
 from scripts.entities.dad import Dad
 from scripts.entities.mom import Mom
 from scripts.entities.mike import Mike
@@ -41,7 +42,6 @@ class Spawner:
         # get the center of the map, use int() to get integer rather than float.
         map_center_x = int(self.display.get_width() / 2)
         map_center_y = int(self.display.get_height() / 2)
-
 
         # get the intensity. Search by entity type, then by level number (which has to be a string).
         try:
@@ -92,6 +92,13 @@ class Spawner:
             spheroid = Spheroid(self.game, pos, self.game.spheroid_size)
             self.game.enemy_group.add(spheroid)
             self.game.allsprites.add(spheroid)
+
+        # spawn brains
+        brain_positions = self.spawn_positions("brains")
+        for pos in brain_positions:
+            brain = Brain(self.game, pos, self.game.brain_size)
+            self.game.enemy_group.add(brain)
+            self.game.allsprites.add(brain)
 
     def spawn_family(self, wave_count):
         """

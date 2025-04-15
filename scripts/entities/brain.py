@@ -40,6 +40,7 @@ class Brain(PhysicsEntity):
         
         # unless there are humans left, chase the closest one
         humans = self.game.family_group.sprites()
+
         if len(humans) > 0:
             
             # initialize the closest human position
@@ -54,7 +55,7 @@ class Brain(PhysicsEntity):
                 # Update the smallest distance and target position if a closer human is found
                 if smallest_distance == 0 or distance <= smallest_distance:
                     smallest_distance = distance
-                    self.target_pos = human.pos       
+                    target_pos = human.pos       
 
         # move to the target position
         super().move_to_target(target_pos,
