@@ -20,14 +20,11 @@ class Enforcer(PhysicsEntity):
 
     def fire_projectile(self):
         """
-        Fire projectiles at the hero
+        Fire projectiles at the hero.
+
         :return: None
         """
-        hero_position = [self.game.hero.rect[0], self.game.hero.rect[1]]
-
-        fire_direction = list(self.direction_to_target(hero_position))
-
-        projectile = EnforcerProjectiles(self.game, "enforcer_projectile", self.pos, fire_direction)
+        projectile = EnforcerProjectiles(self.game, "enforcer_projectile", self.pos)
         self.game.enemy_projectiles.add(projectile)
         self.game.allsprites.add(projectile)
 

@@ -7,10 +7,16 @@ from scripts.entities.spawner import Spawner
 from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
+from scripts.scoring import Scoring
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+# New game values
+SCORE_COUNT = 0
+WAVE_COUNT = 0
+LIFE_COUNT = 5
 
 
 class Game:
@@ -24,18 +30,10 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.movement = [0, 0]  # [x, y]
+        self.hero_movement = [False, False, False, False]  # [left, right, up, down]
         self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
 
         self.assets = {
-            "hero": load_image("entities/hero.png"),
-            "dad": load_image("entities/dad.png"),
-            "mom": load_image("entities/mom.png"),
-            "mike": load_image("entities/mike.png"),
-            "grunt": load_image("entities/grunt.png"),
-            "hulk": load_image("entities/hulk.png"),
-            "spheroid": load_image("entities/spheroid.png"),
-            "enforcer": load_image("entities/enforcer.png"),
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
             "projectile": load_image("projectiles/hero_projectile.png")
         }
@@ -54,17 +52,22 @@ class Game:
         self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
         self.robotrons_animations = SpriteSheet("data/images/entities/robotrons_spritesheet.png")
 
-        # example use of the animations for reference, look in the json files in the data/images/entities folder for the animation names
-        # self.display.blit(self.human_family_animations.animations['mike']['walk_right'][animation_frame_count], (20, 60))
+        # initialize game counters
+        self.score_count = SCORE_COUNT
+        self.wave_count = WAVE_COUNT
+        self.life_count = LIFE_COUNT
 
-        # init counts
-        self.score_count = 0
-        self.wave_counter = 0
-        self.life_count = 3
+        # initalize the score counter
+        self.scoring = Scoring(self)
 
         # initialize the HUD
-        self.hud = HUD(self.score_count, self.wave_counter, self.life_count)
+        self.hud = HUD(self)
 
+        # initialize game conditions
+        self.game_over = False
+        self.game_restart = False
+
+        # initialize the group that will be used to draw all the sprites at once.
         self.allsprites = pygame.sprite.Group()
 
         # Create the hero
@@ -91,6 +94,17 @@ class Game:
         while True:
             self.display.fill((0, 0, 0))  # black background
 
+            if self.game_restart:
+                # if the game has been restarted, set all the counters back to the their original values.
+                self.score_count = SCORE_COUNT
+                self.wave_count = WAVE_COUNT
+                self.life_count = LIFE_COUNT
+                for entity in self.grunts_group:
+                    # this will trigger the spawn enemies code.
+                    entity.kill()
+                self.game_over = False
+                self.game_restart = False
+
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
                 # empty out any previous wave stuff
@@ -104,10 +118,12 @@ class Game:
                     family.kill()  # :(
                 # respawn the player
                 self.hero.move_to_center()
+                # reset the family score multiplier
+                self.scoring.reset_score_mult()
                 # spawn new wave
-                self.hud.wave_count += 1
-                self.spawner.spawn_enemies(self.hud.wave_count)
-                self.spawner.spawn_family(self.hud.wave_count)
+                self.wave_count += 1
+                self.spawner.spawn_enemies(self.wave_count)
+                self.spawner.spawn_family(self.wave_count)
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -115,7 +131,12 @@ class Game:
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
+                self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
+            #  hero_projectile-to-enemy_projectile
+            projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
+            if projectile_hit:
+                self.scoring.update_score("projectile")
             #   enemy-to-hero
             hero_collision = pygame.sprite.spritecollide(self.hero, self.enemy_group, False)
             hero_shot = pygame.sprite.spritecollide(self.hero, self.enemy_projectiles, False)
@@ -125,30 +146,41 @@ class Game:
                 affected_projectile = hero_shot[0]  # determine the projectile
                 affected_projectile.kill()
             if hero_collision or hero_shot:
-                if self.hud.life_count == 0:
-                    # TODO: game over
-                    pass
-                else:
-                    # TODO: respawn logic: hero invulnerability, etc.
-                    self.hud.life_count -= 1
-                    self.hero.move_to_center()
+                if not self.hero.respawn_invuln:
+                    # check if the hero is invulnerable due to respawn
+                    # if the player is not invulnerable, they lose a life.
+                    if self.life_count != 0:
+                        # this is here because otherwise you end up with a -1 life indication at the GAME OVER screen
+                        self.life_count -= 1
+                    if self.life_count == 0:
+                        self.game_over = True
+                    else:
+                        # respawn the hero at the center of the screen and toggle invulnerability
+                        self.hero.move_to_center()
+                        self.hero.respawn_invuln = 120  # set the hero invulnerable for 2 seconds
             #   hulk-to-family
             pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
             #   hero-to-family
-            pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
+            family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
+            if family_saved:
+                self.scoring.update_score("family", pos=self.hero.pos)
 
-            # Update hero
-            self.hero.update(movement=(self.movement[0], self.movement[1]),
-                             shooting=self.hero_shooting)
+            if not self.game_over:
+                # Update hero
+                self.hero.update(movement=self.hero_movement,
+                                 shooting=self.hero_shooting)
 
-            # Update groups
-            self.hero_projectiles.update()
-            self.enemy_projectiles.update()
-            self.enemy_group.update()
-            self.family_group.update()
+                # Update groups
+                self.hero_projectiles.update()
+                self.enemy_projectiles.update()
+                self.enemy_group.update()
+                self.family_group.update()
 
             # draw sprites
             self.allsprites.draw(self.display)
+            if self.game_over:
+                # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
+                self.hud.game_over()
 
             # event manager
             for event in pygame.event.get():
@@ -156,14 +188,14 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_w:
-                        self.movement[1] = -1
-                    if event.key == pygame.K_s:
-                        self.movement[1] = 1
                     if event.key == pygame.K_a:
-                        self.movement[0] = -1
+                        self.hero_movement[0] = True
                     if event.key == pygame.K_d:
-                        self.movement[0] = 1
+                        self.hero_movement[1] = True
+                    if event.key == pygame.K_w:
+                        self.hero_movement[2] = True
+                    if event.key == pygame.K_s:
+                        self.hero_movement[3] = True
                     if event.key == pygame.K_LEFT:
                         self.hero_shooting[0] = True
                     if event.key == pygame.K_RIGHT:
@@ -172,15 +204,19 @@ class Game:
                         self.hero_shooting[2] = True
                     if event.key == pygame.K_DOWN:
                         self.hero_shooting[3] = True
+                    if event.key == pygame.K_r:
+                        if self.game_over:
+                            # if the game is over, restart the game.
+                            self.game_restart = True
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_w:
-                        self.movement[1] = 0
-                    if event.key == pygame.K_s:
-                        self.movement[1] = 0
                     if event.key == pygame.K_a:
-                        self.movement[0] = 0
+                        self.hero_movement[0] = False
                     if event.key == pygame.K_d:
-                        self.movement[0] = 0
+                        self.hero_movement[1] = False
+                    if event.key == pygame.K_w:
+                        self.hero_movement[2] = False
+                    if event.key == pygame.K_s:
+                        self.hero_movement[3] = False
                     if event.key == pygame.K_LEFT:
                         self.hero_shooting[0] = False
                     if event.key == pygame.K_RIGHT:
