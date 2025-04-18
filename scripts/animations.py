@@ -26,7 +26,7 @@ class ExplodeAnimations:
         self.pos_x = self.sprite.pos[0]
         self.pos_y = self.sprite.pos[1]
 
-        self.slice_count = 5  # The number of slices to split the sprite into.
+        self.slice_count = 5  # The number of slices to split the sprite into
         self.center_index = self.slice_count // 2  # The index of the center slice, used for calculating movement speeds
 
         img_width, img_height = sprite.image.get_size()
@@ -36,6 +36,7 @@ class ExplodeAnimations:
         for i in range(self.slice_count):
             # vertical slices
             if i == self.slice_count - 1:
+                # if i is the the last index piece, take the remaining width of the image
                 width = img_width - (i * slice_width)
             else:
                 width = slice_width
@@ -69,13 +70,14 @@ class ExplodeAnimations:
 
         for slice_list in slice_lists:
             for s in slice_list:
+                # iterate through each image slice from the original entity
                 surf = s["surf"]
                 rect = s["rect"]
                 # Calculate the opacity value based on elapsed time
                 alpha = int(self.alpha_start * (1 - t) + self.alpha_end * t)
                 surf.set_alpha(alpha)
 
-                # Calculate the displacement speed for each slice based on its distance from the center slice
+                # Slices further away from the center should move faster than the center slice
                 distance_from_center = abs(s["index"] - self.center_index)
                 displace_scale = 1 + distance_from_center
 
@@ -85,6 +87,9 @@ class ExplodeAnimations:
                     new_surf = pygame.transform.scale(surf, (new_width, rect.height))
                     shift = int(self.displacement * displace_scale * t)
 
+                    # rect.x is the new position of the image slice
+                    # self.pox_x is the original position of the entity, necessary to place the splices in the correct position
+                    # shift is the displacement rate. Slices further away from center move at a faster rate
                     self.game.display.blit(new_surf, (rect.x + self.pos_x - shift, rect.y + self.pos_y))
                     self.game.display.blit(new_surf, (rect.x + self.pos_x + shift, rect.y + self.pos_y))
 
@@ -131,41 +136,40 @@ class ConvergenceAnimations:
         """
         self.game = game
         self.sprite = sprite
-        self.explode_direction = explode_direction  # Direction and mirroring flag
+        self.explode_direction = explode_direction  # [direction, mirror flag]
         self.start_time = pygame.time.get_ticks()  # Start time of the animation
         self.duration = 1500  # Duration of the convergence animation in ms
 
-        # For convergence, we'll reverse the alpha transition:
-        # Start with a lower alpha (from explosion state) and end with full opacity.
-        self.alpha_start = 255  # Final (assembled) alpha
-        self.alpha_end = 128    # Initial (exploded) alpha
+        # Start as transparent and end with full opacity
+        self.alpha_start = 255
+        self.alpha_end = 128
 
-        self.displacement = 25  # Maximum displacement (slices start displaced and converge)
+        self.displacement = 25  # Maximum displacement away from the spawn location
 
-        self.vertical_slices = []  # List for vertical slices (for horizontal convergence)
-        self.horizontal_slices = []  # List for horizontal slices (for vertical/diagonal convergence)
+        self.vertical_slices = []
+        self.horizontal_slices = []
 
-        # The on-screen position of the sprite.
+        # The position of the sprite
         self.pos_x = self.sprite.pos[0]
         self.pos_y = self.sprite.pos[1]
 
-        self.slice_count = 5
-        self.center_index = self.slice_count // 2
+        self.slice_count = 5  # number of slices
+        self.center_index = self.slice_count // 2  # calculate the center of the convergence based on the slice_count
 
-        # Split the image into slices based on its actual size.
+        # Split the image into slices
         img_width, img_height = sprite.image.get_size()
         slice_width = img_width // self.slice_count
         slice_height = img_height // self.slice_count
 
-        # Create vertical slices (for horizontal convergence).
         for i in range(self.slice_count):
+            # vertical slices
             width = img_width - (i * slice_width) if i == self.slice_count - 1 else slice_width
             rect = pygame.Rect(i * slice_width, 0, width, img_height)
             surf = sprite.image.subsurface(rect).copy()
             self.vertical_slices.append({"surf": surf, "rect": rect.copy(), "dir": "h", "index": i})
 
-        # Create horizontal slices (for vertical or diagonal convergence).
         for i in range(self.slice_count):
+            # horizontal slices
             height = img_height - (i * slice_height) if i == self.slice_count - 1 else slice_height
             rect = pygame.Rect(0, i * slice_height, img_width, height)
             surf = sprite.image.subsurface(rect).copy()
@@ -189,12 +193,11 @@ class ConvergenceAnimations:
 
         self.finished = t >= 1.0
 
-        # Determine which slice lists to animate.
-        # If the sprite is a hero, animate slices from both directions.
+        # If the sprite is a hero, animate slices from all directions
         if getattr(self.sprite, "e_type", None) == "hero":
             slice_lists = [self.vertical_slices, self.horizontal_slices]
         else:
-            # Otherwise, use the specified explode_direction for convergence.
+            # else the direction is picked at random by the entity itself
             if self.explode_direction[0] == "horizontal":
                 slice_lists = [self.vertical_slices]
             elif self.explode_direction[0] == "vertical":
@@ -202,12 +205,10 @@ class ConvergenceAnimations:
             elif self.explode_direction[0] == "diagonal":
                 slice_lists = [self.horizontal_slices]
 
-        # Animate each slice in the selected lists.
         for slice_list in slice_lists:
             for s in slice_list:
-
-                # Update the on-screen position of the sprite.
-                # This is mostly used for the hero respawn, when the hero can move while invulnerable
+                # Update the on-screen position of the sprite
+                # This is mostly used for the hero respawn because the hero can move while invulnerable
                 self.pos_x = self.sprite.pos[0]
                 self.pos_y = self.sprite.pos[1]
 
@@ -221,14 +222,14 @@ class ConvergenceAnimations:
                 distance_from_center = abs(s["index"] - self.center_index)
                 displace_scale = 1 + distance_from_center
 
-                # Animate convergence based on the type of slice.
+                # Animate convergence based on the type of slice
                 if self.explode_direction[0] == "horizontal" or getattr(self.sprite, "e_type", None) == "hero":
                     # For vertical slices (s["dir"] == "h"), converge horizontally.
                     if s["dir"] == "h":
                         new_width = max(1, int(rect.width * t))
                         new_surf = pygame.transform.scale(surf, (new_width, rect.height))
                         shift = int(self.displacement * displace_scale * rev_t)
-                        # Slices converge from left and right.
+                        # Slices converge from left and right
                         self.game.display.blit(new_surf, (rect.x + self.pos_x - shift, rect.y + self.pos_y))
                         self.game.display.blit(new_surf, (rect.x + self.pos_x + shift, rect.y + self.pos_y))
                 if self.explode_direction[0] == "vertical" or getattr(self.sprite, "e_type", None) == "hero":
@@ -237,12 +238,11 @@ class ConvergenceAnimations:
                         new_height = max(1, int(rect.height * t))
                         new_surf = pygame.transform.scale(surf, (rect.width, new_height))
                         shift = int(self.displacement * displace_scale * rev_t)
-                        # Slices converge from above and below.
+                        # Slices converge from above and below
                         self.game.display.blit(new_surf, (rect.x + self.pos_x, rect.y + self.pos_y - shift))
                         self.game.display.blit(new_surf, (rect.x + self.pos_x, rect.y + self.pos_y + shift))
                 if self.explode_direction[0] == "diagonal" or getattr(self.sprite, "e_type", None) == "hero":
-                    # For diagonal convergence, apply diagonal movement.
-                    # (We assume the diagonal slices are stored in the horizontal_slices list.)
+                    # For diagonal convergence, apply diagonal movement to horizontal slices
                     if s["dir"] == "v":
                         new_width = max(1, int(rect.width * t))
                         new_height = max(1, int(rect.height * t))
@@ -251,7 +251,7 @@ class ConvergenceAnimations:
                         # Convergence diagonally: slices move toward their proper positions.
                         self.game.display.blit(new_surf, (rect.x + self.pos_x - shift, rect.y + self.pos_y - shift))
                         self.game.display.blit(new_surf, (rect.x + self.pos_x + shift, rect.y + self.pos_y + shift))
-                        # If mirroring is enabled, also converge from the opposite diagonal.
-                        if self.explode_direction[1] == 1:
+                        # If mirroring is True, also converge from the opposite diagonal.
+                        if self.explode_direction[1]:
                             self.game.display.blit(new_surf, (rect.x + self.pos_x + shift, rect.y + self.pos_y - shift))
                             self.game.display.blit(new_surf, (rect.x + self.pos_x - shift, rect.y + self.pos_y + shift))
