@@ -72,7 +72,7 @@ class Game:
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
         self.spawn_counter = 0
-        self.spawn = True
+        self.spawn = True  # This flag blocks entities from moving
 
         # initialize game conditions
         self.game_over = False
@@ -139,6 +139,7 @@ class Game:
                 self.spawner.spawn_family()
                 for entity in self.allsprites:
                     if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
+                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
                         self.converge_list.append(ConvergenceAnimations(self, entity,
                                                                         (random.choice(["vertical", "horizontal"]), 0)))
 
@@ -149,7 +150,7 @@ class Game:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
                 for key in enemy_hit:
-                    explode_logic = key.explode_logic
+                    explode_logic = key.explode_logic  # explode logic is dictated by the projectile direction
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
                 if affected_enemy.e_type != "hulk":
@@ -203,8 +204,8 @@ class Game:
             # draw sprites
             if not self.spawn:
                 self.allsprites.draw(self.display)
-
             if self.spawn:
+                # robots should spawn into the world with the family already there, like aliens invading.
                 self.family_group.draw(self.display)
                 if self.spawn_counter == self.spawn_timer:
                     self.spawn = False
