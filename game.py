@@ -72,7 +72,7 @@ class Game:
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
         self.spawn_counter = 0
-        self.spawn = True  # This flag blocks entities from moving
+        self.pause_entity_movement = True  # This flag is active when entities are spawning into the map, blocks entity updates+movement
 
         # initialize game conditions
         self.game_over = False
@@ -115,11 +115,11 @@ class Game:
                     entity.kill()
                 self.game_over = False
                 self.game_restart = False
-                self.spawn = True
+                self.pause_entity_movement = True
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
-                self.spawn = True
+                self.pause_entity_movement = True
                 # empty out any previous wave stuff
                 for enemy in self.enemy_group:
                     enemy.kill()
@@ -149,8 +149,8 @@ class Game:
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
-                for key in enemy_hit:
-                    explode_logic = key.explode_logic  # explode logic is dictated by the projectile direction
+                for projectile in enemy_hit:
+                    explode_logic = projectile.explode_logic  # explode logic is dictated by the projectile direction
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
                 if affected_enemy.e_type != "hulk":
@@ -190,7 +190,7 @@ class Game:
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
 
-            if not self.game_over and not self.spawn:
+            if not self.game_over and not self.pause_entity_movement:
                 # Update hero
                 self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
@@ -202,13 +202,13 @@ class Game:
                 self.family_group.update()
 
             # draw sprites
-            if not self.spawn:
+            if not self.pause_entity_movement:
                 self.allsprites.draw(self.display)
-            if self.spawn:
+            if self.pause_entity_movement:
                 # robots should spawn into the world with the family already there, like aliens invading.
                 self.family_group.draw(self.display)
                 if self.spawn_counter == self.spawn_timer:
-                    self.spawn = False
+                    self.pause_entity_movement = False
                     self.spawn_counter = 0
                 else:
                     self.spawn_counter += 1
