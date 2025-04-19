@@ -57,6 +57,9 @@ class HUD:
         # Update the display
         display.blit(pygame.transform.scale(display, display.get_size()), (0, 0))
 
+        # draw any family-saved score point indicators
+        self.game.scoring.draw_family_saved_score()
+
     def game_over(self):
         """
         You lose.
