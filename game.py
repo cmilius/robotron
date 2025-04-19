@@ -273,9 +273,6 @@ class Game:
                 if animation.finished:
                     self.converge_list.remove(animation)
 
-            # draw any family saved score floats
-            self.scoring.draw_family_saved_score()
-
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
