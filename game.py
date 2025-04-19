@@ -1,6 +1,7 @@
 import sys
 import pygame
 import logging
+import random
 
 from scripts.entities.hero import Hero
 from scripts.entities.spawner import Spawner
@@ -8,6 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -39,7 +41,7 @@ class Game:
         }
 
         # pixel size of sprite
-        self.grunt_size = (29, 27)
+        self.grunt_size = (9, 13)
         self.hulk_size = (29, 27)
         self.dad_size = (29, 27)
         self.mom_size = (29, 27)
@@ -62,6 +64,15 @@ class Game:
 
         # initialize the HUD
         self.hud = HUD(self)
+
+        # Animation container
+        self.active_animations = []
+        self.converge_list = []
+
+        #
+        self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
+        self.spawn_counter = 0
+        self.pause_entity_movement = True  # This flag is active when entities are spawning into the map, blocks entity updates+movement
 
         # initialize game conditions
         self.game_over = False
@@ -104,9 +115,11 @@ class Game:
                     entity.kill()
                 self.game_over = False
                 self.game_restart = False
+                self.pause_entity_movement = True
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
+                self.pause_entity_movement = True
                 # empty out any previous wave stuff
                 for enemy in self.enemy_group:
                     enemy.kill()
@@ -122,8 +135,13 @@ class Game:
                 self.scoring.reset_score_mult()
                 # spawn new wave
                 self.wave_count += 1
-                self.spawner.spawn_enemies(self.wave_count)
-                self.spawner.spawn_family(self.wave_count)
+                self.spawner.spawn_enemies()
+                self.spawner.spawn_family()
+                for entity in self.allsprites:
+                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
+                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
+                        self.converge_list.append(ConvergenceAnimations(self, entity,
+                                                                        (random.choice(["vertical", "horizontal"]), 0)))
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -131,8 +149,12 @@ class Game:
             if enemy_hit:
                 # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
+                for projectile in enemy_hit:
+                    explode_logic = projectile.explode_logic  # explode logic is dictated by the projectile direction
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
+                if affected_enemy.e_type != "hulk":
+                    self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -157,7 +179,10 @@ class Game:
                     else:
                         # respawn the hero at the center of the screen and toggle invulnerability
                         self.hero.move_to_center()
-                        self.hero.respawn_invuln = 120  # set the hero invulnerable for 2 seconds
+                        self.hero.respawn_invuln = 90  # set the hero invulnerable for 1.5 seconds
+                        self.converge_list.append(ConvergenceAnimations(self, self.hero,
+                                                                            (random.choice(["vertical", "horizontal"]),
+                                                                             0)))
             #   hulk-to-family
             pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
             #   hero-to-family
@@ -165,7 +190,7 @@ class Game:
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
 
-            if not self.game_over:
+            if not self.game_over and not self.pause_entity_movement:
                 # Update hero
                 self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
@@ -177,7 +202,17 @@ class Game:
                 self.family_group.update()
 
             # draw sprites
-            self.allsprites.draw(self.display)
+            if not self.pause_entity_movement:
+                self.allsprites.draw(self.display)
+            if self.pause_entity_movement:
+                # robots should spawn into the world with the family already there, like aliens invading.
+                self.family_group.draw(self.display)
+                if self.spawn_counter == self.spawn_timer:
+                    self.pause_entity_movement = False
+                    self.spawn_counter = 0
+                else:
+                    self.spawn_counter += 1
+
             if self.game_over:
                 # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
                 self.hud.game_over()
@@ -228,6 +263,18 @@ class Game:
 
             # draw the HUD
             self.hud.render(self.display)
+
+            for animation in self.active_animations:
+                animation.animate_slices()
+                if animation.finished:
+                    self.active_animations.remove(animation)
+            for animation in self.converge_list:
+                animation.animate_slices()
+                if animation.finished:
+                    self.converge_list.remove(animation)
+
+            # draw any family saved score floats
+            self.scoring.draw_family_saved_score()
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
