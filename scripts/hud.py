@@ -1,5 +1,6 @@
 import pygame
 import logging
+import copy
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -94,10 +95,16 @@ class HUD:
 
         :return: None
         """
-        for skull in self.skull_anim:
-            if self.skull_anim[skull][1] > 0:
-                self.game.display.blit(self.skull_and_bones, (self.skull_anim[skull][0]))
-                self.skull_anim[skull][1] -= 1  # reduce the display countdown
+        # use copy.copy() to safely alter the dictionary while iterating through it
+        skull_anim_copy = copy.copy(self.skull_anim)
+
+        for skull in skull_anim_copy:
+            if skull_anim_copy[skull][1] > 0:
+                self.game.display.blit(self.skull_and_bones, (skull_anim_copy[skull][0]))
+                skull_anim_copy[skull][1] -= 1  # reduce the display countdown
                 # make the skull float ominously
-                self.skull_anim[skull][0][0] -= .1
-                self.skull_anim[skull][0][1] -= .1
+                skull_anim_copy[skull][0][0] -= .1
+                skull_anim_copy[skull][0][1] -= .1
+            if self.skull_anim[skull][1] == 0:
+                del self.skull_anim[skull]
+

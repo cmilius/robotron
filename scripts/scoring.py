@@ -1,4 +1,5 @@
 import logging
+import copy
 from pygame import font
 
 logger = logging.getLogger(__name__)
@@ -97,9 +98,14 @@ class Scoring:
 
         :return: None
         """
-        for saved in self.score_disp:
-            if self.score_disp[saved][1] > 0:
-                self.game.display.blit(saved, (self.score_disp[saved][0]))
-                self.score_disp[saved][1] -= 1  # reduce the display countdown
-                self.score_disp[saved][0][1] -= .1  # make the score float vertically away
+        # use copy.copy() to safely alter the dictionary while looping through it
+        score_disp_copy = copy.copy(self.score_disp)
+
+        for saved in score_disp_copy:
+            if score_disp_copy[saved][1] > 0:
+                self.game.display.blit(saved, (score_disp_copy[saved][0]))
+                score_disp_copy[saved][1] -= 1  # reduce the display countdown
+                score_disp_copy[saved][0][1] -= .1  # make the score float vertically away
+            if score_disp_copy[saved][1] == 0:
+                del self.score_disp[saved]
 
