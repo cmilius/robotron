@@ -4,6 +4,7 @@ from scripts.entities.entities import PhysicsEntity
 class Mike(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "mike", pos, size)  # inheret the PhysicsEntity class
+        self.image = self.game.human_family_animations.animations[self.e_type][self.action][0]
 
         self.target_posit = self.random_movement()
 
