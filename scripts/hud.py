@@ -1,6 +1,5 @@
 import pygame
 import logging
-import copy
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -87,7 +86,7 @@ class HUD:
         :param pos: Position of the killed family member as (x, y)
         :return: None
         """
-        self.skull_anim[int(pos[0])] = [list(pos), 160]  # 3 seconds
+        self.skull_anim[int(pos[0])] = [self.skull_and_bones, list(pos), 160]  # 3 seconds
 
     def draw_family_death(self):
         """
@@ -95,16 +94,6 @@ class HUD:
 
         :return: None
         """
-        # use copy.copy() to safely alter the dictionary while iterating through it
-        skull_anim_copy = copy.copy(self.skull_anim)
-
-        for skull in skull_anim_copy:
-            if skull_anim_copy[skull][1] > 0:
-                self.game.display.blit(self.skull_and_bones, (skull_anim_copy[skull][0]))
-                skull_anim_copy[skull][1] -= 1  # reduce the display countdown
-                # make the skull float ominously
-                skull_anim_copy[skull][0][0] -= .1
-                skull_anim_copy[skull][0][1] -= .1
-            if self.skull_anim[skull][1] == 0:
-                del self.skull_anim[skull]
+        if self.skull_anim:
+            self.skull_anim = self.game.floating_animations.float_anim(self.skull_anim)
 

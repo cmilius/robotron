@@ -9,7 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -66,9 +66,10 @@ class Game:
         # initialize the HUD
         self.hud = HUD(self)
 
-        # Animation container
+        # Animation containers
         self.active_animations = []
         self.converge_list = []
+        self.floating_animations = FloatingAnimations(self)
 
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
