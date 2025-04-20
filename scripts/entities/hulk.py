@@ -9,6 +9,7 @@ class Hulk(PhysicsEntity):
 
     def __init__(self, game, pos, size):
         super().__init__(game, "hulk", pos, size)  # inheret the PhysicsEntity class
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
         self.slowed_timer = 300
         self.timer = 300
 
@@ -52,6 +53,22 @@ class Hulk(PhysicsEntity):
                                movement=movement,
                                scaler=movement_scaler,
                                move_dir=self.move_dir)
+
+    def animate(self, frame_movement):
+        """
+        Given a list frame_movement, update the entity animations.
+
+        :param list frame_movement: The direction vector the entity is moving in.
+        :return: None
+        """
+        self.iterate_animation_frames()
+        if frame_movement[0] == 0 and frame_movement[1] != 0:
+            self.action = "walk_vertical"
+        elif frame_movement[0] > 0:
+            self.action = "walk_right"
+        elif frame_movement[0] < 0:
+            self.action = "walk_left"
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
     def hit_by_projectile(self):
         """
