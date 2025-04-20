@@ -37,7 +37,8 @@ class Game:
 
         self.assets = {
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
-            "projectile": load_image("projectiles/hero_projectile.png")
+            "projectile": load_image("projectiles/hero_projectile.png"),
+            "skull_and_bones": load_image("skull_and_bones.png")
         }
 
         # pixel size of sprite
@@ -184,7 +185,10 @@ class Game:
                                                                             (random.choice(["vertical", "horizontal"]),
                                                                              0)))
             #   hulk-to-family
-            pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
+            hulk_to_fam = pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
+            if hulk_to_fam:
+                # {<Hulk Sprite(in 3 groups)>: [<Dad Sprite(in 0 groups)>]}
+                self.hud.add_family_death(list(hulk_to_fam.values())[0][0].pos)
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:
