@@ -14,6 +14,7 @@ class Spheroid(PhysicsEntity):
     """
     def __init__(self, game, pos, size):
         super().__init__(game, "spheroid", pos, size)  # inheret from PhysicsEntity class
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
 
         self.number_of_enforcers = random.randint(2, 5)
 
