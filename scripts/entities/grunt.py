@@ -4,6 +4,7 @@ from scripts.entities.entities import PhysicsEntity
 class Grunt(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "grunt", pos, size)  # inheret the PhysicsEntity class
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
         self.movement_timer = 0
         self.move_at_time = 20
 
@@ -21,8 +22,19 @@ class Grunt(PhysicsEntity):
                                    scaler=3)
             self.movement_timer = 0
 
+    def animate(self, frame_movement):
+        """
+        Given a list frame_movement, update the entity animations.
+
+        :param list frame_movement: The direction vector the entity is moving in.
+        :return: None
+        """
+        if frame_movement[0] or frame_movement[1]:
+            self.action = "walk"
+            self.iterate_animation_frames("grunt")
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
+
     def hit_by_projectile(self):
         self.kill()
-        # TODO: add to score
 
 
