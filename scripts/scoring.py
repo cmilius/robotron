@@ -73,8 +73,9 @@ class Scoring:
             self.score_to_add = 1000 * self.score_mult
             self.game.score_count += self.score_to_add
 
-            # Add score to the score_disp dictionary. [position, time to display]
-            self.score_disp[self.font.render(str(self.score_to_add), True, (255, 255, 255))] = [list(pos), 120]
+            # Add score to the score_disp dictionary. [surf, position, time to display]
+            surf = self.font.render(str(self.score_to_add), True, (255, 255, 255))
+            self.score_disp[surf] = [surf, list(pos), 120]
 
             if not self.score_mult == 5:  # limit the score multiplier to 5
                 self.score_mult += 1
@@ -97,9 +98,7 @@ class Scoring:
 
         :return: None
         """
-        for saved in self.score_disp:
-            if self.score_disp[saved][1] > 0:
-                self.game.display.blit(saved, (self.score_disp[saved][0]))
-                self.score_disp[saved][1] -= 1  # reduce the display countdown
-                self.score_disp[saved][0][1] -= .1  # make the score float vertically away
+        if self.score_disp:
+            self.score_disp = self.game.floating_animations.float_anim(self.score_disp)
+
 

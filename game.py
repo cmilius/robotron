@@ -9,7 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -37,7 +37,8 @@ class Game:
 
         self.assets = {
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
-            "projectile": load_image("projectiles/hero_projectile.png")
+            "projectile": load_image("projectiles/hero_projectile.png"),
+            "skull_and_bones": load_image("skull_and_bones.png")
         }
 
         # pixel size of sprite
@@ -65,9 +66,10 @@ class Game:
         # initialize the HUD
         self.hud = HUD(self)
 
-        # Animation container
+        # Animation containers
         self.active_animations = []
         self.converge_list = []
+        self.floating_animations = FloatingAnimations(self)
 
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
@@ -184,7 +186,10 @@ class Game:
                                                                             (random.choice(["vertical", "horizontal"]),
                                                                              0)))
             #   hulk-to-family
-            pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
+            hulk_to_fam = pygame.sprite.groupcollide(self.hulks_group, self.family_group, False, True)
+            if hulk_to_fam:
+                # {<Hulk Sprite(in 3 groups)>: [<Dad Sprite(in 0 groups)>]}
+                self.hud.add_family_death(list(hulk_to_fam.values())[0][0].pos)
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:

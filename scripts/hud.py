@@ -21,6 +21,8 @@ class HUD:
 
         # init variables
         self.game = game
+        self.skull_and_bones = self.game.assets["skull_and_bones"]
+        self.skull_anim = {}  # holds the animation details
         
         # border setup
         self.border_color = (255, 0, 0)  # Red
@@ -60,6 +62,9 @@ class HUD:
         # draw any family-saved score point indicators
         self.game.scoring.draw_family_saved_score()
 
+        # draw any family_killed skull_and_bones
+        self.draw_family_death()
+
     def game_over(self):
         """
         You lose.
@@ -73,3 +78,22 @@ class HUD:
         self.game.display.blit(restart_text,
                                (self.game.display.get_width()/2-restart_text.get_width()/2,
                                 self.game.display.get_height()/2+game_over_text.get_height()/2+restart_text.get_height()))
+
+    def add_family_death(self, pos):
+        """
+        Add the killed family member to a dictionary that will render a death animation.
+
+        :param pos: Position of the killed family member as (x, y)
+        :return: None
+        """
+        self.skull_anim[int(pos[0])] = [self.skull_and_bones, list(pos), 160]  # 3 seconds
+
+    def draw_family_death(self):
+        """
+        Display a skull and crossbones over any family member that is killed by robots.
+
+        :return: None
+        """
+        if self.skull_anim:
+            self.skull_anim = self.game.floating_animations.float_anim(self.skull_anim)
+

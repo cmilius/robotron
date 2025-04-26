@@ -5,9 +5,7 @@ import sys
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
-from scripts.entities.dad import Dad
-from scripts.entities.mom import Mom
-from scripts.entities.mike import Mike
+from scripts.entities.family import Dad, Mom, Mike
 
 logger = logging.getLogger(__name__)
 
