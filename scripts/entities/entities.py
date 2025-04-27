@@ -58,21 +58,14 @@ class PhysicsEntity(pygame.sprite.Sprite):
             if self.frame_counter == self.spawn_frames:
                 self.block_actions = False
 
-    def iterate_animation_frames(self, entity=None):
+    def iterate_animation_frames(self):
         """
         Update the animation frames.
         There are two counters, the buffer and the flipbook index.
         The buffer is the length of time in game frames, while the
         flipbook index is the index for the individual images in the animation.
-        :param str entity: Type of entity, only required if == "grunt"
         :return: None
         """
-        if entity == "grunt":
-            # the grunt already moves on a "delay", so no buffer is required.
-            self.flipbook_index += 1
-            if self.flipbook_index == self.anim_length:
-                self.flipbook_index = 0
-            return
         self.buffer += 1
         if self.buffer_length == self.buffer:
             self.buffer = 0
