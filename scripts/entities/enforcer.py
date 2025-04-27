@@ -19,11 +19,6 @@ class Enforcer(PhysicsEntity):
 
         self.target_posit = self.random_movement()
 
-        self.block_actions = True  # block movement until the enforcer has fully spawned
-        self.spawn_frames = 6  # the number of animations frames in the enforcer spawn
-        self.frame_counter = 0
-        self.anim_frame_delay = 0
-
     def fire_projectile(self):
         """
         Fire projectiles at the hero.
@@ -43,19 +38,7 @@ class Enforcer(PhysicsEntity):
         :return: None
         """
         if self.block_actions:
-            # spawn the enforcer
-            self.anim_frame_delay += 1
-            if self.anim_frame_delay == 30:
-                self.iterate_animation_frames()
-                # the enforcer dictionary is indexed by a number, indicating the current "frame" of the spawn
-                # I did it this because each piece of the spawn changes size
-                self.image = self.game.robotrons_animations.animations[self.e_type][str(self.frame_counter)][0]
-                # TODO: extract the frame_size of the image to adjust the hitbox as the entity is spawning
-                # self.rect = self.game.robotrons_animations.animations[self.e_type][]
-                self.frame_counter += 1
-                self.anim_frame_delay = 0
-                if self.frame_counter == self.spawn_frames:
-                    self.block_actions = False
+            super().spawn_animation()
 
     def update(self, movement=(0, 0)):
         if self.block_actions:

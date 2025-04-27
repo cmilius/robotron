@@ -32,6 +32,12 @@
             "4": {"frame_data": {"x":33,"y":80,"w":7,"h":9}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
             "5": {"frame_data": {"x":43,"y":79,"w":9,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
         }
+    },
+    "quark":
+    {
+        "animations": {
+            "idle": {"frame_data": {"x":15,"y":104,"w":8,"h":8}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+        }
     }
     },
     "meta": {
