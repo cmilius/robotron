@@ -12,7 +12,7 @@ class Enforcer(PhysicsEntity):
 
     def __init__(self, game, pos, size):
         super().__init__(game, "enforcer", pos, size)
-        self.image = self.game.robotrons_animations.animations[self.e_type]["1"][0]
+        self.image = self.game.robotrons_animations.animations[self.e_type]["0"][0]
 
         self.projectile_reload = 0
         self.projectile_timer = 60  # fire rate
