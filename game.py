@@ -49,7 +49,8 @@ class Game:
         self.mike_size = (29, 27)
         self.spheroid_size = (16, 15)
         self.quark_size = (16, 15)
-        self.enforcer_size = (30, 37)
+        self.enforcer_size = (9, 11)
+        self.tank_size = (13, 16)
 
         # Load the sprite sheets
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
