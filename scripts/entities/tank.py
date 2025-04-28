@@ -13,7 +13,7 @@ class Tank(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "tank", pos, size)
         self.image = self.game.robotrons_animations.animations[self.e_type]["0"][0]
-        self.spawn_frames = 3
+        self.spawn_frames = 4
 
         # override default animation logic
         self.anim_flipbook = [0, 1, 2, 3]
