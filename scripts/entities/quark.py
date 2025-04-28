@@ -1,5 +1,6 @@
 from scripts.entities.pregnant_enemy import PregnantEnemy
 from scripts.projectiles.enforcer_projectiles import EnforcerProjectiles
+from scripts.entities.tank import Tank
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,11 +27,12 @@ class Quark(PregnantEnemy):
             self.full_anim = True  # used to stop this from setting the variable endlessly
             self.num_frames = 7  # use all the frames once close to spawning an entity
 
-        # spawn tanks
+        # spawn tank
         if self.spawn_counter == self.spawn_time:
             # spawn the tank
-            # TODO
-
+            tank = Tank(self.game, (self.pos[0], self.pos[1]), self.game.tank_size)
+            self.game.enemy_group.add(tank)
+            self.game.allsprites.add(tank)
 
             self.kill()
 
