@@ -42,14 +42,15 @@ class PhysicsEntity(pygame.sprite.Sprite):
     def spawn_animation(self):
         """
         Used for entities with a special spawn, not the normal ConvergenceAnimation.
-        :return:
+
+        :return: None
         """
         # spawn the entity
         self.anim_frame_delay += 1
         if self.anim_frame_delay == 30:
             self.iterate_animation_frames()
-            # the enforcer dictionary is indexed by a number, indicating the current "frame" of the spawn
-            # I did it this because each piece of the spawn changes size
+            # the dictionary is indexed by a number, indicating the current "frame" of the spawn
+            # I did it this way because each piece of the spawn changes size
             self.image = self.game.robotrons_animations.animations[self.e_type][str(self.frame_counter)][0]
             # TODO: extract the frame_size of the image to adjust the hitbox as the entity is spawning
             # self.rect = self.game.robotrons_animations.animations[self.e_type][]
