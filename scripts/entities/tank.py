@@ -60,5 +60,5 @@ class Tank(PhysicsEntity):
 
             super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=.7,
+                               scaler=.4,
                                move_dir=None)
