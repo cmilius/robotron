@@ -51,6 +51,7 @@ class Game:
         self.quark_size = (16, 15)
         self.enforcer_size = (9, 11)
         self.tank_size = (13, 16)
+        self.electrode_size = (9, 9)
 
         # Load the sprite sheets
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")

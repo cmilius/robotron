@@ -66,6 +66,9 @@ class Scoring:
         :param pos: the position of the entity, only needed if the entity is family
         :return: None
         """
+        if e_type == "electrode":
+            # electrodes do not give any score
+            return
         if e_type in self.enemy_score_dict.keys():
             self.game.score_count += self.enemy_score_dict[e_type]
         elif e_type == "family":
