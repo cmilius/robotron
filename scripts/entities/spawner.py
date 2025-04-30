@@ -6,14 +6,13 @@ from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
 from scripts.entities.brain import Brain
-from scripts.entities.dad import Dad
-from scripts.entities.mom import Mom
-from scripts.entities.mike import Mike
+from scripts.entities.family import Dad, Mom, Mike
 
 logger = logging.getLogger(__name__)
 
 with open("data/spawn_counts.json", "r") as f:
     WAVE_INTENSITY = json.load(f)
+
 
 class Spawner:
     def __init__(self, game):
@@ -61,11 +60,10 @@ class Spawner:
                            random.choice([y for y in range(mod_surf_size_y) if y not in y_exclude])))
         return posits
 
-    def spawn_enemies(self, wave_count):
+    def spawn_enemies(self):
         """
         Used to spawn enemies for a new wave.
 
-        :param wave_count: Current game wave count.
         :return: None
         """
         self.level = self.game.wave_count  # update the wave
@@ -93,21 +91,13 @@ class Spawner:
             self.game.enemy_group.add(spheroid)
             self.game.allsprites.add(spheroid)
 
-        # spawn brains
-        brain_positions = self.spawn_positions("brains")
-        for pos in brain_positions:
-            brain = Brain(self.game, pos, self.game.brain_size)
-            self.game.enemy_group.add(brain)
-            self.game.allsprites.add(brain)
-
     def spawn_family(self, wave_count):
         """
         Used to spawn family members for a new wave.
 
-        :param wave_count: Current game wave count.
         :return: None
         """
-        self.level = wave_count  # update the wave
+        self.level = self.game.wave_count  # update the wave
 
         # spawn dads
         dad_positions = self.spawn_positions("dad")

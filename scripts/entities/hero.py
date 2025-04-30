@@ -8,6 +8,7 @@ class Hero(PhysicsEntity):
         self.pos = list(pos)
         self.size = size
         super().__init__(self.game, "hero", self.pos, self.size)
+        self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
         self.buffer_length = 10  # override the super() buffer_length to be shorter
         self.projectile_reload = 20  # frames
         self.projectile_timer = 10  # count up to projectile reload
