@@ -287,3 +287,113 @@ class FloatingAnimations:
                 # Remove from the dictionary once the timer has run out
                 del data_dict[key]
         return data_dict
+
+
+import sys
+import pygame
+import random
+import copy
+
+
+class Squares:
+    def __init__(self, game):
+        self.game = game
+
+        self.square_dur = 2000  # milliseconds, how long it takes for a square to get to the edge
+        self.total_dur = 3000  # milliseconds, how long until the final square will be drawn
+        self.real_start = pygame.time.get_ticks()  # timer for the final square
+        self.square_spacing = 0.02  # controls new squares being drawn, dictated by the ratio of drawn to total width
+        # smaller number = more squares drawn
+
+        self.squares = {}  # dictionary of squares that will be drawn
+
+        self.center = (self.game.display.get_width() // 2, self.game.display.get_height() // 2)
+        self.width = self.game.display.get_width()
+        self.height = self.game.display.get_height()
+        self.first = True  # triggers the first square, which is generated outside the for loop
+        self.last = False  # triggers the last square, which is transparent
+        self.last_done = False  # indicates that the last square has been created, stopping all further squares
+        self.finished = False  # indicates that the last square has finished its animation, ending this animation
+        self.final_start = None
+
+        self.transition_surf = pygame.Surface(self.game.display.get_size())
+
+
+
+    def add_square(self):
+        """
+        Add a square to the stack.
+        The dictionary key is a randomly generated color.
+        The values are a list containing [ratio, square_flag, start_time].
+        """
+        start_time = pygame.time.get_ticks()  # start time of the individual square
+        if not self.last:
+            self.color = tuple(random.choices(range(256), k=3))
+        else:
+            self.color = (0, 0, 0)  # the last square is black to make the transition to the game background more smooth
+            self.last_done = True  # indicates the last square has been drawn
+
+        # [curr_ratio, square_flag, start_time]
+        self.squares[self.color] = [0, True, start_time]
+
+    def grow(self):
+        now = pygame.time.get_ticks()
+
+        full_elapsed = now - self.real_start
+        self.last = full_elapsed >= self.total_dur
+
+        if self.first:
+            self.add_square()
+            self.first = False
+
+        # use copy.copy() to safely edit dicts in a loop
+        square_copy = copy.copy(self.squares)
+        for key in square_copy:
+
+            elapsed = now - square_copy[key][2]
+            # normalize time (0 to 1) over the duration
+            t = min(elapsed / self.square_dur, 1)
+            self.squares[key][0] = t  # this keeps track of the size ratio of individual squares
+
+            # determine the size of the square by expanding over a period of time to the full width/height
+            x_ratio = self.width * square_copy[key][0]
+            y_ratio = self.height * square_copy[key][0]
+
+            rect = (self.center[0] - (x_ratio // 2), self.center[1] - (y_ratio // 2), x_ratio, y_ratio)
+
+            # draw the normal squares by using pygame rects and filling them with color
+            if self.squares[key][0] <= 1:
+                pygame.draw.rect(
+                    surface=self.transition_surf,
+                    color=key,
+                    rect=rect
+                )
+
+            # Add more squares based on how much the previous square has grown, until the last square has been drawn
+            if (x_ratio / self.width > self.square_spacing and self.squares[key][1]) and not self.last_done:
+                self.add_square()
+                self.squares[key][1] = False
+
+            # Keep the drawn squares on the screen for a period of time to allow the smaller squares to reach the edges
+            if elapsed > self.square_dur + 1000:
+                del self.squares[key]
+
+            if self.last_done:
+                if self.final_start is None:
+                    self.final_start = pygame.time.get_ticks()
+                elapsed = now - self.final_start
+                # normalize time (0 to 1) over the duration
+                t = min(elapsed / self.square_dur, 1)
+
+                # determine the size of the square by expanding over a period of time to the full width/height
+                x_ratio = self.width * t
+                y_ratio = self.height * t
+
+                rect = (self.center[0] - (x_ratio // 2), self.center[1] - (y_ratio // 2), x_ratio, y_ratio)
+
+                pygame.draw.rect(self.transition_surf, (255, 255, 255), rect)
+                self.transition_surf.set_colorkey((255, 255, 255))
+                if x_ratio == self.width:
+                    self.finished = True
+
+            self.game.display.blit(self.transition_surf, (0, 0))

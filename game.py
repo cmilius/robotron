@@ -9,7 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations, Squares
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -69,7 +69,11 @@ class Game:
         # Animation containers
         self.active_animations = []
         self.converge_list = []
+        self.converged = False
         self.floating_animations = FloatingAnimations(self)
+        self.transition_squares = None
+        self.transition_timer = 180  # 3 seconds
+        self.transition_flag = True
 
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
@@ -118,10 +122,14 @@ class Game:
                 self.game_over = False
                 self.game_restart = False
                 self.pause_entity_movement = True
+                self.transition_flag = True
+                self.converged = False
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
                 self.pause_entity_movement = True
+                self.transition_flag = True
+                self.converged = False
                 # empty out any previous wave stuff
                 for enemy in self.enemy_group:
                     enemy.kill()
@@ -139,11 +147,6 @@ class Game:
                 self.wave_count += 1
                 self.spawner.spawn_enemies()
                 self.spawner.spawn_family()
-                for entity in self.allsprites:
-                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
-                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
-                        self.converge_list.append(ConvergenceAnimations(self, entity,
-                                                                        (random.choice(["vertical", "horizontal"]), 0)))
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -195,7 +198,7 @@ class Game:
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
 
-            if not self.game_over and not self.pause_entity_movement:
+            if not self.game_over and not self.pause_entity_movement and not self.transition_flag:
                 # Update hero
                 self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
@@ -207,9 +210,11 @@ class Game:
                 self.family_group.update()
 
             # draw sprites
-            if not self.pause_entity_movement:
+            if not self.pause_entity_movement and not self.transition_flag:
+                # this is the main draw loop, active only if movement is not paused for spawn animations or transitions
                 self.allsprites.draw(self.display)
-            if self.pause_entity_movement:
+            if self.pause_entity_movement and not self.transition_flag:
+                # this is the robot entity spawn, after the transition has completed. It starts the convergence loop
                 # robots should spawn into the world with the family already there, like aliens invading.
                 self.family_group.draw(self.display)
                 if self.spawn_counter == self.spawn_timer:
@@ -217,6 +222,9 @@ class Game:
                     self.spawn_counter = 0
                 else:
                     self.spawn_counter += 1
+            elif self.transition_flag:
+                # this is the transition animation. The family should be there once it is completed.
+                self.family_group.draw(self.display)
 
             if self.game_over:
                 # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
@@ -273,10 +281,31 @@ class Game:
                 animation.animate_slices()
                 if animation.finished:
                     self.active_animations.remove(animation)
-            for animation in self.converge_list:
-                animation.animate_slices()
-                if animation.finished:
-                    self.converge_list.remove(animation)
+
+            if not self.transition_flag and not self.converged:
+                # only trigger once, to put all the current entities into the ConvergenceAnimation sequence
+                for entity in self.allsprites:
+                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
+                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
+                        self.converge_list.append(ConvergenceAnimations(self, entity,
+                                                                        (random.choice(["vertical", "horizontal"]), 0)))
+                self.converged = True
+
+            if self.converged:
+                # after all the entities are in the converge_list, we can start the animation sequence
+                for animation in self.converge_list:
+                    animation.animate_slices()
+                    if animation.finished:
+                        self.converge_list.remove(animation)
+
+            if self.transition_flag and self.transition_squares is None:
+                # if transition is true, init the Squares transition
+                self.transition_squares = Squares(self)
+            if self.transition_squares:
+                self.transition_squares.grow()
+                if self.transition_squares.finished:
+                    self.transition_squares = None
+                    self.transition_flag = False
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
