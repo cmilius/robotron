@@ -1,4 +1,5 @@
 from scripts.entities.entities import PhysicsEntity
+from scripts.entities.prog import Prog
 
 class Brain(PhysicsEntity):
     """
@@ -21,7 +22,7 @@ class Brain(PhysicsEntity):
 
         # inheret the PhysicsEntity class
         super().__init__(game, self.__class__.__name__.lower(), pos, size)  
-        
+        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
         self.action = "idle"        # initial stance
         self.target_pos = [0, 0]    # target position for the brain to move to
 
@@ -70,12 +71,16 @@ class Brain(PhysicsEntity):
         """
         # TODO: Implement the fire_projectile method for the brain.
 
-    def create_prog(self):
+    def spawn_prog(self):
         """
         Turn a human into a Prog
         :return: None
         """
-        # TODO: Implement the create_prog method for the brain.
+
+        # spawn the enforcer
+        prog = Prog(self.game, (self.pos[0], self.pos[1]), self.game.prog_size)
+        self.game.enemy_group.add(prog)
+        self.game.allsprites.add(prog)
 
     def hit_by_projectile(self):
         """
