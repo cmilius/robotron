@@ -314,10 +314,16 @@ class Squares:
         self.last = False  # triggers the last square, which is transparent
         self.last_done = False  # indicates that the last square has been created, stopping all further squares
         self.finished = False  # indicates that the last square has finished its animation, ending this animation
-        self.final_start = None
+        self.final_start = None  # the start time of the final square
 
-        self.transition_surf = pygame.Surface(self.game.display.get_size())
-
+        # Create a surface to draw our squares onto. This surface will then be blit onto the game.display
+        if self.game.first_wave:
+            # if it is the first wave, create a black background (default behaviour of Surface)
+            self.transition_surf = pygame.Surface(self.game.display.get_size())
+        else:
+            # else, make the background transparent to keep showing the HUD and other game elements
+            self.transition_surf = pygame.Surface(self.game.display.get_size(), pygame.SRCALPHA)
+            self.transition_surf.fill((0, 0, 0, 0))
 
 
     def add_square(self):
@@ -327,11 +333,7 @@ class Squares:
         The values are a list containing [ratio, square_flag, start_time].
         """
         start_time = pygame.time.get_ticks()  # start time of the individual square
-        if not self.last:
-            self.color = tuple(random.choices(range(256), k=3))
-        else:
-            self.color = (0, 0, 0)  # the last square is black to make the transition to the game background more smooth
-            self.last_done = True  # indicates the last square has been drawn
+        self.color = tuple(random.choices(range(256), k=3))
 
         # [curr_ratio, square_flag, start_time]
         self.squares[self.color] = [0, True, start_time]
@@ -340,7 +342,7 @@ class Squares:
         now = pygame.time.get_ticks()
 
         full_elapsed = now - self.real_start
-        self.last = full_elapsed >= self.total_dur
+        self.last_done = full_elapsed >= self.total_dur
 
         if self.first:
             self.add_square()
@@ -379,6 +381,7 @@ class Squares:
                 del self.squares[key]
 
             if self.last_done:
+                # we need the time that the final transparent square starts drawing
                 if self.final_start is None:
                     self.final_start = pygame.time.get_ticks()
                 elapsed = now - self.final_start
@@ -394,6 +397,6 @@ class Squares:
                 pygame.draw.rect(self.transition_surf, (255, 255, 255), rect)
                 self.transition_surf.set_colorkey((255, 255, 255))
                 if x_ratio == self.width:
-                    self.finished = True
+                    self.finished = True  # stop this animation, which will remove it from the main game loop
 
-            self.game.display.blit(self.transition_surf, (0, 0))
+        self.game.display.blit(self.transition_surf, (0, 0))
