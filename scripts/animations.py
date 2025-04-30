@@ -289,12 +289,6 @@ class FloatingAnimations:
         return data_dict
 
 
-import sys
-import pygame
-import random
-import copy
-
-
 class Squares:
     def __init__(self, game):
         self.game = game
