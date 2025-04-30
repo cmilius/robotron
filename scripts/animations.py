@@ -311,9 +311,8 @@ class Squares:
         self.width = self.game.display.get_width()
         self.height = self.game.display.get_height()
         self.first = True  # triggers the first square, which is generated outside the for loop
-        self.last = False  # triggers the last square, which is transparent
         self.last_done = False  # indicates that the last square has been created, stopping all further squares
-        self.finished = False  # indicates that the last square has finished its animation, ending this animation
+        self.finished = False  # indicates that the last square has finished its animation, ending this class animation
         self.final_start = None  # the start time of the final square
 
         # Create a surface to draw our squares onto. This surface will then be blit onto the game.display
@@ -331,6 +330,8 @@ class Squares:
         Add a square to the stack.
         The dictionary key is a randomly generated color.
         The values are a list containing [ratio, square_flag, start_time].
+
+        :return: None
         """
         start_time = pygame.time.get_ticks()  # start time of the individual square
         self.color = tuple(random.choices(range(256), k=3))
@@ -339,6 +340,11 @@ class Squares:
         self.squares[self.color] = [0, True, start_time]
 
     def grow(self):
+        """
+        Update the square dimensions based on the amount of time they have been active.
+
+        :return: None
+        """
         now = pygame.time.get_ticks()
 
         full_elapsed = now - self.real_start
