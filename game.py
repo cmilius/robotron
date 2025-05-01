@@ -9,7 +9,10 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations, Squares
+from robotron.scripts.animations.explode import ExplodeAnimations
+from robotron.scripts.animations.converge import ConvergenceAnimations
+from robotron.scripts.animations.float import FloatingAnimations
+from robotron.scripts.animations.transitions import Transitions
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -322,9 +325,9 @@ class Game:
 
             if self.transition_flag and self.transition_squares is None:
                 # if transition is true, init the Squares transition
-                self.transition_squares = Squares(self)
+                self.transition_squares = Transitions(self)
             if self.transition_squares:
-                self.transition_squares.grow()
+                self.transition_squares.iterate()
                 if self.transition_squares.finished:
                     self.transition_squares = None
                     self.transition_flag = False
