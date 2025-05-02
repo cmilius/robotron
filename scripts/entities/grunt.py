@@ -22,6 +22,12 @@ class Grunt(PhysicsEntity):
                                    scaler=3)
             self.movement_timer = 0
 
+    def iterate_animation_frames(self):
+        # the grunt already moves on a "delay", so no buffer is required.
+        self.flipbook_index += 1
+        if self.flipbook_index == self.anim_length:
+            self.flipbook_index = 0
+
     def animate(self, frame_movement):
         """
         Given a list frame_movement, update the entity animations.
@@ -31,7 +37,7 @@ class Grunt(PhysicsEntity):
         """
         if frame_movement[0] or frame_movement[1]:
             self.action = "walk"
-            self.iterate_animation_frames("grunt")
+            self.iterate_animation_frames()
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
     def hit_by_projectile(self):

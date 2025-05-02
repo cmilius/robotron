@@ -24,6 +24,12 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.buffer = 0  # the counter for buffer, will count to the buffer_length then cycle
         self.anim_length = len(self.anim_flipbook)  # The number of images in the animation
 
+        # spawn animation variables, used for the enforcer and the tank
+        self.block_actions = True  # block movement until the entity has fully spawned
+        self.spawn_frames = 6  # the number of animations frames in the spawn
+        self.frame_counter = 0
+        self.anim_frame_delay = 0
+
     def update(self, movement=(0, 0)):
         """
         Update the physics entity movement.
@@ -33,21 +39,34 @@ class PhysicsEntity(pygame.sprite.Sprite):
         """
         self.move_entity(movement=movement)
 
-    def iterate_animation_frames(self, entity=None):
+    def spawn_animation(self):
+        """
+        Used for entities with a special spawn, not the normal ConvergenceAnimation.
+
+        :return: None
+        """
+        # spawn the entity
+        self.anim_frame_delay += 1
+        if self.anim_frame_delay == 30:
+            self.iterate_animation_frames()
+            # the dictionary is indexed by a number, indicating the current "frame" of the spawn
+            # I did it this way because each piece of the spawn changes size
+            self.image = self.game.robotrons_animations.animations[self.e_type][str(self.frame_counter)][0]
+            # TODO: extract the frame_size of the image to adjust the hitbox as the entity is spawning
+            # self.rect = self.game.robotrons_animations.animations[self.e_type][]
+            self.frame_counter += 1
+            self.anim_frame_delay = 0
+            if self.frame_counter == self.spawn_frames:
+                self.block_actions = False
+
+    def iterate_animation_frames(self):
         """
         Update the animation frames.
         There are two counters, the buffer and the flipbook index.
         The buffer is the length of time in game frames, while the
         flipbook index is the index for the individual images in the animation.
-        :param str entity: Type of entity, only required if == "grunt"
         :return: None
         """
-        if entity == "grunt":
-            # the grunt already moves on a "delay", so no buffer is required.
-            self.flipbook_index += 1
-            if self.flipbook_index == self.anim_length:
-                self.flipbook_index = 0
-            return
         self.buffer += 1
         if self.buffer_length == self.buffer:
             self.buffer = 0

@@ -19,7 +19,14 @@
     "spheroid":
     {
         "animations": {
-            "idle": {"frame_data": {"x":45,"y":65,"w":11,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+            "0": {"frame_data": {"x":0,"y":70,"w":1,"h":1}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "1": {"frame_data": {"x":5,"y":69,"w":3,"h":3}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "2": {"frame_data": {"x":12,"y":68,"w":5,"h":5}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "3": {"frame_data": {"x":21,"y":67,"w":8,"h":8}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "4": {"frame_data": {"x":32,"y":66,"w":9,"h":9}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "5": {"frame_data": {"x":45,"y":65,"w":11,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "6": {"frame_data": {"x":60,"y":64,"w":12,"h":12}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "7": {"frame_data": {"x":77,"y":63,"w":15,"h":15}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
         }
     },
     "enforcer":
@@ -31,6 +38,29 @@
             "3": {"frame_data": {"x":23,"y":80,"w":5,"h":9}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
             "4": {"frame_data": {"x":33,"y":80,"w":7,"h":9}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
             "5": {"frame_data": {"x":43,"y":79,"w":9,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+        }
+    },
+    "quark":
+    {
+        "animations": {
+            "0": {"frame_data": {"x":0,"y":107,"w":3,"h":3}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "1": {"frame_data": {"x":7,"y":106,"w":5,"h":5}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "2": {"frame_data": {"x":16,"y":105,"w":7,"h":7}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "3": {"frame_data": {"x":27,"y":104,"w":9,"h":9}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "4": {"frame_data": {"x":40,"y":103,"w":11,"h":11}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "5": {"frame_data": {"x":55,"y":102,"w":13,"h":13}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "6": {"frame_data": {"x":72,"y":101,"w":15,"h":15}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "7": {"frame_data": {"x":91,"y":101,"w":15,"h":15}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1}
+        }
+    },
+    "tank":
+    {
+        "animations": {
+            "0": {"frame_data": {"x":0,"y":121,"w":6,"h":7}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "1": {"frame_data": {"x":8,"y":121,"w":7,"h":8}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "2": {"frame_data": {"x":17,"y":119,"w":10,"h":12}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "3": {"frame_data": {"x":29,"y":117,"w":13,"h":16}, "frame_padding": {"x":0,"y":0}, "rows": 1, "cols": 1},
+            "walk": {"frame_data": {"x":29,"y":117,"w":13,"h":16}, "frame_padding": {"x":2,"y":0}, "rows": 1, "cols": 4}
         }
     }
     },

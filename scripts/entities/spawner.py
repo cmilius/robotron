@@ -5,6 +5,7 @@ import sys
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
+from scripts.entities.quark import Quark
 from scripts.entities.family import Dad, Mom, Mike
 
 logger = logging.getLogger(__name__)
@@ -90,6 +91,13 @@ class Spawner:
             spheroid = Spheroid(self.game, pos, self.game.spheroid_size)
             self.game.enemy_group.add(spheroid)
             self.game.allsprites.add(spheroid)
+
+        # spawn quarks
+        quark_positions =self.spawn_positions("quarks")
+        for pos in quark_positions:
+            quark = Quark(self.game, pos, self.game.quark_size)
+            self.game.enemy_group.add(quark)
+            self.game.allsprites.add(quark)
 
     def spawn_family(self):
         """
