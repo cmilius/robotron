@@ -20,12 +20,8 @@ class PregnantEnemy(PhysicsEntity):
         self.num_frames = 4  # start by only iterating through the initial images (zero index)
         self.image = self.game.robotrons_animations.animations[self.e_type][str(self.frame_counter)][0]
 
-        if e_type == "spheroid":
-            self.number_of_children = random.randint(2, 5)
-        elif e_type == "quark":
-            self.number_of_children = 1
-        else:
-            logger.critical("e_type should be quark or spheroid.")
+        # Assigned in the specific class, number of sub-entities this entity will spawn
+        self.number_of_children = None
 
         self.target_posit = self.random_movement()
         self.spawn_counter = 0
