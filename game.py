@@ -53,6 +53,7 @@ class Game:
         self.tank_size = (13, 16)
         self.electrode_size = (9, 9)
 
+
         # Load the sprite sheets
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
         self.human_family_animations = SpriteSheet("data/images/entities/human_family_spritesheet.png")
