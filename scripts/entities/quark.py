@@ -15,6 +15,7 @@ class Quark(PregnantEnemy):
         super().__init__(game, "quark", pos, size)  # inheret from PhysicsEntity class
         self.number_of_children = 1
 
+
     def update(self, movement=(0, 0)):
         """
         Move the quark.

@@ -14,8 +14,8 @@ class Spheroid(PregnantEnemy):
     """
     def __init__(self, game, pos, size):
         super().__init__(game, "spheroid", pos, size)  # inheret from PhysicsEntity class
-
         self.number_of_children = random.randint(2, 5)
+
         self.pause_mvmt = False  # pause the movement briefly when spawning an enforcer
         self.pause_timer = 0
         self.pause_limit = 60  # pause for 1 second

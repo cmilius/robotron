@@ -2,6 +2,7 @@ import random
 import logging
 import json
 import sys
+from scripts.entities.electrode import Electrode
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
@@ -68,6 +69,13 @@ class Spawner:
         :return: None
         """
         self.level = self.game.wave_count  # update the wave
+
+        # spawn electrodes
+        electrode_positions = self.spawn_positions("electrodes")
+        for pos in electrode_positions:
+            electrode = Electrode(self.game, pos, self.game.grunt_size)
+            self.game.enemy_group.add(electrode)
+            self.game.allsprites.add(electrode)
 
         # spawn grunts
         grunt_positions = self.spawn_positions("grunts")
