@@ -90,7 +90,7 @@ class Game:
 
         # initialize game conditions
         self.game_over = False
-        self.game_restart = False
+        self.game_reset = False
 
         # initialize the group that will be used to draw all the sprites at once.
         self.allsprites = pygame.sprite.Group()
@@ -115,13 +115,13 @@ class Game:
         # Family group
         self.family_group = pygame.sprite.Group()
 
-    def restart_game(self):
+    def reset_game(self):
         """ Restart the game by setting counters and flags back to their original values."""
         self.score_count = SCORE_COUNT
         self.wave_count = WAVE_COUNT
         self.life_count = LIFE_COUNT
         self.game_over = False
-        self.game_restart = False
+        self.game_reset = False
         self.pause_entity_movement = True
         self.transition_flag = True
         self.converged = False
@@ -135,8 +135,8 @@ class Game:
         while True:
             self.display.fill((0, 0, 0))  # black background
 
-            if self.game_restart:
-                self.restart_game()
+            if self.game_reset:
+                self.reset_game()
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
@@ -280,7 +280,7 @@ class Game:
                     if event.key == pygame.K_r:
                         if self.game_over:
                             # if the game is over, restart the game.
-                            self.game_restart = True
+                            self.game_reset = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
                         self.hero_movement[0] = False
