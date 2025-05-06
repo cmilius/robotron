@@ -9,7 +9,10 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations, ShrinkAnimations
+from robotron.scripts.animations.explode import ExplodeAnimations
+from robotron.scripts.animations.converge import ConvergenceAnimations
+from robotron.scripts.animations.float import FloatingAnimations
+from robotron.scripts.animations.transitions import Transitions
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -19,6 +22,9 @@ logger = logging.getLogger(__name__)
 SCORE_COUNT = 0
 WAVE_COUNT = 0
 LIFE_COUNT = 5
+
+# MISC CONSTANTS
+TRANSITION_TIMER = 120  # Tied to the length of the Squares animation
 
 
 class Game:
@@ -73,8 +79,14 @@ class Game:
         # Animation containers
         self.active_animations = []
         self.converge_list = []
+        self.converged = False  # indicates whether all of the entities have been added to the converge_list list
         self.shrink_list = []
         self.floating_animations = FloatingAnimations(self)
+        self.transition_squares = None  # will hold the Squares class
+        self.transition_timer = TRANSITION_TIMER  # tied to the Squares class square_dur attribute
+        self.transition_flag = True  # Indicates when the squares transition animation is active
+        self.level_transition = False  # Stops entity movement after level complete, resets once transition fill the screen
+        self.first_wave = True  # Tells the Squares animation whether to draw a black screen or not to block the HUD
 
         #
         self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
@@ -83,7 +95,7 @@ class Game:
 
         # initialize game conditions
         self.game_over = False
-        self.game_restart = False
+        self.game_reset = False
 
         # initialize the group that will be used to draw all the sprites at once.
         self.allsprites = pygame.sprite.Group()
@@ -108,47 +120,59 @@ class Game:
         # Family group
         self.family_group = pygame.sprite.Group()
 
+    def reset_game(self):
+        """ Restart the game by setting counters and flags back to their original values."""
+        self.score_count = SCORE_COUNT
+        self.wave_count = WAVE_COUNT
+        self.life_count = LIFE_COUNT
+        self.game_over = False
+        self.game_reset = False
+        self.pause_entity_movement = True
+        self.transition_flag = True
+        self.converged = False
+        self.first_wave = True
+
+        for entity in self.grunts_group:
+            # this will trigger the spawn enemies code.
+            entity.kill()
+
     def run(self):
         while True:
             self.display.fill((0, 0, 0))  # black background
 
-            if self.game_restart:
-                # if the game has been restarted, set all the counters back to the their original values.
-                self.score_count = SCORE_COUNT
-                self.wave_count = WAVE_COUNT
-                self.life_count = LIFE_COUNT
-                for entity in self.grunts_group:
-                    # this will trigger the spawn enemies code.
-                    entity.kill()
-                self.game_over = False
-                self.game_restart = False
-                self.pause_entity_movement = True
+            if self.game_reset:
+                self.reset_game()
 
             # Spawn enemies
             if not self.grunts_group:  # TODO: This will eventually need to be a 'everything except hulks' group
                 self.pause_entity_movement = True
-                # empty out any previous wave stuff
-                for enemy in self.enemy_group:
-                    enemy.kill()
-                for projectile in self.hero_projectiles:
-                    projectile.kill()
-                for projectile in self.enemy_projectiles:
-                    projectile.kill()
-                for family in self.family_group:
-                    family.kill()  # :(
-                # respawn the player
-                self.hero.move_to_center()
-                # reset the family score multiplier
-                self.scoring.reset_score_mult()
-                # spawn new wave
-                self.wave_count += 1
-                self.spawner.spawn_enemies()
-                self.spawner.spawn_family()
-                for entity in self.allsprites:
-                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
-                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
-                        self.converge_list.append(ConvergenceAnimations(self, entity,
-                                                                        (random.choice(["vertical", "horizontal"]), 0)))
+                self.transition_flag = True
+                self.converged = False
+                self.level_transition = True
+                # wait for the Squares animation to fill the screen before spawning and moving entities for a new wave
+                if self.transition_timer == 0:
+                    # empty out any previous wave stuff
+                    for enemy in self.enemy_group:
+                        enemy.kill()
+                    for projectile in self.hero_projectiles:
+                        projectile.kill()
+                    for projectile in self.enemy_projectiles:
+                        projectile.kill()
+                    for family in self.family_group:
+                        family.kill()  # :(
+                    # respawn the player
+                    self.hero.move_to_center()
+                    # reset the family score multiplier
+                    self.scoring.reset_score_mult()
+                    # spawn new wave
+                    self.wave_count += 1
+                    self.spawner.spawn_enemies()
+                    self.spawner.spawn_family()
+                    self.transition_timer = TRANSITION_TIMER
+                    self.first_wave = False
+                    self.level_transition = False
+                else:
+                    self.transition_timer -= 1
 
             # collision detection
             #   hero_projectile-to-enemy
@@ -202,7 +226,7 @@ class Game:
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
 
-            if not self.game_over and not self.pause_entity_movement:
+            if not self.game_over and not self.pause_entity_movement and not self.transition_flag:
                 # Update hero
                 self.hero.update(movement=self.hero_movement,
                                  shooting=self.hero_shooting)
@@ -214,16 +238,25 @@ class Game:
                 self.family_group.update()
 
             # draw sprites
-            if not self.pause_entity_movement:
+            if self.level_transition:
+                # Keeps all of the entities on the screen until the Squares animation fills the screen.
+                # Only activates between waves
                 self.allsprites.draw(self.display)
-            if self.pause_entity_movement:
+            elif self.transition_flag:
+                # Main transition animation. The family should spawn in once the squares have filled the screen
+                self.family_group.draw(self.display)
+            elif self.pause_entity_movement:
+                # Robot entity spawn, after the transition has completed. It starts the convergence loop
                 # robots should spawn into the world with the family already there, like aliens invading.
                 self.family_group.draw(self.display)
-                if self.spawn_counter == self.spawn_timer:
+                if self.spawn_counter >= self.spawn_timer:
                     self.pause_entity_movement = False
                     self.spawn_counter = 0
                 else:
                     self.spawn_counter += 1
+            else:
+                # Main draw loop, active if movement is not paused for spawn animations or transitions
+                self.allsprites.draw(self.display)
 
             if self.game_over:
                 # GAME OVER text drawn here to ensure it is drawn on top of all the other sprites.
@@ -254,7 +287,7 @@ class Game:
                     if event.key == pygame.K_r:
                         if self.game_over:
                             # if the game is over, restart the game.
-                            self.game_restart = True
+                            self.game_reset = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
                         self.hero_movement[0] = False
@@ -280,6 +313,22 @@ class Game:
                 animation.animate_slices()
                 if animation.finished:
                     self.active_animations.remove(animation)
+
+            if not self.transition_flag and not self.converged:
+                # only trigger once, to put all the current entities into the ConvergenceAnimation sequence
+                for entity in self.allsprites:
+                    if entity.e_type != "mike" and entity.e_type != "mom" and entity.e_type != "dad":
+                        # if the entity is not a family member, spawn them on the screen using ConvergenceAnimations
+                        self.converge_list.append(ConvergenceAnimations(self, entity,
+                                                                        (random.choice(["vertical", "horizontal"]), 0)))
+                self.converged = True
+
+            if self.converged:
+                # after all the entities are in the converge_list, we can start the animation sequence
+                for animation in self.converge_list:
+                    animation.animate_slices()
+                    if animation.finished:
+                        self.converge_list.remove(animation)
             for animation in self.converge_list:
                 animation.animate_slices()
                 if animation.finished:
@@ -288,6 +337,15 @@ class Game:
                 animation.shrink()
                 if animation.finished:
                     self.shrink_list.remove(animation)
+
+            if self.transition_flag and self.transition_squares is None:
+                # if transition is true, init the Squares transition
+                self.transition_squares = Transitions(self)
+            if self.transition_squares:
+                self.transition_squares.iterate()
+                if self.transition_squares.finished:
+                    self.transition_squares = None
+                    self.transition_flag = False
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
