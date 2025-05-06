@@ -2,9 +2,11 @@ import random
 import logging
 import json
 import sys
+from scripts.entities.electrode import Electrode
 from scripts.entities.grunt import Grunt
 from scripts.entities.hulk import Hulk
 from scripts.entities.spheroid import Spheroid
+from scripts.entities.quark import Quark
 from scripts.entities.brain import Brain
 from scripts.entities.family import Dad, Mom, Mike
 
@@ -68,6 +70,13 @@ class Spawner:
         """
         self.level = self.game.wave_count  # update the wave
 
+        # spawn electrodes
+        electrode_positions = self.spawn_positions("electrodes")
+        for pos in electrode_positions:
+            electrode = Electrode(self.game, pos, self.game.grunt_size)
+            self.game.enemy_group.add(electrode)
+            self.game.allsprites.add(electrode)
+
         # spawn grunts
         grunt_positions = self.spawn_positions("grunts")
         for pos in grunt_positions:
@@ -90,6 +99,13 @@ class Spawner:
             spheroid = Spheroid(self.game, pos, self.game.spheroid_size)
             self.game.enemy_group.add(spheroid)
             self.game.allsprites.add(spheroid)
+
+        # spawn quarks
+        quark_positions =self.spawn_positions("quarks")
+        for pos in quark_positions:
+            quark = Quark(self.game, pos, self.game.quark_size)
+            self.game.enemy_group.add(quark)
+            self.game.allsprites.add(quark)
 
         # spawn brains
         brain_positions = self.spawn_positions("brains")

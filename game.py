@@ -9,7 +9,7 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations
+from scripts.animations import ExplodeAnimations, ConvergenceAnimations, FloatingAnimations, ShrinkAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -49,7 +49,10 @@ class Game:
         self.mike_size = (29, 27)
         self.prog_size = (29, 27)
         self.spheroid_size = (16, 15)
-        self.enforcer_size = (30, 37)
+        self.quark_size = (16, 15)
+        self.enforcer_size = (9, 11)
+        self.tank_size = (13, 16)
+        self.electrode_size = (9, 9)
         self.brain_size = (30, 37)
 
         # Load the sprite sheets
@@ -71,6 +74,7 @@ class Game:
         # Animation containers
         self.active_animations = []
         self.converge_list = []
+        self.shrink_list = []
         self.floating_animations = FloatingAnimations(self)
 
         #
@@ -158,8 +162,10 @@ class Game:
                     explode_logic = projectile.explode_logic  # explode logic is dictated by the projectile direction
                 self.scoring.update_score(affected_enemy.e_type)
                 affected_enemy.hit_by_projectile()
-                if affected_enemy.e_type != "hulk":
+                if affected_enemy.e_type != "hulk" and affected_enemy.e_type != "electrode":
                     self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
+                if affected_enemy.e_type == "electrode":
+                    self.shrink_list.append(ShrinkAnimations(self, affected_enemy))
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -288,6 +294,10 @@ class Game:
                 animation.animate_slices()
                 if animation.finished:
                     self.converge_list.remove(animation)
+            for animation in self.shrink_list:
+                animation.shrink()
+                if animation.finished:
+                    self.shrink_list.remove(animation)
 
             # Scale up the pixel art by bliting the smaller display onto the larger screen.
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
