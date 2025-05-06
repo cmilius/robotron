@@ -13,6 +13,7 @@ from robotron.scripts.animations.explode import ExplodeAnimations
 from robotron.scripts.animations.converge import ConvergenceAnimations
 from robotron.scripts.animations.float import FloatingAnimations
 from robotron.scripts.animations.transitions import Transitions
+from robotron.scripts.animations.shrink import ShrinkAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
