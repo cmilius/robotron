@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 class Prog(PhysicsEntity):
     """
-    Progs are spawn by spheroids, and fire projectiles at the hero while slowly moving in a random pattern.
+    Former humans who have been reprogrammed by Brains. They chase the player with deadly intent and move like fast grunts.
     """
 
     def __init__(self, game, pos, size):

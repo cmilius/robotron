@@ -19,7 +19,8 @@ Lastly, to execute the program you just need to run the 'game.py' file. `python 
 ## Reference Material
 [Robotron: 2084 Atari 7800  FAQ/Strategy Guide](https://gamefaqs.gamespot.com/atari7800/585425-robotron-2084/faqs/42864)  
 [Robotron wave information](https://www.seanriddle.com/robowaves.html)
-
+[Robotron: 2084 - Trivia](https://gamefaqs.gamespot.com/arcade/584169-robotron-2084/trivia)
+[Robotron: 2084 - FAQ](https://gamefaqs.gamespot.com/arcade/584169-robotron-2084/faqs/24698)
 
 ## Game Backstory
 
