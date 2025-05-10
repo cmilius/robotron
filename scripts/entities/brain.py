@@ -77,7 +77,7 @@ class Brain(PhysicsEntity):
         :return: None
         """
 
-        # spawn the enforcer
+        # spawn the prog at the brain's position
         prog = Prog(self.game, (self.pos[0], self.pos[1]), self.game.prog_size)
         self.game.enemy_group.add(prog)
         self.game.allsprites.add(prog)

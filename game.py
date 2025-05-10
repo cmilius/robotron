@@ -9,11 +9,11 @@ from scripts.utils import load_image
 from scripts.hud import HUD
 from scripts.entities.spritesheet import SpriteSheet
 from scripts.scoring import Scoring
-from robotron.scripts.animations.explode import ExplodeAnimations
-from robotron.scripts.animations.converge import ConvergenceAnimations
-from robotron.scripts.animations.float import FloatingAnimations
-from robotron.scripts.animations.transitions import Transitions
-from robotron.scripts.animations.shrink import ShrinkAnimations
+from scripts.animations.explode import ExplodeAnimations
+from scripts.animations.converge import ConvergenceAnimations
+from scripts.animations.float import FloatingAnimations
+from scripts.animations.transitions import Transitions
+from scripts.animations.shrink import ShrinkAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)

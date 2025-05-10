@@ -93,6 +93,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
                 self.action = "walk_down"
             elif frame_movement[1] < 0 and not frame_movement[0]:
                 self.action = "walk_up"
+
             if self.e_type in FAMILY_MEMBERS:
                 self.image = self.game.human_family_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
             elif self.e_type == "brain":
