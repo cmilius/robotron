@@ -209,7 +209,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
                  random.choice(range(self.game.display.get_height()))]
         return posit
 
-    def hit_by_projectile(self):
+    def hit_by_projectile(self, **kwargs):
         """
         Default enemy behaviour from being hit by a hero projectile is to remove it from groups with kill()
 

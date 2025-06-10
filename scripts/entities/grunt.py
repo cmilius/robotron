@@ -40,7 +40,7 @@ class Grunt(PhysicsEntity):
             self.iterate_animation_frames()
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
-    def hit_by_projectile(self):
+    def hit_by_projectile(self, **kwargs):
         self.kill()
 
 
