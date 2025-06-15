@@ -5,6 +5,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+NUMBER_OF_CHILDREN = random.randint(2, 5)  # controls how many enforcers will be spawned for each spheroid
+PAUSE_LIMIT = 60  # Controls how long the spheroid will wait while dropping off an enforcer
+SECONDARY_SPAWN_TIMER = random.randint(120, 360)  # speed up the enforcer spawn times after the first drop-off
+SPHEROID_MOVEMENT_SCALER = 0.7  # scales how fast the spheroid moves
+
 
 class Spheroid(PregnantEnemy):
     """
@@ -14,11 +20,11 @@ class Spheroid(PregnantEnemy):
     """
     def __init__(self, game, pos, size):
         super().__init__(game, "spheroid", pos, size)  # inheret from PhysicsEntity class
-        self.number_of_children = random.randint(2, 5)
+        self.number_of_children = NUMBER_OF_CHILDREN
 
         self.pause_mvmt = False  # pause the movement briefly when spawning an enforcer
         self.pause_timer = 0
-        self.pause_limit = 60  # pause for 1 second
+        self.pause_limit = PAUSE_LIMIT
 
     def update(self, movement=(0, 0)):
         """
@@ -61,7 +67,7 @@ class Spheroid(PregnantEnemy):
             if self.number_of_children == 0:
                 self.kill()
             self.spawn_counter = 0
-            self.spawn_time = random.randint(120, 360)  # speed up the spawn times
+            self.spawn_time = SECONDARY_SPAWN_TIMER
 
         # if reached its target, calculate a new target
         self.target_posit = self.reached_target(target_pos=self.target_posit)
@@ -69,7 +75,7 @@ class Spheroid(PregnantEnemy):
         if not self.pause_mvmt:
             super().move_to_target(target_pos=self.target_posit,
                                    movement=movement,
-                                   scaler=.7,
+                                   scaler=SPHEROID_MOVEMENT_SCALER,
                                    move_dir=None)
         else:
             # move_entity with default 0 movement called, to pause movement while still updating animations

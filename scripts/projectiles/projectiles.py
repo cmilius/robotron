@@ -3,6 +3,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+PROJECTILE_SPEED = 16
+
 
 class Projectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos, direction):
@@ -30,7 +33,7 @@ class Projectiles(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 6, 1)
 
     def update(self):
-        projectile_speed = 16
+        projectile_speed = PROJECTILE_SPEED
 
         # Directions truth tables
         #     [True, False, True, False]: "Northwest"

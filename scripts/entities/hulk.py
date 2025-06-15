@@ -1,6 +1,10 @@
 from scripts.entities.entities import PhysicsEntity
 import random
 
+# CONSTANTS
+SLOWED_TIMER = 300  # frames. Controls how long the hulk will be slowed by.
+DEFAULT_MOVE_SPEED_SCALER = 0.6  # The normal movement speed of the hulk
+SLOWED_MOVE_SPEED_SCALER = 0.2  # Movement speed of the hulk when slowed by hero projectile
 
 class Hulk(PhysicsEntity):
     """
@@ -10,8 +14,7 @@ class Hulk(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "hulk", pos, size)  # inheret the PhysicsEntity class
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
-        self.slowed_timer = 300
-        self.timer = 300
+        self.slowed_timer = SLOWED_TIMER
 
         self.target_posit = self.random_movement()
         self.move_dir = None
@@ -24,11 +27,11 @@ class Hulk(PhysicsEntity):
         :return: None
         """
         # If the hulk is hit with a projectile, its movement speed will be slowed for self.slowed_timer.
-        if self.timer == self.slowed_timer:
-            movement_scaler = .6
+        if self.slowed_timer <= 0:
+            movement_scaler = DEFAULT_MOVE_SPEED_SCALER
         else:
-            movement_scaler = .2
-            self.timer += 1
+            movement_scaler = SLOWED_MOVE_SPEED_SCALER
+            self.slowed_timer -= 1
 
         # pick movement direction, x or y
         if self.move_dir is None:
@@ -76,4 +79,4 @@ class Hulk(PhysicsEntity):
 
         :return: None
         """
-        self.timer = 0
+        self.slowed_timer = SLOWED_TIMER

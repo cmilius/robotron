@@ -24,8 +24,12 @@ SCORE_COUNT = 0
 WAVE_COUNT = 0
 LIFE_COUNT = 5
 
-# MISC CONSTANTS
-TRANSITION_TIMER = 120  # Tied to the length of the Squares animation
+# HERO CONSTANTS
+HERO_INVULN_TIME = 90  # set the hero invulnerable for 1.5 seconds
+
+# TRANSITION CONSTANTS
+TRANSITION_TIMER = 30  # frames, tied to the length of the Squares transition animation
+SPAWN_TIMER = 90  # frames, tied to the duration set in ConvergenceAnimation
 
 
 class Game:
@@ -90,7 +94,7 @@ class Game:
         self.first_wave = True  # Tells the Squares animation whether to draw a black screen or not to block the HUD
 
         #
-        self.spawn_timer = 90  # tied to the duration set in ConvergenceAnimation
+        self.spawn_timer = SPAWN_TIMER  # tied to the duration set in ConvergenceAnimation
         self.spawn_counter = 0
         self.pause_entity_movement = True  # This flag is active when entities are spawning into the map, blocks entity updates+movement
 
@@ -213,7 +217,7 @@ class Game:
                     else:
                         # respawn the hero at the center of the screen and toggle invulnerability
                         self.hero.move_to_center()
-                        self.hero.respawn_invuln = 90  # set the hero invulnerable for 1.5 seconds
+                        self.hero.respawn_invuln = HERO_INVULN_TIME  # set the hero invulnerable
                         self.converge_list.append(ConvergenceAnimations(self, self.hero,
                                                                             (random.choice(["vertical", "horizontal"]),
                                                                              0)))
