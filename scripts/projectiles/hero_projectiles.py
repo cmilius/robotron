@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Projectiles(pygame.sprite.Sprite):
+class HeroProjectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos, direction):
         pygame.sprite.Sprite.__init__(self)
         self.game = game

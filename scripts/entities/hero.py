@@ -1,5 +1,5 @@
 from scripts.entities.entities import PhysicsEntity
-from scripts.projectiles.projectiles import Projectiles
+from scripts.projectiles.hero_projectiles import HeroProjectiles
 
 
 class Hero(PhysicsEntity):
@@ -42,7 +42,7 @@ class Hero(PhysicsEntity):
         if self.projectile_timer != self.projectile_reload:
             self.projectile_timer += 1
         if True in self.shooting and (self.projectile_timer == self.projectile_reload):
-            projectile = Projectiles(self.game, "projectile", self.pos, self.shooting)
+            projectile = HeroProjectiles(self.game, "hero_projectile", self.pos, self.shooting)
             self.game.hero_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
             self.projectile_timer = 0  # cooldown to the projectile_reload framecount

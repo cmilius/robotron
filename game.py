@@ -25,7 +25,7 @@ WAVE_COUNT = 0
 LIFE_COUNT = 5
 
 # MISC CONSTANTS
-TRANSITION_TIMER = 120  # Tied to the length of the Squares animation
+TRANSITION_TIMER = 30  # Tied to the length of the Squares animation
 
 
 class Game:
@@ -44,7 +44,8 @@ class Game:
 
         self.assets = {
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
-            "projectile": load_image("projectiles/hero_projectile.png"),
+            "tank_projectile": load_image("projectiles/tank_projectile.png"),
+            "hero_projectile": load_image("projectiles/hero_projectile.png"),
             "skull_and_bones": load_image("skull_and_bones.png")
         }
 

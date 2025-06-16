@@ -1,9 +1,14 @@
 from scripts.entities.entities import PhysicsEntity
+from scripts.projectiles.tank_projectiles import TankProjectiles
 from pygame import transform
 import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+FIRE_RATE = 90  # frames, time before firing another projectile
+TANK_SPEED_SCALER = 0.4  # Scales the speed of the tank
+PROJECTILE_LIMIT = 20  # The tank has a limit of projectiles before running out of ammo
 
 class Tank(PhysicsEntity):
     """
@@ -20,9 +25,21 @@ class Tank(PhysicsEntity):
         self.flipbook_index = 0
 
         self.projectile_reload = 0
-        self.projectile_timer = 60  # fire rate
+        self.projectile_timer = FIRE_RATE
+        self.projectile_limit = PROJECTILE_LIMIT
 
         self.target_posit = self.random_movement()
+
+    def fire_projectile(self):
+        """
+        Fire projectiles at the hero.
+
+        :return: None
+        """
+        if not self.block_actions:
+            projectile = TankProjectiles(self.game, "tank_projectile", self.pos)
+            self.game.enemy_projectiles.add(projectile)
+            self.game.allsprites.add(projectile)
 
     def animate(self, frame_movement):
         """
@@ -53,12 +70,18 @@ class Tank(PhysicsEntity):
                 self.image = transform.flip(self.game.robotrons_animations.animations[self.e_type]["walk"][
                     self.anim_flipbook[self.flipbook_index]], True, False)
 
-            # TODO: projectiles
+            # fire projectiles
+            self.projectile_reload -= 1
+            if self.projectile_reload <= 0 and self.projectile_limit:
+                # fire torwards the player
+                self.fire_projectile()
+                self.projectile_reload = FIRE_RATE
+                self.projectile_limit -= 1
 
             # if reached its target, calculate a new target
             self.target_posit = self.reached_target(target_pos=self.target_posit)
 
             super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=.4,
+                               scaler=TANK_SPEED_SCALER,
                                move_dir=None)

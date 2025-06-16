@@ -18,10 +18,10 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
 
     def fire_to_target(self, target_pos, scaler=2):
         """
-        Move the entity torward the target.
+        Fire the projectile at the hero entity.
 
-        :param target_pos: [x, y] position for the entity to move torwards
-        :param float scaler: Scales how fast the enemy moves in relation to the target.
+        :param target_pos: [x, y] position for the projectile to fire at
+        :param float scaler: Scales how fast the projectile moves
         :return: None
         """
         target_pos = list(target_pos)
