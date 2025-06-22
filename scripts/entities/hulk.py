@@ -1,6 +1,24 @@
 from scripts.entities.entities import PhysicsEntity
 import random
+import logging
 
+logger = logging.getLogger(__name__)
+
+DIRECTION_MAP = {
+    (True, False, False, True): (-1, 1),  # Northwest
+    (True, False, True, False): (-1, -1),  # Southwest
+    (False, True, False, True): (1, 1),  # Northeast
+    (False, True, True, False): (1, -1),  # Southeast
+    (False, False, False, True): (0, 1),  # North
+    (False, False, True, False): (0, -1),  # South
+    (False, True, False, False): (1, 0),  # East
+    (True, False, False, False): (-1, 0),  # West
+}
+
+# CONSTANTS
+SLOWED_TIMER = 300  # frames. Controls how long the hulk will be slowed by.
+DEFAULT_MOVE_SPEED_SCALER = 0.6  # The normal movement speed of the hulk
+SLOWED_MOVE_SPEED_SCALER = 0.2  # Movement speed of the hulk when slowed by hero projectile
 
 class Hulk(PhysicsEntity):
     """
@@ -10,8 +28,7 @@ class Hulk(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "hulk", pos, size)  # inheret the PhysicsEntity class
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
-        self.slowed_timer = 300
-        self.timer = 300
+        self.slowed_timer = SLOWED_TIMER
 
         self.target_posit = self.random_movement()
         self.move_dir = None
@@ -24,11 +41,11 @@ class Hulk(PhysicsEntity):
         :return: None
         """
         # If the hulk is hit with a projectile, its movement speed will be slowed for self.slowed_timer.
-        if self.timer == self.slowed_timer:
-            movement_scaler = .6
+        if self.slowed_timer <= 0:
+            movement_scaler = DEFAULT_MOVE_SPEED_SCALER
         else:
-            movement_scaler = .2
-            self.timer += 1
+            movement_scaler = SLOWED_MOVE_SPEED_SCALER
+            self.slowed_timer -= 1
 
         # pick movement direction, x or y
         if self.move_dir is None:
@@ -70,10 +87,19 @@ class Hulk(PhysicsEntity):
             self.action = "walk_left"
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
 
-    def hit_by_projectile(self):
+    def hit_by_projectile(self, **kwargs):
         """
         Slows down the hulk.
 
         :return: None
         """
-        self.timer = 0
+        # This will slow down the movement scaler in update()
+        self.slowed_timer = SLOWED_TIMER
+        
+        # Push back the hulk in the direction it was hit
+        for k, val in kwargs.items():
+            hit_dir_list = val
+
+        movement = DIRECTION_MAP.get(tuple(hit_dir_list))
+        self.move_entity(movement)
+

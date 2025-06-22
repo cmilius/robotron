@@ -1,5 +1,10 @@
 import pygame
 
+# CONSTANTS
+ANIMATION_DURATION = 1500  # ms, duration of the convergence animation
+DISPLACEMENT_DISTANCE = 25  # Distance away from the spawn location that slices will spawn in
+SLICE_COUNT = 5  # The number of slices to explode into, for each respective direction
+
 class ConvergenceAnimations:
     """
     A class to animate the convergence of sprite slices into the final image.
@@ -19,13 +24,13 @@ class ConvergenceAnimations:
         self.sprite = sprite
         self.explode_direction = explode_direction  # [direction, mirror flag]
         self.start_time = pygame.time.get_ticks()  # Start time of the animation
-        self.duration = 1500  # Duration of the convergence animation in ms
+        self.duration = ANIMATION_DURATION
 
         # Start as transparent and end with full opacity
         self.alpha_start = 255
         self.alpha_end = 128
 
-        self.displacement = 25  # Maximum displacement away from the spawn location
+        self.displacement = DISPLACEMENT_DISTANCE
 
         self.vertical_slices = []
         self.horizontal_slices = []
@@ -34,7 +39,7 @@ class ConvergenceAnimations:
         self.pos_x = self.sprite.pos[0]
         self.pos_y = self.sprite.pos[1]
 
-        self.slice_count = 5  # number of slices
+        self.slice_count = SLICE_COUNT
         self.center_index = self.slice_count // 2  # calculate the center of the convergence based on the slice_count
 
         # Split the image into slices

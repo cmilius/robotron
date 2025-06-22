@@ -6,6 +6,9 @@ logger = logging.getLogger(__name__)
 
 FAMILY_MEMBERS = ("mom", "dad", "mike")
 
+# CONSTANTS
+BUFFER_LENGTH = 20  # Frames, the time delay before the flipbook animation will cycle to the next image
+BUFFER = 0  # the counter for buffer, will count to the buffer_length then cycle
 
 class PhysicsEntity(pygame.sprite.Sprite):
     def __init__(self, game, e_type, pos, size):
@@ -20,8 +23,8 @@ class PhysicsEntity(pygame.sprite.Sprite):
         # animation variables, see _iterate_animation_frames() for more information
         self.anim_flipbook = [0, 1, 0, 2]  # controls the animation static image
         self.flipbook_index = 0  # indexes the anim_flipbook list
-        self.buffer_length = 20  # the time delay before the flipbook index will cycle
-        self.buffer = 0  # the counter for buffer, will count to the buffer_length then cycle
+        self.buffer_length = BUFFER_LENGTH
+        self.buffer = BUFFER
         self.anim_length = len(self.anim_flipbook)  # The number of images in the animation
 
         # spawn animation variables, used for the enforcer and the tank
@@ -209,7 +212,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
                  random.choice(range(self.game.display.get_height()))]
         return posit
 
-    def hit_by_projectile(self):
+    def hit_by_projectile(self, **kwargs):
         """
         Default enemy behaviour from being hit by a hero projectile is to remove it from groups with kill()
 

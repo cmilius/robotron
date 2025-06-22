@@ -1,5 +1,8 @@
 from scripts.entities.entities import PhysicsEntity
 
+# CONSTANTS
+FAMILY_MOVEMENT_SCALER = 0.2  # controls the movement speed of the family
+
 
 class Family(PhysicsEntity):
     def __init__(self, game, e_type, pos, size):
@@ -13,7 +16,7 @@ class Family(PhysicsEntity):
         self.target_posit = self.reached_target(target_pos=self.target_posit)
         super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=.2,
+                               scaler=FAMILY_MOVEMENT_SCALER,
                                move_dir=None)
 
 class Dad(Family):

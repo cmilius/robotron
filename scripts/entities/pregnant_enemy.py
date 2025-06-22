@@ -5,6 +5,9 @@ from scripts.entities.enforcer import Enforcer
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+SPAWN_TIME = random.randint(480, 600)  # frames, spawn sub-entities between 8 and 10 seconds
+
 class PregnantEnemy(PhysicsEntity):
     """
     Pregnant enemies are entities that will spawn other entities, such as the spheroid and the quark.
@@ -25,7 +28,7 @@ class PregnantEnemy(PhysicsEntity):
 
         self.target_posit = self.random_movement()
         self.spawn_counter = 0
-        self.spawn_time = random.randint(480, 600)  # between
+        self.spawn_time = SPAWN_TIME
 
     def animate(self, frame_movement=None):
         """

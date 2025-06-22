@@ -5,6 +5,16 @@ logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line:
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+HUD_FONT_SIZE = 14
+GAME_OVER_FONT_SIZE = 14 * 3
+BORDER_COLOR = (255, 0, 0)  # red
+TEXT_COLOR_WHITE = (255, 255, 255)
+TEXT_COLOR_RED = (255, 0, 0)
+BORDER_THICKNESS = 5
+BORDER_PADDING = 15
+ANIMATION_TIME = 160  # frames, 3 seconds
+
 
 class HUD:
     """
@@ -16,8 +26,8 @@ class HUD:
         pygame.font.init()  # Initialize the font module
 
         # HUD setup
-        self.font = pygame.font.SysFont('Consolas', 14)  # Load the Consolas font
-        self.game_over_font = pygame.font.SysFont('Consolas', 14*3)  # Load the Consolas font
+        self.font = pygame.font.SysFont('Consolas', HUD_FONT_SIZE)  # Load the Consolas font
+        self.game_over_font = pygame.font.SysFont('Consolas', GAME_OVER_FONT_SIZE)  # Load the Consolas font
 
         # init variables
         self.game = game
@@ -25,9 +35,9 @@ class HUD:
         self.skull_anim = {}  # holds the animation details
         
         # border setup
-        self.border_color = (255, 0, 0)  # Red
-        self.border_thickness = 5
-        self.border_padding = 15
+        self.border_color = BORDER_COLOR
+        self.border_thickness = BORDER_THICKNESS
+        self.border_padding = BORDER_PADDING
 
     def render(self, display):
         """Render the HUD on the screen.
@@ -45,15 +55,15 @@ class HUD:
                          self.border_thickness)
         
         # Draw the score
-        score_text = self.font.render(f'SCORE: {self.game.score_count}', True, (255, 255, 255))
+        score_text = self.font.render(f'SCORE: {self.game.score_count}', True, TEXT_COLOR_WHITE)
         display.blit(score_text, (5, 0)) 
 
         # Draw the wave number
-        wave_text = self.font.render(f'WAVE: {self.game.wave_count}', True, (255, 255, 255))
+        wave_text = self.font.render(f'WAVE: {self.game.wave_count}', True, TEXT_COLOR_WHITE)
         display.blit(wave_text, (5, rect.height - 15))
 
         # Draw the life count
-        life_text = self.font.render(f'LIVES: {self.game.life_count}', True, (255, 255, 255))
+        life_text = self.font.render(f'LIVES: {self.game.life_count}', True, TEXT_COLOR_WHITE)
         display.blit(life_text, (rect.width - 70, rect.top))
 
         # Update the display
@@ -71,8 +81,8 @@ class HUD:
 
         :return: None
         """
-        game_over_text = self.game_over_font.render(f"GAME OVER", True, (255, 0, 0))
-        restart_text = self.font.render(f"Press 'R' to restart.", True, (255, 0, 0))
+        game_over_text = self.game_over_font.render(f"GAME OVER", True, TEXT_COLOR_RED)
+        restart_text = self.font.render(f"Press 'R' to restart.", True, TEXT_COLOR_RED)
         self.game.display.blit(game_over_text, (self.game.display.get_width()/2-game_over_text.get_width()/2,
                                                 self.game.display.get_height()/2-game_over_text.get_height()/2))
         self.game.display.blit(restart_text,
@@ -86,7 +96,7 @@ class HUD:
         :param pos: Position of the killed family member as (x, y)
         :return: None
         """
-        self.skull_anim[int(pos[0])] = [self.skull_and_bones, list(pos), 160]  # 3 seconds
+        self.skull_anim[int(pos[0])] = [self.skull_and_bones, list(pos), ANIMATION_TIME]  # 3 seconds
 
     def draw_family_death(self):
         """

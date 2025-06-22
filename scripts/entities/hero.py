@@ -2,6 +2,9 @@ from scripts.entities.entities import PhysicsEntity
 from scripts.projectiles.hero_projectiles import HeroProjectiles
 
 
+# CONSTANTS
+PROJECTILE_RELOAD_TIMER = 10  # Frames
+
 class Hero(PhysicsEntity):
     def __init__(self, game, pos, size):
         self.game = game
@@ -9,9 +12,8 @@ class Hero(PhysicsEntity):
         self.size = size
         super().__init__(self.game, "hero", self.pos, self.size)
         self.image = self.game.hero_animations.animations[self.e_type][self.action][0]
-        self.buffer_length = 10  # override the super() buffer_length to be shorter
-        self.projectile_reload = 10  # frames
-        self.projectile_timer = 5  # count up to projectile reload
+        self.buffer_length = 10  # the time delay before the flipbook index will cycle
+        self.projectile_reload = PROJECTILE_RELOAD_TIMER  # frames
         self.respawn_invuln = 0  # frames
 
         self.action = "idle"  # initial stance
@@ -45,7 +47,7 @@ class Hero(PhysicsEntity):
             projectile = HeroProjectiles(self.game, "hero_projectile", self.pos, self.shooting)
             self.game.hero_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
-            self.projectile_timer = 0  # cooldown to the projectile_reload framecount
+            self.projectile_reload = PROJECTILE_RELOAD_TIMER  # Reload the gun
 
     def _directions_logic(self, player_inputs, h_stack, v_stack):
         """

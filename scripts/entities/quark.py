@@ -5,6 +5,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+QUARK_MOVEMENT_SCALER = 1  # Scales how fast the quark moves
+
 
 class Quark(PregnantEnemy):
     """
@@ -42,5 +45,5 @@ class Quark(PregnantEnemy):
         self.target_posit = self.reached_target(target_pos=self.target_posit)
         super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=1,
+                               scaler=QUARK_MOVEMENT_SCALER,
                                move_dir=None)

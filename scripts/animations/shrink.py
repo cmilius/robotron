@@ -1,5 +1,8 @@
 import pygame
 
+# CONSTANTS
+SHRINK_DURATION = 1000 # ms, duration of the shrink animation
+
 class ShrinkAnimations:
     def __init__(self, game, sprite):
         """
@@ -17,7 +20,7 @@ class ShrinkAnimations:
 
         self.orig_size = self.surf.get_size() # get the original size of the image
         self.start_time = pygame.time.get_ticks()
-        self.duration = 1000  # duration of animation in ms
+        self.duration = SHRINK_DURATION
         self.finished = False
 
     def shrink(self):

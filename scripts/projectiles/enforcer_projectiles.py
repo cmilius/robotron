@@ -2,6 +2,9 @@ import math
 import pygame
 
 
+# CONSTANTS
+DEFAULT_SCALER = 2  # Scales how fast the projectile moves
+
 class EnforcerProjectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos):
         pygame.sprite.Sprite.__init__(self)
@@ -16,7 +19,7 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
         self.h_wall = False  # horizontal collision detection
         self.v_wall = False  # vertical collision detection
 
-    def fire_to_target(self, target_pos, scaler=2):
+    def fire_to_target(self, target_pos, scaler=DEFAULT_SCALER):
         """
         Fire the projectile at the hero entity.
 
