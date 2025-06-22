@@ -4,6 +4,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+FIRE_RATE = 60  # frames, fires every second
+TANK_SPEED_SCALER = 0.4  # Scales the speed of the tank
+
 
 class Tank(PhysicsEntity):
     """
@@ -13,14 +17,14 @@ class Tank(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "tank", pos, size)
         self.image = self.game.robotrons_animations.animations[self.e_type]["0"][0]
-        self.spawn_frames = 4
+        self.spawn_frames = 4  # dictated by the spritesheet
 
         # override default animation logic
-        self.anim_flipbook = [0, 1, 2, 3]
+        self.anim_flipbook = [0, 1, 2, 3]  # dictated by the spritesheet
         self.flipbook_index = 0
 
         self.projectile_reload = 0
-        self.projectile_timer = 60  # fire rate
+        self.projectile_timer = FIRE_RATE
 
         self.target_posit = self.random_movement()
 
@@ -60,5 +64,5 @@ class Tank(PhysicsEntity):
 
             super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=.4,
+                               scaler=TANK_SPEED_SCALER,
                                move_dir=None)

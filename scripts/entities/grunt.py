@@ -1,12 +1,14 @@
 from scripts.entities.entities import PhysicsEntity
 
+# CONSTANTS
+MOVE_AT_TIME = 20  # Frames, dictates the frame interval when all the grunts move at once
+GRUNT_MOVEMENT_SCALER = 3
 
 class Grunt(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "grunt", pos, size)  # inheret the PhysicsEntity class
         self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
-        self.movement_timer = 0
-        self.move_at_time = 20
+        self.move_at_time = MOVE_AT_TIME
 
     def update(self, movement=(0, 0)):
         """
@@ -15,12 +17,12 @@ class Grunt(PhysicsEntity):
         :param movement: Movement in (x, y). Default (0, 0)
         :return: None
         """
-        self.movement_timer += 1
-        if self.movement_timer == self.move_at_time:
+        self.move_at_time -= 1
+        if self.move_at_time <= 0:
             super().move_to_target(target_pos=(self.game.hero.rect.x, self.game.hero.rect.y),
                                    movement=movement,
-                                   scaler=3)
-            self.movement_timer = 0
+                                   scaler=GRUNT_MOVEMENT_SCALER)
+            self.move_at_time = MOVE_AT_TIME
 
     def iterate_animation_frames(self):
         # the grunt already moves on a "delay", so no buffer is required.

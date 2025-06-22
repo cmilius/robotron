@@ -4,6 +4,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+PROJECTILE_FIRE_TIMER = 60  # Frames, controls how often the enforcer will fire at the hero
+ENFORCER_MOVEMENT_SCALER = 0.7  # Scales the movement speed of the enforcer
 
 class Enforcer(PhysicsEntity):
     """
@@ -13,9 +16,7 @@ class Enforcer(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "enforcer", pos, size)
         self.image = self.game.robotrons_animations.animations[self.e_type]["0"][0]
-
-        self.projectile_reload = 0
-        self.projectile_timer = 60  # fire rate
+        self.projectile_timer = PROJECTILE_FIRE_TIMER
 
         self.target_posit = self.random_movement()
 
@@ -46,16 +47,16 @@ class Enforcer(PhysicsEntity):
             self.animate([None])
         if not self.block_actions:
             # once the enforcer is fully spawned in, resume normal functions
-            self.projectile_reload += 1
-            if self.projectile_reload == self.projectile_timer:
+            self.projectile_timer -= 1
+            if self.projectile_timer <= 0:
                 # fire torwards the player
                 self.fire_projectile()
-                self.projectile_reload = 0
+                self.projectile_timer = PROJECTILE_FIRE_TIMER
 
             # if reached its target, calculate a new target
             self.target_posit = self.reached_target(target_pos=self.target_posit)
 
             super().move_to_target(target_pos=self.target_posit,
                                movement=movement,
-                               scaler=.7,
+                               scaler=ENFORCER_MOVEMENT_SCALER,
                                move_dir=None)

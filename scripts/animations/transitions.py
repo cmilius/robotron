@@ -2,10 +2,13 @@ import pygame
 import random
 import copy
 
-SQUARE_DURATION = 2000  # milliseconds, how long it takes for a square to get to the edge
-TOTAL_DURATION = 3000  # milliseconds, how long until the final square will be drawn which ends the animation
-SQUARE_SPACING = 0.02  # controls new squares being drawn
-#  dictated by the ratio of drawn to total width. Smaller number = more squares
+# CONSTANTS
+# !!! WARNING !!!!
+# Changing the transition animation will require changing the transition timers in the main game loop
+SQUARE_DURATION = 1000  # milliseconds, how long it takes for a square to get to the edge
+TOTAL_DURATION = 1000  # milliseconds, how long until the final square will be drawn which ends the animation
+SQUARE_SPACING = 0.04  # controls new squares being drawn
+# SQUARE_SPACING is dictated by the ratio of drawn to total width. Smaller number = more squares
 
 
 class TransitionBase:
