@@ -183,12 +183,15 @@ class Game:
             #   hero_projectile-to-enemy
             enemy_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_group, True, False)
             if enemy_hit:
-                # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 affected_enemy = list(enemy_hit.values())[0][0]  # determine the affected enemy
+                # returns {<Projectiles Sprite(in 0 groups)>: [<Grunt Sprite(in 3 groups)>]}
                 for projectile in enemy_hit:
                     explode_logic = projectile.explode_logic  # explode logic is dictated by the projectile direction
+                    projectile_direction = projectile.direction
+                # update the score
                 self.scoring.update_score(affected_enemy.e_type)
-                affected_enemy.hit_by_projectile()
+                # Update the entity via its object
+                affected_enemy.hit_by_projectile(hit_dir=projectile_direction)
                 if affected_enemy.e_type != "hulk" and affected_enemy.e_type != "electrode":
                     self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
                 if affected_enemy.e_type == "electrode":
