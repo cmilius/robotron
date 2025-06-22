@@ -1,5 +1,10 @@
 import pygame
 
+# CONSTANTS
+ANIMATION_DURATION = 1000 # ms, total duration of the explode animation
+DISPLACEMENT_SPEED = 25  # the speed of the displaced slices during the animation
+SLICE_COUNT = 5  # The number of slices to explode into, for each respective direction
+
 class ExplodeAnimations:
     """
     Animate sprite explosions by splitting an image into slices and animating their expansion
@@ -10,9 +15,9 @@ class ExplodeAnimations:
         self.sprite = sprite
         self.explode_logic = explode_logic  # [direction, mirror flag]
         self.start_time = pygame.time.get_ticks()
-        self.duration = 1000  # The total duration of the animation in milliseconds
+        self.duration = ANIMATION_DURATION
         self.finished = False
-        self.displacement = 25  # The displacement speed for the slices during animation
+        self.displacement = DISPLACEMENT_SPEED
         self.alpha_start = 255  # The initial opacity value of the slices (fully opaque)
         self.alpha_end = 0  # The final opacity value of the slices (fully transparent)
 
@@ -22,7 +27,7 @@ class ExplodeAnimations:
         self.pos_x = self.sprite.pos[0]
         self.pos_y = self.sprite.pos[1]
 
-        self.slice_count = 5  # The number of slices to split the sprite into
+        self.slice_count = SLICE_COUNT
         self.center_index = self.slice_count // 2  # The index of the center slice, used for calculating movement speeds
 
         img_width, img_height = sprite.image.get_size()

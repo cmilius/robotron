@@ -2,6 +2,9 @@ import math
 import pygame
 
 
+# CONSTANTS
+DEFAULT_SCALER = 2  # Scales how fast the projectile moves
+
 class EnforcerProjectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos):
         pygame.sprite.Sprite.__init__(self)
@@ -16,12 +19,12 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
         self.h_wall = False  # horizontal collision detection
         self.v_wall = False  # vertical collision detection
 
-    def fire_to_target(self, target_pos, scaler=2):
+    def fire_to_target(self, target_pos, scaler=DEFAULT_SCALER):
         """
         Move the entity torward the target.
 
         :param target_pos: [x, y] position for the entity to move torwards
-        :param float scaler: Scales how fast the enemy moves in relation to the target.
+        :param float scaler: Scales how fast the projectile moves
         :return: None
         """
         target_pos = list(target_pos)
