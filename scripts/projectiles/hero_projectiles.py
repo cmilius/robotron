@@ -52,8 +52,8 @@ class HeroProjectiles(pygame.sprite.Sprite):
 
         # Once the projectile leaves the map, kill
         if self.rect.left < 0 \
-                or self.rect.right > self.game.display.get_width() \
-                or self.rect.top > self.game.display.get_height() \
-                or self.rect.bottom < 0:
+                or self.rect.right > self.game.active_area.width \
+                or self.rect.top > self.game.active_area.height \
+                or self.rect.bottom < self.game.active_area.top:
             self.kill()
 

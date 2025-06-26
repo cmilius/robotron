@@ -82,6 +82,9 @@ class Game:
         # initialize the HUD
         self.hud = HUD(self)
 
+        # Get the active_area, where entities can spawn and move. The area inside of the red hud rectangle
+        self.active_area = self.hud.active_area
+
         # Animation containers
         self.active_animations = []
         self.converge_list = []
@@ -107,8 +110,8 @@ class Game:
         self.allsprites = pygame.sprite.Group()
 
         # Create the hero
-        self.hero_size = (20, 27)  # pixel size
-        self.hero = Hero(self, (self.display.get_width()/2, self.display.get_height()/2), self.hero_size)
+        self.hero_size = (7, 12)  # pixel size
+        self.hero = Hero(self, (self.active_area.width/2, self.active_area.height/2), self.hero_size)
         self.hero_group = pygame.sprite.Group()
         self.hero_group.add(self.hero)
         self.allsprites.add(self.hero)
