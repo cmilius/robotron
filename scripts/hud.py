@@ -47,10 +47,10 @@ class HUD:
                           self.display_rect.width,
                           self.display_rect.height - 2 * self.border_padding)
         # Define the area inside of the hud_rect as the active_area, where entities and projectiles can move
-        self.active_area = pygame.Rect(self.display_rect.left + self.border_thickness,
-                                       self.display_rect.top + self.border_padding + self.border_thickness,
-                                       self.display_rect.width - 2 * self.border_thickness,
-                                       self.display_rect.height - 2 * self.border_padding - 2 * self.border_thickness)
+        self.active_area = pygame.Rect(self.hud_rect.left + self.border_thickness,
+                                       self.hud_rect.top + self.border_thickness,
+                                       self.hud_rect.width - 2 * self.border_thickness,
+                                       self.hud_rect.height - 2 * self.border_thickness)
 
     def render(self, display):
         """Render the HUD on the screen.
