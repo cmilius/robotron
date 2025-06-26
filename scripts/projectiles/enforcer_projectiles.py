@@ -50,9 +50,13 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
 
         # projectiles move along walls until hitting the corner
         buffer = 2
-        if (self.rect.left - buffer) < 0 or (self.rect.right + buffer) > self.game.display.get_width():
+        if self.rect.left + buffer < self.game.active_area.left:
             self.v_wall = True
-        if (self.rect.top - buffer) < 0 or (self.rect.bottom + buffer) > self.game.display.get_height():
+        if self.rect.right + buffer > self.game.active_area.right:
+            self.v_wall = True
+        if self.rect.top + buffer < self.game.active_area.top:
+            self.h_wall = True
+        if self.rect.bottom + buffer > self.game.active_area.bottom:
             self.h_wall = True
 
         # if the projectile hits a corner, kill
