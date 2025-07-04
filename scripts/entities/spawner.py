@@ -21,11 +21,11 @@ class Spawner:
         Constructor to pull in Game class.
         """
         self.game = game
-        self.display = self.game.display
+        self.active_area = self.game.active_area
 
     @staticmethod
     def get_valid_position(size, exclude_range):
-        """ Return valid positions within the display."""
+        """ Return valid positions within the active area."""
         valid_positions = [i for i in range(size) if not (exclude_range[0] <= i < exclude_range[1])]
         return random.choice(valid_positions)
 
@@ -36,13 +36,13 @@ class Spawner:
         :return: List of randomized positions per enemy_type
         """
         # account for the size of the robots to avoid clipping off the edge of the map
-        mod_surf_size_x = self.display.get_width() - self.game.grunt_size[0]
-        mod_surf_size_y = self.display.get_height() - self.game.grunt_size[1]
+        # TODO: update self.game.grunt_size to the size of the specific entity
+        mod_surf_size_x = self.active_area.width - self.game.grunt_size[0]
+        mod_surf_size_y = self.active_area.height - self.game.grunt_size[1]
 
         # get the center of the map, use int() to get integer rather than float.
-        map_center_x = int(self.display.get_width() / 2)
-        map_center_y = int(self.display.get_height() / 2)
-
+        map_center_x = int(self.active_area.width / 2)
+        map_center_y = int(self.active_area.height / 2)
 
         # get the intensity. Search by entity type, then by level number (which has to be a string).
         try:

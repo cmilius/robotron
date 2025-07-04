@@ -107,8 +107,13 @@ class PhysicsEntity(pygame.sprite.Sprite):
             x_dir = (movement[1] - movement[0])
             y_dir = (movement[3] - movement[2])
 
-            self.pos[0] += x_dir
-            self.pos[1] += y_dir
+            # check out of bounds
+            in_bounds = self.check_movement_in_bounds([x_dir, y_dir])
+            # only move in that direction if it moves to a valid in-bounds position
+            if in_bounds[0]:
+                self.pos[0] += x_dir
+            if in_bounds[1]:
+                self.pos[1] += y_dir
 
             self.rect.x = self.pos[0]
             self.rect.y = self.pos[1]
@@ -124,6 +129,28 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         # update animations
         self.animate(frame_movement)
+
+    def check_movement_in_bounds(self, frame_movement):
+        """
+        Check that the given movement is within the bounds of the active area.
+        If not, set that direction to False. Return a list of [x, y] in-bounds validity.
+
+        :param frame_movement: The current frame_movement
+        :return: in-bounds truth table
+        """
+
+        in_bounds = [True, True]
+
+        if self.rect.right + frame_movement[0] > self.game.active_area.right:
+            in_bounds[0] = False
+        if self.rect.left + frame_movement[0] < self.game.active_area.left:
+            in_bounds[0] = False
+        if self.rect.top + frame_movement[1] < self.game.active_area.top:
+            in_bounds[1] = False
+        if self.rect.bottom + frame_movement[1] > self.game.active_area.bottom:
+            in_bounds[1] = False
+
+        return in_bounds
 
     def direction_to_target(self, target_pos):
         """
@@ -183,8 +210,8 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         :return: None
         """
-        cent_y = self.game.display.get_height() // 2
-        cent_x = self.game.display.get_width() // 2
+        cent_y = self.game.active_area.height // 2
+        cent_x = self.game.active_area.width // 2
         hero_x = self.rect.x
         hero_y = self.rect.y
         self.move_entity(movement=[cent_x-hero_x, cent_y-hero_y])
@@ -208,8 +235,8 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         :return: [x, y]
         """
-        posit = [random.choice(range(self.game.display.get_width())),
-                 random.choice(range(self.game.display.get_height()))]
+        posit = [random.choice(range(self.game.active_area.width)),
+                 random.choice(range(self.game.active_area.height))]
         return posit
 
     def hit_by_projectile(self, **kwargs):

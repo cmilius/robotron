@@ -71,18 +71,22 @@ class TankProjectiles(pygame.sprite.Sprite):
 
         # projectiles bounce off of walls
         buffer = 2
-        if (self.rect.left - buffer) < 0 or (self.rect.right + buffer) > self.game.display.get_width():
-            self.h_wall = True
-        if (self.rect.top - buffer) < 0 or (self.rect.bottom + buffer) > self.game.display.get_height():
+        if self.rect.left + buffer < self.game.active_area.left:
             self.v_wall = True
+        if self.rect.right + buffer > self.game.active_area.right:
+            self.v_wall = True
+        if self.rect.top + buffer < self.game.active_area.top:
+            self.h_wall = True
+        if self.rect.bottom + buffer > self.game.active_area.bottom:
+            self.h_wall = True
 
         # if the projectile hits one of the walls, flip the movement in that direction
-        if self.h_wall and not self.flip_delay_h:
-            self.frame_movement[0] *= -1
-            self.flip_delay_h = 60
-            self.h_wall = False
         if self.v_wall and not self.flip_delay_v:
-            self.frame_movement[1] *= -1
+            self.frame_movement[0] *= -1
             self.flip_delay_v = 60
             self.v_wall = False
+        if self.h_wall and not self.flip_delay_h:
+            self.frame_movement[1] *= -1
+            self.flip_delay_h = 60
+            self.h_wall = False
 

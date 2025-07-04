@@ -41,9 +41,9 @@ class Hero(PhysicsEntity):
 
         self.shooting = self._directions_logic(shooting, self.h_stack_shooting, self.v_stack_shooting)
         # only fire if the gun is reloaded
-        if self.projectile_timer != self.projectile_reload:
-            self.projectile_timer += 1
-        if True in self.shooting and (self.projectile_timer == self.projectile_reload):
+        if self.projectile_reload > 0:
+            self.projectile_reload -= 1
+        if True in self.shooting and (self.projectile_reload <= 0):
             projectile = HeroProjectiles(self.game, "hero_projectile", self.pos, self.shooting)
             self.game.hero_projectiles.add(projectile)
             self.game.allsprites.add(projectile)

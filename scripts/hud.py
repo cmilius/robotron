@@ -39,6 +39,19 @@ class HUD:
         self.border_thickness = BORDER_THICKNESS
         self.border_padding = BORDER_PADDING
 
+        self.display_rect = game.display.get_rect()
+        # The height of the rectangle
+        # adjusted by subtracting twice the border_padding (once for the top and once for the bottom).
+        self.hud_rect = pygame.Rect(self.display_rect.left,
+                          self.display_rect.top + self.border_padding,
+                          self.display_rect.width,
+                          self.display_rect.height - 2 * self.border_padding)
+        # Define the area inside of the hud_rect as the active_area, where entities and projectiles can move
+        self.active_area = pygame.Rect(self.hud_rect.left + self.border_thickness,
+                                       self.hud_rect.top + self.border_thickness,
+                                       self.hud_rect.width - 2 * self.border_thickness,
+                                       self.hud_rect.height - 2 * self.border_thickness)
+
     def render(self, display):
         """Render the HUD on the screen.
 
@@ -46,13 +59,10 @@ class HUD:
         """
 
         # Draw a border around the game window with padding at the top and bottom
-        rect = display.get_rect()
-        pygame.draw.rect(display, self.border_color, 
-                         (rect.left, 
-                          rect.top + self.border_padding, 
-                          rect.width, 
-                          rect.height - 2 * self.border_padding),  # The height of the rectangle, adjusted by subtracting twice the border_padding (once for the top and once for the bottom).
-                         self.border_thickness)
+        pygame.draw.rect(surface=display,
+                         color=self.border_color,
+                         rect=self.hud_rect,
+                         width=self.border_thickness)
         
         # Draw the score
         score_text = self.font.render(f'SCORE: {self.game.score_count}', True, TEXT_COLOR_WHITE)
@@ -60,11 +70,11 @@ class HUD:
 
         # Draw the wave number
         wave_text = self.font.render(f'WAVE: {self.game.wave_count}', True, TEXT_COLOR_WHITE)
-        display.blit(wave_text, (5, rect.height - 15))
+        display.blit(wave_text, (5, self.display_rect.height - 15))
 
         # Draw the life count
         life_text = self.font.render(f'LIVES: {self.game.life_count}', True, TEXT_COLOR_WHITE)
-        display.blit(life_text, (rect.width - 70, rect.top))
+        display.blit(life_text, (self.display_rect.width - 70, self.display_rect.top))
 
         # Update the display
         display.blit(pygame.transform.scale(display, display.get_size()), (0, 0))
