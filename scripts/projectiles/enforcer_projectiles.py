@@ -4,13 +4,16 @@ import pygame
 
 # CONSTANTS
 DEFAULT_SCALER = 2  # Scales how fast the projectile moves
+SLOWED_TIMER = 3  # number of seconds the slow rate occur over
+FRAME_COUNTER = 20  # number of frames before each SLOW_RATE is applied
+SLOW_RATE = 0.8  # the rate that the projectile speed should be reduced by
 
 class EnforcerProjectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.p_type = p_type
-        self.pos = pos
+        self.pos = pygame.math.Vector2(pos)
 
         self.image = self.game.assets[self.p_type]
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 13, 13)
@@ -18,6 +21,10 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
         self.frame_movement = self.fire_to_target(target_pos=(self.game.hero.rect[0], self.game.hero.rect[1]))
         self.h_wall = False  # horizontal collision detection
         self.v_wall = False  # vertical collision detection
+
+        self.slowed_timer = SLOWED_TIMER
+        self.slow_rate = SLOW_RATE
+        self.frame_counter = FRAME_COUNTER
 
     def fire_to_target(self, target_pos, scaler=DEFAULT_SCALER):
         """
@@ -40,13 +47,24 @@ class EnforcerProjectiles(pygame.sprite.Sprite):
         frame_movement[1] = (target_pos[1] - e_pos[1]) / max_diff
 
         # scale the movement, can be used later to increase difficulty if desired.
-        return [frame_movement[0] * scaler,
-                frame_movement[1] * scaler]
+        return pygame.math.Vector2(frame_movement[0] * scaler,
+                                   frame_movement[1] * scaler)
 
     def update(self):
 
-        self.rect.x += self.frame_movement[0]
-        self.rect.y += self.frame_movement[1]
+        # Calculate the new speed of the projectile based on time components
+        # the projectile should smoothly slow down a certain amount after being fired.
+        if self.slowed_timer >= 0:
+            if self.frame_counter >= 0:
+                self.frame_counter -= 1
+            else:
+                self.frame_movement *= self.slow_rate
+                self.frame_counter = FRAME_COUNTER
+                self.slowed_timer -= 1
+
+        # Calculate the new position using float math to account for small changes, then round for Rect logic
+        self.pos += self.frame_movement
+        self.rect.topleft = (round(self.pos.x), round(self.pos.y))
 
         # projectiles move along walls until hitting the corner
         buffer = 2
