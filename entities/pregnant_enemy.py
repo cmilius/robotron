@@ -1,7 +1,6 @@
 import random
 import logging
-from scripts.entities.entities import PhysicsEntity
-from scripts.entities.enforcer import Enforcer
+from entities.entities import PhysicsEntity
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-from scripts.entities.entities import PhysicsEntity
+from entities.entities import PhysicsEntity
 import logging
 import random
 

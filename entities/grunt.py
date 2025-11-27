@@ -1,4 +1,4 @@
-from scripts.entities.entities import PhysicsEntity
+from entities.entities import PhysicsEntity
 
 # CONSTANTS
 MOVE_AT_TIME = 20  # Frames, dictates the frame interval when all the grunts move at once

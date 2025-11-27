@@ -1,5 +1,5 @@
-from scripts.entities.entities import PhysicsEntity
-from scripts.projectiles.hero_projectiles import HeroProjectiles
+from entities.entities import PhysicsEntity
+from projectiles.hero_projectiles import HeroProjectiles
 
 
 # CONSTANTS

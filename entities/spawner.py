@@ -2,12 +2,12 @@ import random
 import logging
 import json
 import sys
-from scripts.entities.electrode import Electrode
-from scripts.entities.grunt import Grunt
-from scripts.entities.hulk import Hulk
-from scripts.entities.spheroid import Spheroid
-from scripts.entities.quark import Quark
-from scripts.entities.family import Dad, Mom, Mike
+from entities.electrode import Electrode
+from entities.grunt import Grunt
+from entities.hulk import Hulk
+from entities.spheroid import Spheroid
+from entities.quark import Quark
+from entities.family import Dad, Mom, Mike
 
 logger = logging.getLogger(__name__)
 

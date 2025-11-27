@@ -2,18 +2,19 @@ import sys
 import pygame
 import logging
 import random
+import asyncio
 
-from scripts.entities.hero import Hero
-from scripts.entities.spawner import Spawner
-from scripts.utils import load_image
-from scripts.hud import HUD
-from scripts.entities.spritesheet import SpriteSheet
-from scripts.scoring import Scoring
-from robotron.scripts.animations.explode import ExplodeAnimations
-from robotron.scripts.animations.converge import ConvergenceAnimations
-from robotron.scripts.animations.float import FloatingAnimations
-from robotron.scripts.animations.transitions import Transitions
-from robotron.scripts.animations.shrink import ShrinkAnimations
+from entities.hero import Hero
+from entities.spawner import Spawner
+from utils import load_image
+from hud import HUD
+from entities.spritesheet import SpriteSheet
+from scoring import Scoring
+from animations.explode import ExplodeAnimations
+from animations.converge import ConvergenceAnimations
+from animations.float import FloatingAnimations
+from animations.transitions import Transitions
+from animations.shrink import ShrinkAnimations
 
 logging.basicConfig(format='%(name)s %(levelname)s %(asctime)s %(module)s (line: %(lineno)d) -- %(message)s',
                     level=logging.DEBUG)
@@ -145,7 +146,7 @@ class Game:
             # this will trigger the spawn enemies code.
             entity.kill()
 
-    def run(self):
+    async def main(self):
         while True:
             self.display.fill((0, 0, 0))  # black background
 
@@ -365,7 +366,8 @@ class Game:
             # update the screen
             pygame.display.flip()
             self.clock.tick(60)  # framerate
+            await asyncio.sleep(0)
 
 
-if __name__ == "__main__":
-    Game().run()
+def main():
+    asyncio.run(Game().main())

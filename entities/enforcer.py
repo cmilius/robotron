@@ -1,5 +1,5 @@
-from scripts.entities.entities import PhysicsEntity
-from scripts.projectiles.enforcer_projectiles import EnforcerProjectiles
+from entities.entities import PhysicsEntity
+from projectiles.enforcer_projectiles import EnforcerProjectiles
 import logging
 
 logger = logging.getLogger(__name__)

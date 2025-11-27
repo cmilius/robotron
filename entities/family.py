@@ -1,4 +1,4 @@
-from scripts.entities.entities import PhysicsEntity
+from entities.entities import PhysicsEntity
 
 # CONSTANTS
 FAMILY_MOVEMENT_SCALER = 0.2  # controls the movement speed of the family

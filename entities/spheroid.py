@@ -1,5 +1,5 @@
-from scripts.entities.enforcer import Enforcer
-from scripts.entities.pregnant_enemy import PregnantEnemy
+from entities.enforcer import Enforcer
+from entities.pregnant_enemy import PregnantEnemy
 import random
 import logging
 

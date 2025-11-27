@@ -1,5 +1,5 @@
-from scripts.entities.entities import PhysicsEntity
-from scripts.projectiles.tank_projectiles import TankProjectiles
+from entities.entities import PhysicsEntity
+from projectiles.tank_projectiles import TankProjectiles
 from pygame import transform
 import logging
 
