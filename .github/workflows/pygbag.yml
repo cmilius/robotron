@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Install pygbag
         run: |
@@ -18,7 +18,7 @@ jobs:
           python -m pygbag .
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4
+        uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           branch: gh-pages
           folder: build/web
