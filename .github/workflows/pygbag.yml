@@ -29,9 +29,16 @@ jobs:
         echo "=== build tree ==="
         find build -maxdepth 4 -type d
 
+    - name: Debug full build output
+      run: |
+        echo "=== web-cache tree ==="
+        find build/web-cache -maxdepth 4 -type d
+        echo "=== files ==="
+        find build/web-cache -maxdepth 4 -type f
+
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         branch: gh-pages
-        folder: build/web
+        folder: build/web-cache/robotron
         clean: true
