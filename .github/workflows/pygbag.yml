@@ -4,6 +4,7 @@ on: [workflow_dispatch]
 jobs:
   build-pygbag:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
     - name: Checkout repository
@@ -19,14 +20,14 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pygbag
 
-    - name: Build pygbag project
+    - name: Build pygbag project (CI-safe)
       run: |
-        python -m pygbag .
+        python -m pygbag --build .
 
     - name: Debug build output
       run: |
         echo "=== build tree ==="
-        find . -maxdepth 4 -type d
+        find build -maxdepth 4 -type d
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.7
