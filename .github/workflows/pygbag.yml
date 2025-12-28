@@ -7,11 +7,9 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: "3.11"
 
@@ -20,25 +18,18 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pygbag
 
-    - name: Build pygbag project (CI-safe)
+    - name: Build pygbag app
       run: |
-        python -m pygbag --build .
+        python -m pygbag --build main.py
 
-    - name: Debug build output
+    - name: Debug output
       run: |
-        echo "=== build tree ==="
         find build -maxdepth 4 -type d
-
-    - name: Debug full build output
-      run: |
-        echo "=== web-cache tree ==="
-        find build/web-cache -maxdepth 4 -type d
-        echo "=== files ==="
-        find build/web-cache -maxdepth 4 -type f
+        find build -maxdepth 4 -type f
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         branch: gh-pages
-        folder: build/web-cache/robotron
+        folder: build/web
         clean: true
