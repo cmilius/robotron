@@ -3,23 +3,31 @@ on: [workflow_dispatch]
 
 jobs:
   build-pygbag:
+    name: Build and deploy pygbag app to GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Debug build output
+      run: |
+        find build -maxdepth 4 -type d
+    
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: "3.11"
 
-    - name: Build pygbag project
+    - name: Install pygbag and build project
       run: |
         python -m pip install --upgrade pip
         python -m pip install pygbag
-        python -m pygbag --build main.py
+        python -m pygbag --build --app-name index main.py
 
-    - name: Deploy to GitHub Pages
+    - name: Deploy to GitHub Pages (gh-pages branch)
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         branch: gh-pages
-        folder: build/web/main
+        folder: build/web/index
+        clean: true
