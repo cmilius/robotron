@@ -82,7 +82,7 @@ class Brain(PhysicsEntity):
         self.game.enemy_group.add(prog)
         self.game.allsprites.add(prog)
 
-    def hit_by_projectile(self):
+    def hit_by_projectile(self, **kwargs):
         """
         Brain ded
 
