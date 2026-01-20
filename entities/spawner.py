@@ -113,6 +113,7 @@ class Spawner:
         for pos in brain_positions:
             brain = Brain(self.game, pos, self.game.brain_size)
             self.game.enemy_group.add(brain)
+            self.game.brains_group.add(brain)
             self.game.allsprites.add(brain)
 
     def spawn_family(self):
