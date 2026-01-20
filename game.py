@@ -60,12 +60,13 @@ class Game:
         self.dad_size = (29, 27)
         self.mom_size = (29, 27)
         self.mike_size = (29, 27)
+        self.prog_size = (29, 27)
         self.spheroid_size = (16, 15)
         self.quark_size = (16, 15)
         self.enforcer_size = (9, 11)
         self.tank_size = (13, 16)
         self.electrode_size = (9, 9)
-
+        self.brain_size = (30, 37)
 
         # Load the sprite sheets
         self.hero_animations = SpriteSheet("data/images/entities/hero_spritesheet.png")
@@ -126,6 +127,7 @@ class Game:
         self.grunts_group = pygame.sprite.Group()
         self.enemy_group = pygame.sprite.Group()
         self.hulks_group = pygame.sprite.Group()
+        self.brains_group = pygame.sprite.Group()
 
         # Family group
         self.family_group = pygame.sprite.Group()
@@ -234,6 +236,14 @@ class Game:
             if hulk_to_fam:
                 # {<Hulk Sprite(in 3 groups)>: [<Dad Sprite(in 0 groups)>]}
                 self.hud.add_family_death(list(hulk_to_fam.values())[0][0].pos)
+
+            # brain-to-family
+            brain_to_fam = pygame.sprite.groupcollide(self.brains_group, self.family_group, False, True)
+            for brain in brain_to_fam:
+                # spawn a prog
+                brain.spawn_prog()
+                self.hud.add_family_death(list(brain_to_fam.values())[0][0].pos)
+
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:

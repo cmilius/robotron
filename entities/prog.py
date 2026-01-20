@@ -1,5 +1,5 @@
 import pygame
-from entities import PhysicsEntity
+from entities.entities import PhysicsEntity
 import logging
 
 logger = logging.getLogger(__name__)
