@@ -14,7 +14,7 @@ Make sure your IDE is connected to the new virtual environment -> this step will
 
 Once you have cloned the repo and are in the virtual environment, use the command: `pip install -r requirements.txt`. This will install the package requirements for the project.
 
-Lastly, to execute the program you just need to run the 'game.py' file. `python game.py`
+Lastly, to execute the program you just need to run the 'main.py' file. `python main.py`
 
 ## Reference Material
 [Robotron: 2084 Atari 7800  FAQ/Strategy Guide](https://gamefaqs.gamespot.com/atari7800/585425-robotron-2084/faqs/42864)  
