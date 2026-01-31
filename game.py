@@ -51,6 +51,7 @@ class Game:
             "enforcer_projectile": load_image("projectiles/enforcer_projectile.png"),
             "tank_projectile": load_image("projectiles/tank_projectile.png"),
             "hero_projectile": load_image("projectiles/hero_projectile.png"),
+            "brain_projectile": load_image("projectiles/brain_projectile.png"),
             "skull_and_bones": load_image("skull_and_bones.png")
         }
 
