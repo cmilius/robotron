@@ -6,6 +6,7 @@ from entities.electrode import Electrode
 from entities.grunt import Grunt
 from entities.hulk import Hulk
 from entities.spheroid import Spheroid
+from entities.brain import Brain
 from entities.quark import Quark
 from entities.family import Dad, Mom, Mike
 
@@ -106,6 +107,14 @@ class Spawner:
             quark = Quark(self.game, pos, self.game.quark_size)
             self.game.enemy_group.add(quark)
             self.game.allsprites.add(quark)
+
+        # spawn brains
+        brain_positions = self.spawn_positions("brains")
+        for pos in brain_positions:
+            brain = Brain(self.game, pos, self.game.brain_size)
+            self.game.enemy_group.add(brain)
+            self.game.brains_group.add(brain)
+            self.game.allsprites.add(brain)
 
     def spawn_family(self):
         """
