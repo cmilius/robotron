@@ -1,8 +1,9 @@
 import pygame
 import random
+import math
 
 # CONSTANTS
-SPEED = 1                   # Scales how fast the projectile moves
+SPEED = 0.5                   # Scales how fast the projectile moves
 DIRECTION_MAX_FRAMES = 20   # max number of frames before a direction change
 
 class BrainProjectile(pygame.sprite.Sprite):
@@ -12,9 +13,8 @@ class BrainProjectile(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(pos)
 
         self.image = self.game.assets[p_type]
+        self.original_image = self.image  # store the original image for rotation
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 13, 13)
-
-        # self.frame_movement = self.fire_to_target(target_pos=(self.game.hero.rect[0], self.game.hero.rect[1]))
 
         self.frame_counter = DIRECTION_MAX_FRAMES
         self.frame_max = DIRECTION_MAX_FRAMES
@@ -46,3 +46,14 @@ class BrainProjectile(pygame.sprite.Sprite):
             direction_vector = direction_vector.normalize() * SPEED
             self.pos += direction_vector
             self.rect.topleft = (round(self.pos.x), round(self.pos.y))
+
+            # 1. Get the angle in radians
+            # Note: -direction.y accounts for Pygame's inverted Y-axis
+            radians = math.atan2(-direction_vector.y, direction_vector.x)
+
+            # 2. Convert to degrees
+            angle = math.degrees(radians)
+
+            # 3. Rotate the original image
+            # Use a "clean" reference image to avoid quality degradation from repeated rotations
+            self.image = pygame.transform.rotate(self.original_image, angle)
