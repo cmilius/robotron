@@ -12,7 +12,7 @@ class Brain(PhysicsEntity):
     # define constants
     POINT_VALUE     = 500  # point value for the brain
     MOVEMENT_SPEED  = 0.2  # movement speed of the brain
-    PROJECTILE_FIRE_TIMER = 60  # Frames, controls how often the brain will fire at the hero
+    PROJECTILE_FIRE_TIMER = 150  # Frames, controls how often the brain will fire at the hero
 
     def __init__(self, game, pos, size):
         """
@@ -80,13 +80,11 @@ class Brain(PhysicsEntity):
         Fire cruise missile at the hero
         :return: None
         """
-        print("Brain attempting to fire projectile")
 
         if not self.block_actions:
             projectile = BrainProjectile(self.game, "brain_projectile", self.pos)
             self.game.enemy_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
-            print("Brain fired projectile")
 
     def spawn_prog(self):
         """
