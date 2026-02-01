@@ -5,7 +5,7 @@ import math
 # CONSTANTS
 SPEED = 1                # Scales how fast the projectile moves
 DIRECTION_MAX_FRAMES = 20  # max number of frames before a direction change
-IMAGE_TRAIL_LENGTH = 50    # number of trail images to store
+IMAGE_TRAIL_LENGTH = 30    # number of trail images to store
 
 class BrainProjectile(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos):
@@ -60,5 +60,7 @@ class BrainProjectile(pygame.sprite.Sprite):
             # Draw trail images at their respective positions
             for i, trail_pos in enumerate(self.image_trail_positions):
                 if i % 3 == 0:  # Only draw every 3rd image for performance
-                    self.game.display.blit(self.image, (trail_pos[0], trail_pos[1]), special_flags=pygame.BLEND_ADD)
+                    colored_image = self.original_image.copy()
+                    colored_image.fill((255, 0, 0, 100), special_flags=pygame.BLEND_RGBA_ADD)
+                    self.game.display.blit(colored_image, (trail_pos[0], trail_pos[1]), special_flags=pygame.BLEND_ADD)
             
