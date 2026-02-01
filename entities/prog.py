@@ -4,6 +4,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# CONSTANTS
+IMAGE_TRAIL_LENGTH = 15    # number of trail images to store
+
 class Prog(PhysicsEntity):
     """
     Former humans who have been reprogrammed by Brains. They chase the player with deadly intent and move like fast grunts.
@@ -13,15 +16,13 @@ class Prog(PhysicsEntity):
         super().__init__(game, self.__class__.__name__.lower(), pos, size)
         self.animations = self.game.human_family_animations.animations[self.e_type] # they were originally humans
         self.image = self.animations[self.action][0] 
-
         self.target_posit = self.random_movement()
 
         self.block_actions = True  # block movement until the prog has fully spawned
         self.spawn_frames = 6  # the number of animations frames in the prog spawn
         self.frame_counter = 0
         self.anim_frame_delay = 0
-        self.trail_images = []  # list to store the trail images
-
+        self.image_trail_positions = []  # list to store trail image positions
 
     def animate(self, frame_movement):
         """
@@ -30,18 +31,19 @@ class Prog(PhysicsEntity):
         :param list frame_movement: The direction vector the entity is moving in.
         :return: None
         """
+        # Store the current position for trail effect
+        self.image_trail_positions.append((self.pos[0], self.pos[1]))
 
-        # Append the current image and position to the trail
-        self.trail_images.append((self.image, self.rect.topleft))
-
-        # Limit the trail to the last 15 frames
-        if len(self.trail_images) > 15:
-            self.trail_images.pop(0)
+        # Limit the trail to the last IMAGE_TRAIL_LENGTH positions
+        if len(self.image_trail_positions) > IMAGE_TRAIL_LENGTH:
+            self.image_trail_positions.pop(0)
 
         # Draw trail images at their respective positions
-        for i, (trail_image, trail_pos) in enumerate(self.trail_images):
-            if i % 5 == 0:  # Only draw every 5th image
-                self.game.display.blit(trail_image, trail_pos, special_flags=pygame.BLEND_SUB)
+        for i, trail_pos in enumerate(self.image_trail_positions):
+            if i % 5 == 0:  # Only draw every 3rd image for performance
+                colored_image = self.image.copy()
+                colored_image.fill((255, 255, 0, 100), special_flags=pygame.BLEND_RGBA_ADD)
+                self.game.display.blit(colored_image, (trail_pos[0], trail_pos[1]), special_flags=pygame.BLEND_ADD)
 
         # Iterate the animation frames
         super().iterate_animation_frames()
