@@ -3,8 +3,9 @@ import random
 import math
 
 # CONSTANTS
-SPEED = 0.5                   # Scales how fast the projectile moves
-DIRECTION_MAX_FRAMES = 20   # max number of frames before a direction change
+SPEED = 1                # Scales how fast the projectile moves
+DIRECTION_MAX_FRAMES = 20  # max number of frames before a direction change
+IMAGE_TRAIL_LENGTH = 50    # number of trail images to store
 
 class BrainProjectile(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos):
@@ -20,6 +21,8 @@ class BrainProjectile(pygame.sprite.Sprite):
         self.frame_max = DIRECTION_MAX_FRAMES
 
         self.target_pos = [self.game.hero.rect[0], self.game.hero.rect[1]]
+
+        self.image_trail_positions = []  # list to store trail image positions
 
     def update(self):
 
@@ -47,13 +50,15 @@ class BrainProjectile(pygame.sprite.Sprite):
             self.pos += direction_vector
             self.rect.topleft = (round(self.pos.x), round(self.pos.y))
 
-            # 1. Get the angle in radians
-            # Note: -direction.y accounts for Pygame's inverted Y-axis
-            radians = math.atan2(-direction_vector.y, direction_vector.x)
+            # Store the current position for trail effect
+            self.image_trail_positions.append((self.pos[0], self.pos[1]))
 
-            # 2. Convert to degrees
-            angle = math.degrees(radians)
+            # Limit the trail to the last IMAGE_TRAIL_LENGTH positions
+            if len(self.image_trail_positions) > IMAGE_TRAIL_LENGTH:
+                self.image_trail_positions.pop(0)
 
-            # 3. Rotate the original image
-            # Use a "clean" reference image to avoid quality degradation from repeated rotations
-            self.image = pygame.transform.rotate(self.original_image, angle)
+            # Draw trail images at their respective positions
+            for i, trail_pos in enumerate(self.image_trail_positions):
+                if i % 3 == 0:  # Only draw every 3rd image for performance
+                    self.game.display.blit(self.image, (trail_pos[0], trail_pos[1]), special_flags=pygame.BLEND_ADD)
+            
