@@ -4,6 +4,7 @@ import logging
 import random
 import asyncio
 
+from audio import Audio
 from entities.hero import Hero
 from entities.spawner import Spawner
 from utils import load_image
@@ -32,7 +33,6 @@ HERO_INVULN_TIME = 90  # set the hero invulnerable for 1.5 seconds
 TRANSITION_TIMER = 30  # frames, tied to the length of the Squares transition animation
 SPAWN_TIMER = 90  # frames, tied to the duration set in ConvergenceAnimation
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -43,6 +43,8 @@ class Game:
         self.display = pygame.Surface((640, 480))
 
         self.clock = pygame.time.Clock()
+
+        self.audio = Audio() # initialize audio manager
 
         self.hero_movement = [False, False, False, False]  # [left, right, up, down]
         self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
@@ -100,7 +102,6 @@ class Game:
         self.level_transition = False  # Stops entity movement after level complete, resets once transition fill the screen
         self.first_wave = True  # Tells the Squares animation whether to draw a black screen or not to block the HUD
 
-        #
         self.spawn_timer = SPAWN_TIMER  # tied to the duration set in ConvergenceAnimation
         self.spawn_counter = 0
         self.pause_entity_movement = True  # This flag is active when entities are spawning into the map, blocks entity updates+movement
@@ -223,6 +224,7 @@ class Game:
                     if self.life_count != 0:
                         # this is here because otherwise you end up with a -1 life indication at the GAME OVER screen
                         self.life_count -= 1
+                        self.audio.play("hero_death")
                     if self.life_count == 0:
                         self.game_over = True
                     else:
@@ -249,6 +251,7 @@ class Game:
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
+                self.audio.play("human_save")
 
             if not self.game_over and not self.pause_entity_movement and not self.transition_flag:
                 # Update hero
@@ -276,6 +279,7 @@ class Game:
                 if self.spawn_counter >= self.spawn_timer:
                     self.pause_entity_movement = False
                     self.spawn_counter = 0
+                    self.audio.stop("level_transition")
                 else:
                     self.spawn_counter += 1
             else:
