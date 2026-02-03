@@ -239,6 +239,7 @@ class Game:
             if hulk_to_fam:
                 # {<Hulk Sprite(in 3 groups)>: [<Dad Sprite(in 0 groups)>]}
                 self.hud.add_family_death(list(hulk_to_fam.values())[0][0].pos)
+                self.audio.play("human_die")
 
             # brain-to-family
             brain_to_fam = pygame.sprite.groupcollide(self.brains_group, self.family_group, False, True)
@@ -246,6 +247,7 @@ class Game:
                 # spawn a prog
                 brain.spawn_prog()
                 self.hud.add_family_death(list(brain_to_fam.values())[0][0].pos)
+                self.audio.play("human_die")
 
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)

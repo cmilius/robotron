@@ -16,6 +16,7 @@ class Audio:
             "hero_lazer": pygame.mixer.Sound(AUDIO_FILEPATH + "hero_lazer.wav"),
             "hero_death": pygame.mixer.Sound(AUDIO_FILEPATH + "hero_death.wav"),
             "human_save": pygame.mixer.Sound(AUDIO_FILEPATH + "human_save.wav"),
+            "human_die": pygame.mixer.Sound(AUDIO_FILEPATH + "human_die.wav"),
             "level_transition": pygame.mixer.Sound(AUDIO_FILEPATH + "level_transition.wav")
         }
 
