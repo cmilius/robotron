@@ -13,11 +13,19 @@ class Audio:
         pygame.mixer.init()
 
         self.sounds = {
-            "hero_lazer": pygame.mixer.Sound(AUDIO_FILEPATH + "hero_lazer.wav"),
+            "enforcer_fire": pygame.mixer.Sound(AUDIO_FILEPATH + "enforcer_fire.wav"),
+            "grunt_walk": pygame.mixer.Sound(AUDIO_FILEPATH + "grunt_walk.wav"),
             "hero_death": pygame.mixer.Sound(AUDIO_FILEPATH + "hero_death.wav"),
-            "human_save": pygame.mixer.Sound(AUDIO_FILEPATH + "human_save.wav"),
+            "hero_lazer": pygame.mixer.Sound(AUDIO_FILEPATH + "hero_lazer.wav"),
             "human_die": pygame.mixer.Sound(AUDIO_FILEPATH + "human_die.wav"),
-            "level_transition": pygame.mixer.Sound(AUDIO_FILEPATH + "level_transition.wav")
+            "human_save": pygame.mixer.Sound(AUDIO_FILEPATH + "human_save.wav"),
+            "level_transition": pygame.mixer.Sound(AUDIO_FILEPATH + "level_transition.wav"),
+            "prog_transformation": pygame.mixer.Sound(AUDIO_FILEPATH + "prog_transformation.wav"),
+            "quark_spawn": pygame.mixer.Sound(AUDIO_FILEPATH + "quark_spawn.wav"),
+            "tank_explode": pygame.mixer.Sound(AUDIO_FILEPATH + "tank_explode.wav"),
+            "tank_fire": pygame.mixer.Sound(AUDIO_FILEPATH + "tank_fire.wav"),
+            "tank_projectile_bounce": pygame.mixer.Sound(AUDIO_FILEPATH + "tank_projectile_bounce.wav")
+            
         }
 
         # Set a default volume for all sounds

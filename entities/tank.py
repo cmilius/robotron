@@ -40,6 +40,7 @@ class Tank(PhysicsEntity):
             projectile = TankProjectiles(self.game, "tank_projectile", self.pos)
             self.game.enemy_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
+            self.game.audio.play("tank_fire")
 
     def animate(self, frame_movement):
         """

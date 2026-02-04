@@ -205,6 +205,8 @@ class Game:
                     self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
                 if affected_enemy.e_type == "electrode":
                     self.shrink_list.append(ShrinkAnimations(self, affected_enemy))
+                if affected_enemy.e_type == "tank":
+                    self.audio.play("tank_explode")
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -248,6 +250,7 @@ class Game:
                 brain.spawn_prog()
                 self.hud.add_family_death(list(brain_to_fam.values())[0][0].pos)
                 self.audio.play("human_die")
+                self.audio.play("prog_transformation")
 
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
