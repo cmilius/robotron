@@ -1,6 +1,6 @@
+import audio
 from entities.entities import PhysicsEntity
 from projectiles.hero_projectiles import HeroProjectiles
-
 
 # CONSTANTS
 PROJECTILE_RELOAD_TIMER = 10  # Frames
@@ -48,6 +48,7 @@ class Hero(PhysicsEntity):
             self.game.hero_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
             self.projectile_reload = PROJECTILE_RELOAD_TIMER  # Reload the gun
+            self.game.audio.play("hero_lazer")
 
     def _directions_logic(self, player_inputs, h_stack, v_stack):
         """

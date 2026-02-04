@@ -85,8 +85,10 @@ class TankProjectiles(pygame.sprite.Sprite):
             self.frame_movement[0] *= -1
             self.flip_delay_v = 60
             self.v_wall = False
+            self.game.audio.play("tank_projectile_bounce")
         if self.h_wall and not self.flip_delay_h:
             self.frame_movement[1] *= -1
             self.flip_delay_h = 60
             self.h_wall = False
+            self.game.audio.play("tank_projectile_bounce")
 

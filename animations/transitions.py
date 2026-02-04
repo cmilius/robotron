@@ -10,7 +10,6 @@ TOTAL_DURATION = 1000  # milliseconds, how long until the final square will be d
 SQUARE_SPACING = 0.04  # controls new squares being drawn
 # SQUARE_SPACING is dictated by the ratio of drawn to total width. Smaller number = more squares
 
-
 class TransitionBase:
     def __init__(self, center, width, height, color, start_time, duration):
         """
@@ -67,7 +66,6 @@ class TransitionBase:
         rect = (self.center[0] - (x_size // 2), self.center[1] - (y_size // 2), x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
 
-
 class CenterSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
         super().__init__(center, width, height, color, start_time, duration)
@@ -84,7 +82,6 @@ class CenterSquare(TransitionBase):
         y_size = self.height * t
         rect = (self.center[0] - (x_size // 2), self.center[1] - (y_size // 2), x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
-
 
 class VerticalSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
@@ -103,7 +100,6 @@ class VerticalSquare(TransitionBase):
         rect = (self.center[0] - (x_size // 2), self.center[1] - (y_size // 2), x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
 
-
 class HorizontalSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
         super().__init__(center, width, height, color, start_time, duration)
@@ -120,7 +116,6 @@ class HorizontalSquare(TransitionBase):
         y_size = self.height * t
         rect = (self.center[0] - (x_size // 2), self.center[1] - (y_size // 2), x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
-
 
 class LeftSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
@@ -140,7 +135,6 @@ class LeftSquare(TransitionBase):
         rect = (0, self.center[1] - (y_size // 2), x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
 
-
 class RightSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
         super().__init__(center, width, height, color, start_time, duration)
@@ -157,7 +151,6 @@ class RightSquare(TransitionBase):
         y_size = self.height
         rect = (self.width-x_size, self.center[1] - (y_size // 2), x_size+10, y_size)  # +10 to cover up any lag
         pygame.draw.rect(surface, (255, 255, 255), rect)
-
 
 class TopSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
@@ -176,7 +169,6 @@ class TopSquare(TransitionBase):
         rect = (self.center[0] - (x_size // 2), 0, x_size, y_size)
         pygame.draw.rect(surface, (255, 255, 255), rect)
 
-
 class BotSquare(TransitionBase):
     def __init__(self, center, width, height, color, start_time, duration):
         super().__init__(center, width, height, color, start_time, duration)
@@ -194,7 +186,6 @@ class BotSquare(TransitionBase):
         rect = (self.center[0] - (x_size // 2), self.height - y_size, x_size, y_size+10)  # +10 to cover up any lag
         pygame.draw.rect(surface, (255, 255, 255), rect)
 
-
 TRANSITION_OPTIONS = [
     VerticalSquare,
     HorizontalSquare,
@@ -203,7 +194,6 @@ TRANSITION_OPTIONS = [
     TopSquare,
     BotSquare
 ]
-
 
 class Transitions:
     def __init__(self, game):
@@ -238,6 +228,8 @@ class Transitions:
 
         # Create a surface to draw our squares onto. This surface will then be blit onto the game.display
         self.transition_surf = self.create_transition_surface()
+
+        self.game.audio.play("level_transition")
 
     def create_transition_surface(self):
         """
