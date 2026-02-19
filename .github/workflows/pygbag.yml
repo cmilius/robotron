@@ -1,7 +1,13 @@
 name: pygbag_build
-on: [workflow_dispatch]
+on:
+  pull_request: {} # Enables automatic triggering of the workflow on pull requests
+  push: # Enables automatic triggering of the workflow on pushes to the main branch
+    branches:
+      - main
+  workflow_dispatch: {} # Enables manual triggering of the workflow from the GitHub Actions tab
 
 jobs:
+  # Build the pygbag app
   build-pygbag:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -24,8 +30,26 @@ jobs:
 
     - name: Debug output
       run: |
-        find build -maxdepth 4 -type d
-        find build -maxdepth 4 -type f
+        find build -maxdepth 4 -type d || true
+        find build -maxdepth 4 -type f || true
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pygbag-build
+        path: build
+
+  # Deploy to GitHub Pages
+  deploy-pygbag:
+    runs-on: ubuntu-latest
+    needs: build-pygbag
+
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: pygbag-build
+        path: build
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.7
