@@ -45,6 +45,8 @@ jobs:
     needs: build-pygbag
 
     steps:
+    - uses: actions/checkout@v4 # JamesIves/github-pages-deploy-action requires the repository to be checked out due to it's internal reliance on git context
+    
     - name: Download build artifact
       uses: actions/download-artifact@v4
       with:
@@ -55,5 +57,5 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         branch: gh-pages
-        folder: build
+        folder: build/web
         clean: true
