@@ -43,10 +43,10 @@ jobs:
   deploy-pygbag:
     runs-on: ubuntu-latest
     needs: build-pygbag
+    # Only run this job if the event is a push (restricted to branches specified in 'on' section) or a manual dispatch
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
-    - uses: actions/checkout@v4 # JamesIves/github-pages-deploy-action requires the repository to be checked out due to it's internal reliance on git context
-    
     - name: Download build artifact
       uses: actions/download-artifact@v4
       with:
