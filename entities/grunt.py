@@ -23,6 +23,7 @@ class Grunt(PhysicsEntity):
                                    movement=movement,
                                    scaler=GRUNT_MOVEMENT_SCALER)
             self.move_at_time = MOVE_AT_TIME
+            self.game.audio.play("grunt_walk")
 
     def iterate_animation_frames(self):
         # the grunt already moves on a "delay", so no buffer is required.

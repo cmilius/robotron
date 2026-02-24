@@ -30,6 +30,7 @@ class Enforcer(PhysicsEntity):
             projectile = EnforcerProjectiles(self.game, "enforcer_projectile", self.pos)
             self.game.enemy_projectiles.add(projectile)
             self.game.allsprites.add(projectile)
+            self.game.audio.play("enforcer_fire")
 
     def animate(self, frame_movement):
         """

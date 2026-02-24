@@ -4,6 +4,7 @@ import logging
 import random
 import asyncio
 
+from audio import Audio
 from entities.hero import Hero
 from entities.spawner import Spawner
 from utils import load_image
@@ -32,7 +33,6 @@ HERO_INVULN_TIME = 90  # set the hero invulnerable for 1.5 seconds
 TRANSITION_TIMER = 30  # frames, tied to the length of the Squares transition animation
 SPAWN_TIMER = 90  # frames, tied to the duration set in ConvergenceAnimation
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -43,6 +43,8 @@ class Game:
         self.display = pygame.Surface((640, 480))
 
         self.clock = pygame.time.Clock()
+
+        self.audio = Audio() # initialize audio manager
 
         self.hero_movement = [False, False, False, False]  # [left, right, up, down]
         self.hero_shooting = [False, False, False, False]  # [left, right, up, down]
@@ -100,7 +102,6 @@ class Game:
         self.level_transition = False  # Stops entity movement after level complete, resets once transition fill the screen
         self.first_wave = True  # Tells the Squares animation whether to draw a black screen or not to block the HUD
 
-        #
         self.spawn_timer = SPAWN_TIMER  # tied to the duration set in ConvergenceAnimation
         self.spawn_counter = 0
         self.pause_entity_movement = True  # This flag is active when entities are spawning into the map, blocks entity updates+movement
@@ -204,6 +205,8 @@ class Game:
                     self.active_animations.append(ExplodeAnimations(self, affected_enemy, explode_logic))
                 if affected_enemy.e_type == "electrode":
                     self.shrink_list.append(ShrinkAnimations(self, affected_enemy))
+                if affected_enemy.e_type == "tank":
+                    self.audio.play("tank_explode")
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
             if projectile_hit:
@@ -223,6 +226,7 @@ class Game:
                     if self.life_count != 0:
                         # this is here because otherwise you end up with a -1 life indication at the GAME OVER screen
                         self.life_count -= 1
+                        self.audio.play("hero_death")
                     if self.life_count == 0:
                         self.game_over = True
                     else:
@@ -237,6 +241,7 @@ class Game:
             if hulk_to_fam:
                 # {<Hulk Sprite(in 3 groups)>: [<Dad Sprite(in 0 groups)>]}
                 self.hud.add_family_death(list(hulk_to_fam.values())[0][0].pos)
+                self.audio.play("human_die")
 
             # brain-to-family
             brain_to_fam = pygame.sprite.groupcollide(self.brains_group, self.family_group, False, True)
@@ -244,11 +249,14 @@ class Game:
                 # spawn a prog
                 brain.spawn_prog()
                 self.hud.add_family_death(list(brain_to_fam.values())[0][0].pos)
+                self.audio.play("human_die")
+                self.audio.play("prog_transformation")
 
             #   hero-to-family
             family_saved = pygame.sprite.groupcollide(self.hero_group, self.family_group, False, True)
             if family_saved:
                 self.scoring.update_score("family", pos=self.hero.pos)
+                self.audio.play("human_save")
 
             if not self.game_over and not self.pause_entity_movement and not self.transition_flag:
                 # Update hero
@@ -276,6 +284,7 @@ class Game:
                 if self.spawn_counter >= self.spawn_timer:
                     self.pause_entity_movement = False
                     self.spawn_counter = 0
+                    self.audio.stop("level_transition")
                 else:
                     self.spawn_counter += 1
             else:

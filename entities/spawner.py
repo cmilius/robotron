@@ -107,6 +107,7 @@ class Spawner:
             quark = Quark(self.game, pos, self.game.quark_size)
             self.game.enemy_group.add(quark)
             self.game.allsprites.add(quark)
+            self.game.audio.play("quark_spawn")
 
         # spawn brains
         brain_positions = self.spawn_positions("brains")
