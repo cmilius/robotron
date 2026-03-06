@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 QUARK_MOVEMENT_SCALER = 1  # Scales how fast the quark moves
 
-
 class Quark(PregnantEnemy):
     """
     Quarks move in a frandom pattern and drops off a single tank.
@@ -16,7 +15,6 @@ class Quark(PregnantEnemy):
     def __init__(self, game, pos, size):
         super().__init__(game, "quark", pos, size)  # inheret from PhysicsEntity class
         self.number_of_children = 1
-
 
     def update(self, movement=(0, 0)):
         """

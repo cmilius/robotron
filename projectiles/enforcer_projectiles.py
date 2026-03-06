@@ -1,7 +1,6 @@
 import math
 import pygame
 
-
 # CONSTANTS
 DEFAULT_SCALER = 2  # Scales how fast the projectile moves
 SLOWED_TIMER = 3  # number of seconds the slow rate occur over

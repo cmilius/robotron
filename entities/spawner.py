@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 with open("data/spawn_counts.json", "r") as f:
     WAVE_INTENSITY = json.load(f)
 
-
 class Spawner:
     def __init__(self, game):
         """

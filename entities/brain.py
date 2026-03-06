@@ -2,17 +2,20 @@ from entities.entities import PhysicsEntity
 from entities.prog import Prog
 from projectiles.brain_projectile import BrainProjectile
 
+
 class Brain(PhysicsEntity):
     """
-        These are the most intelligent enemies. They fire Cruise Missiles that home in 
-        on the player and can capture humans, turning them into Progs. They only appear every 
-        5 levels in a "Brain Wave."
+    These are the most intelligent enemies. They fire Cruise Missiles that home in
+    on the player and can capture humans, turning them into Progs. They only appear every
+    5 levels in a "Brain Wave."
     """
 
     # define constants
-    POINT_VALUE     = 500  # point value for the brain
-    MOVEMENT_SPEED  = 0.2  # movement speed of the brain
-    PROJECTILE_FIRE_TIMER = 150  # Frames, controls how often the brain will fire at the hero
+    POINT_VALUE = 500  # point value for the brain
+    MOVEMENT_SPEED = 0.2  # movement speed of the brain
+    PROJECTILE_FIRE_TIMER = (
+        150  # Frames, controls how often the brain will fire at the hero
+    )
 
     def __init__(self, game, pos, size):
         """
@@ -23,12 +26,16 @@ class Brain(PhysicsEntity):
         """
 
         # inheret the PhysicsEntity class
-        super().__init__(game, self.__class__.__name__.lower(), pos, size)  
-        self.image = self.game.robotrons_animations.animations[self.e_type][self.action][0]
-        self.action = "idle"                               # initial stance
-        self.target_pos = [0, 0]                           # target position for the brain to move to
-        self.projectile_timer = self.PROJECTILE_FIRE_TIMER # timer counter for firing projectiles
-        self.block_actions = False                         # brains can act immediately
+        super().__init__(game, self.__class__.__name__.lower(), pos, size)
+        self.image = self.game.robotrons_animations.animations[self.e_type][
+            self.action
+        ][0]
+        self.action = "idle"  # initial stance
+        self.target_pos = [0, 0]  # target position for the brain to move to
+        self.projectile_timer = (
+            self.PROJECTILE_FIRE_TIMER
+        )  # timer counter for firing projectiles
+        self.block_actions = False  # brains can act immediately
 
     def update(self, movement=(0, 0)):
         """
@@ -42,12 +49,11 @@ class Brain(PhysicsEntity):
 
         # chase the player
         target_pos = [self.game.hero.rect[0], self.game.hero.rect[1]]
-        
+
         # unless there are humans left, chase the closest one
         humans = self.game.family_group.sprites()
 
         if len(humans) > 0:
-            
             # initialize the closest human position
             smallest_distance = 0
 
@@ -60,7 +66,7 @@ class Brain(PhysicsEntity):
                 # Update the smallest distance and target position if a closer human is found
                 if smallest_distance == 0 or distance <= smallest_distance:
                     smallest_distance = distance
-                    target_pos = human.pos       
+                    target_pos = human.pos
 
         # decrement the projectile timer and fire if ready
         self.projectile_timer -= 1
@@ -70,10 +76,9 @@ class Brain(PhysicsEntity):
             self.projectile_timer = self.PROJECTILE_FIRE_TIMER
 
         # move to the target position
-        super().move_to_target(target_pos,
-                               movement=movement,
-                               scaler=self.MOVEMENT_SPEED,
-                               move_dir=None)
+        super().move_to_target(
+            target_pos, movement=movement, scaler=self.MOVEMENT_SPEED, move_dir=None
+        )
 
     def fire_projectile(self):
         """

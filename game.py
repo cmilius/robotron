@@ -209,6 +209,7 @@ class Game:
                     self.audio.play("tank_explode")
             #  hero_projectile-to-enemy_projectile
             projectile_hit = pygame.sprite.groupcollide(self.hero_projectiles, self.enemy_projectiles, True, True)
+            
             if projectile_hit:
                 self.scoring.update_score("projectile")
             #   enemy-to-hero
@@ -373,6 +374,7 @@ class Game:
 
             if self.transition_flag and self.transition_squares is None:
                 # if transition is true, init the Squares transition
+                self.audio.stop_all()  # stop all audio to prepare for the next wave's music and sound effects
                 self.transition_squares = Transitions(self)
             if self.transition_squares:
                 self.transition_squares.iterate()

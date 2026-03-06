@@ -91,4 +91,3 @@ class TankProjectiles(pygame.sprite.Sprite):
             self.flip_delay_h = 60
             self.h_wall = False
             self.game.audio.play("tank_projectile_bounce")
-

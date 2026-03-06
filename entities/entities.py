@@ -10,6 +10,7 @@ FAMILY_MEMBERS = ("mom", "dad", "mike")
 BUFFER_LENGTH = 20  # Frames, the time delay before the flipbook animation will cycle to the next image
 BUFFER = 0  # the counter for buffer, will count to the buffer_length then cycle
 
+
 class PhysicsEntity(pygame.sprite.Sprite):
     def __init__(self, game, e_type, pos, size):
         pygame.sprite.Sprite.__init__(self)
@@ -25,7 +26,9 @@ class PhysicsEntity(pygame.sprite.Sprite):
         self.flipbook_index = 0  # indexes the anim_flipbook list
         self.buffer_length = BUFFER_LENGTH
         self.buffer = BUFFER
-        self.anim_length = len(self.anim_flipbook)  # The number of images in the animation
+        self.anim_length = len(
+            self.anim_flipbook
+        )  # The number of images in the animation
 
         # spawn animation variables, used for the enforcer and the tank
         self.block_actions = True  # block movement until the entity has fully spawned
@@ -54,7 +57,9 @@ class PhysicsEntity(pygame.sprite.Sprite):
             self.iterate_animation_frames()
             # the dictionary is indexed by a number, indicating the current "frame" of the spawn
             # I did it this way because each piece of the spawn changes size
-            self.image = self.game.robotrons_animations.animations[self.e_type][str(self.frame_counter)][0]
+            self.image = self.game.robotrons_animations.animations[self.e_type][
+                str(self.frame_counter)
+            ][0]
             # TODO: extract the frame_size of the image to adjust the hitbox as the entity is spawning
             # self.rect = self.game.robotrons_animations.animations[self.e_type][]
             self.frame_counter += 1
@@ -97,15 +102,19 @@ class PhysicsEntity(pygame.sprite.Sprite):
             elif frame_movement[1] < 0 and not frame_movement[0]:
                 self.action = "walk_up"
             if self.e_type in FAMILY_MEMBERS:
-                self.image = self.game.human_family_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
+                self.image = self.game.human_family_animations.animations[self.e_type][
+                    self.action
+                ][self.anim_flipbook[self.flipbook_index]]
             elif self.e_type == "brain":
-                self.image = self.game.robotrons_animations.animations[self.e_type][self.action][self.anim_flipbook[self.flipbook_index]]
+                self.image = self.game.robotrons_animations.animations[self.e_type][
+                    self.action
+                ][self.anim_flipbook[self.flipbook_index]]
 
     def move_entity(self, movement=(0, 0)):
         if len(movement) == 4:
             # hero logic is given in a list of len==4, not len==2
-            x_dir = (movement[1] - movement[0])
-            y_dir = (movement[3] - movement[2])
+            x_dir = movement[1] - movement[0]
+            y_dir = movement[3] - movement[2]
 
             # check out of bounds
             in_bounds = self.check_movement_in_bounds([x_dir, y_dir])
@@ -191,8 +200,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
         frame_movement = list(self.direction_to_target(target_pos))
 
         # scale the movement, can be used later to increase difficulty if desired.
-        frame_movement = [frame_movement[0] * scaler,
-                          frame_movement[1] * scaler]
+        frame_movement = [frame_movement[0] * scaler, frame_movement[1] * scaler]
 
         if move_dir is not None:
             if move_dir == "x":
@@ -200,7 +208,9 @@ class PhysicsEntity(pygame.sprite.Sprite):
             elif move_dir == "y":
                 frame_movement[0] = 0
             else:
-                logger.warning(f"Movement direction input must be either 'x' or 'y'. Current input: {move_dir}")
+                logger.warning(
+                    f"Movement direction input must be either 'x' or 'y'. Current input: {move_dir}"
+                )
 
         self.move_entity(movement=frame_movement)
 
@@ -214,7 +224,7 @@ class PhysicsEntity(pygame.sprite.Sprite):
         cent_x = self.game.active_area.width // 2
         hero_x = self.rect.x
         hero_y = self.rect.y
-        self.move_entity(movement=[cent_x-hero_x, cent_y-hero_y])
+        self.move_entity(movement=[cent_x - hero_x, cent_y - hero_y])
 
     def reached_target(self, target_pos):
         """
@@ -223,8 +233,10 @@ class PhysicsEntity(pygame.sprite.Sprite):
         :param target_pos: Target entity position
         :return: [x, y]
         """
-        if abs(self.pos[0] - target_pos[0]) < 2\
-                and abs(self.pos[1] - target_pos[1]) < 2:
+        if (
+            abs(self.pos[0] - target_pos[0]) < 2
+            and abs(self.pos[1] - target_pos[1]) < 2
+        ):
             # calculate new target posit
             target_pos = self.random_movement()
         return target_pos
@@ -235,8 +247,10 @@ class PhysicsEntity(pygame.sprite.Sprite):
 
         :return: [x, y]
         """
-        posit = [random.choice(range(self.game.active_area.width)),
-                 random.choice(range(self.game.active_area.height))]
+        posit = [
+            random.choice(range(self.game.active_area.width)),
+            random.choice(range(self.game.active_area.height)),
+        ]
         return posit
 
     def hit_by_projectile(self, **kwargs):
@@ -246,5 +260,3 @@ class PhysicsEntity(pygame.sprite.Sprite):
         :return: None
         """
         self.kill()
-
-
