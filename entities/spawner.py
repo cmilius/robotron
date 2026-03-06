@@ -50,7 +50,7 @@ class Spawner:
             num_robots = WAVE_INTENSITY.get(e_type).get(str(self.level))
         except AttributeError as e:
             logger.critical(e)
-            logger.critical(f"Error getting the entity or level from the JSON. Double check the variable names.")
+            logger.critical("Error getting the entity or level from the JSON. Double check the variable names.")
             sys.exit()
         posits = []
 

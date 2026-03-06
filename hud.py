@@ -91,8 +91,8 @@ class HUD:
 
         :return: None
         """
-        game_over_text = self.game_over_font.render(f"GAME OVER", True, TEXT_COLOR_RED)
-        restart_text = self.font.render(f"Press 'R' to restart.", True, TEXT_COLOR_RED)
+        game_over_text = self.game_over_font.render("GAME OVER", True, TEXT_COLOR_RED)
+        restart_text = self.font.render("Press 'R' to restart.", True, TEXT_COLOR_RED)
         self.game.display.blit(game_over_text, (self.game.display.get_width()/2-game_over_text.get_width()/2,
                                                 self.game.display.get_height()/2-game_over_text.get_height()/2))
         self.game.display.blit(restart_text,
