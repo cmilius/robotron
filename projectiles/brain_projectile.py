@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 
 # CONSTANTS
 SPEED = 1                # Scales how fast the projectile moves

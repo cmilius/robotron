@@ -45,3 +45,7 @@ class Audio:
     def stop(self, sound_name):
         if sound_name in self.sounds:
             self.sounds[sound_name].stop()
+
+    def stop_all(self):
+        for sound in self.sounds.values():
+            sound.stop()

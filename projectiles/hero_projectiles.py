@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 PROJECTILE_SPEED = 16
 
-
 class HeroProjectiles(pygame.sprite.Sprite):
     def __init__(self, game, p_type, pos, direction):
         pygame.sprite.Sprite.__init__(self)
@@ -56,4 +55,3 @@ class HeroProjectiles(pygame.sprite.Sprite):
                 or self.rect.top > self.game.active_area.height \
                 or self.rect.bottom < self.game.active_area.top:
             self.kill()
-

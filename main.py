@@ -1,5 +1,5 @@
 import asyncio
-import pygame
+
 from game import Game
 
 async def main():

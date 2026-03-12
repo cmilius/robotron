@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 with open("data/spawn_counts.json", "r") as f:
     WAVE_INTENSITY = json.load(f)
 
-
 class Spawner:
     def __init__(self, game):
         """
@@ -50,7 +49,7 @@ class Spawner:
             num_robots = WAVE_INTENSITY.get(e_type).get(str(self.level))
         except AttributeError as e:
             logger.critical(e)
-            logger.critical(f"Error getting the entity or level from the JSON. Double check the variable names.")
+            logger.critical("Error getting the entity or level from the JSON. Double check the variable names.")
             sys.exit()
         posits = []
 

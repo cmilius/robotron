@@ -11,7 +11,6 @@ PAUSE_LIMIT = 60  # Controls how long the spheroid will wait while dropping off 
 SECONDARY_SPAWN_TIMER = random.randint(120, 360)  # speed up the enforcer spawn times after the first drop-off
 SPHEROID_MOVEMENT_SCALER = 0.7  # scales how fast the spheroid moves
 
-
 class Spheroid(PregnantEnemy):
     """
     These enemies stay near the edges of the screen and generate Enforcers

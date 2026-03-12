@@ -1,0 +1,10 @@
+name: ruff_linting
+on: [push, pull_request, workflow_dispatch] # Enables automatic triggering of the workflow on pushes and pull requests, and allows manual triggering from the GitHub Actions tab
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run Ruff
+      uses: astral-sh/ruff-action@v3
